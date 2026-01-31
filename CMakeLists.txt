@@ -5,10 +5,9 @@ project(zutil
   LANGUAGES CXX
 )
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 add_executable(zutil
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ansi.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/log.cpp
 )
 

@@ -16,43 +16,64 @@ inline const std::string& LogString::str() const noexcept
 
 std::ostream& operator<<(std::ostream& os, const LogString& log_str) noexcept
 {
-    os << log_str.str();
-    return os;
+    return os << log_str.str();
 }
 
-void Log::_writeTimestamp() noexcept
+ColorString::ColorString(const char* str) noexcept : LogString {str} {}
+
+ColorString::ColorString(ANSI ansi, const char* str) noexcept : LogString {str}, _ansi {ansi} {}
+
+[[nodiscard]]
+ANSI ColorString::getColor() const noexcept
 {
-    std::cout << "[HH:MM:SS::DD:MM:YYYY]";
+    return this->_ansi;
 }
 
-void Log::_writeMsg(std::string_view prefix, const LogString& log_str) noexcept
+void ColorString::setColor(ANSI ansi_code) noexcept
 {
-    if (false)
-    {
-        Log::_writeTimestamp();
-    }
+    this->_ansi = ansi_code;
+}
 
-    std::cout << prefix << " : " << log_str << "\n";
+std::ostream& operator<<(std::ostream& os, const ColorString& log_str) noexcept
+{
+    return os << log_str._ansi << log_str._str << ANSI::Reset;
+}
+
+std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept
+{
+    static const ColorString TAGS[4] {
+        ColorString { ANSI::Blue   , "[DBUG]" },
+        ColorString { ANSI::Green  , "[INFO]" },
+        ColorString { ANSI::Yellow , "[WARN]" },
+        ColorString { ANSI::Red    , "[ERRO]" },
+    };
+
+    return os << TAGS[static_cast<size_t>(log_lvl)];
+}
+
+void Log::_writeMsg(LogLevel log_lvl, const LogString& log_str) noexcept
+{
+    std::cout << log_lvl << " : " << log_str << "\n";
 }
 
 void Log::debugMsg(const LogString& log_str) noexcept
 {
-    Log::_writeMsg("[DBUG]", log_str);
+    Log::_writeMsg(LogLevel::Debug, log_str);
 }
 
 void Log::infoMsg(const LogString& log_str) noexcept
 {
-    Log::_writeMsg("[INFO]", log_str);
+    Log::_writeMsg(LogLevel::Info, log_str);
 }
 
 void Log::warnMsg(const LogString& log_str) noexcept
 {
-    Log::_writeMsg("[WARN]", log_str);
+    Log::_writeMsg(LogLevel::Warn, log_str);
 }
 
 void Log::errorMsg(const LogString& log_str) noexcept
 {
-    Log::_writeMsg("[ERRO]", log_str);
+    Log::_writeMsg(LogLevel::Error, log_str);
 }
 
 } // namespace zutils
