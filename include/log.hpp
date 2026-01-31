@@ -12,7 +12,7 @@ private:
     std::string _str;
 
 public:
-    LogString(const char* str) noexcept : _str { str } {}
+    LogString(const char* str) noexcept;
 
     template <typename... Args>
     LogString(const std::format_string<Args...> f_str, Args&&... arg)
@@ -26,15 +26,9 @@ public:
     constexpr LogString& operator=(LogString&&)      noexcept = default;
     constexpr LogString& operator=(const LogString&) noexcept = default;
 
-    void clear() noexcept
-    {
-        this->_str.clear();
-    }
+    void clear() noexcept;
 
-    inline const std::string& str() const noexcept
-    {
-        return this->_str;
-    }
+    inline const std::string& str() const noexcept;
 
     inline operator bool() const noexcept
     {
@@ -46,40 +40,31 @@ public:
         return this->_str;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const LogString& log_str) noexcept
-    {
-        os << log_str.str();
-        return os;
-    }
+    friend std::ostream& operator<<(std::ostream& os, const LogString& log_str) noexcept;
 };
 
 class Log final {
 private:
+    Log() = default;
+    ~Log() = default;
+
     constexpr Log(Log&&)                 noexcept = delete;
     constexpr Log(const Log&)            noexcept = delete;
     constexpr Log& operator=(Log&&)      noexcept = delete;
     constexpr Log& operator=(const Log&) noexcept = delete;
 
+    static void _writeTimestamp() noexcept;
+
+    static void _writeMsg(std::string_view prefix, const LogString& log_str) noexcept;
+
 public:
-    static void debugMsg(const LogString& log_str) noexcept
-    {
-        std::cout << "[DBUG] : " << log_str << "\n";
-    }
+    static void debugMsg(const LogString& log_str) noexcept;
 
-    static void infoMsg(const LogString& log_str) noexcept
-    {
-        std::cout << "[INFO] : " << log_str << "\n";
-    }
+    static void infoMsg(const LogString& log_str) noexcept;
 
-    static void warnMsg(const LogString& log_str) noexcept
-    {
-        std::cout << "[WARN] : " << log_str << "\n";
-    }
+    static void warnMsg(const LogString& log_str) noexcept;
 
-    static void errorMsg(const LogString& log_str) noexcept
-    {
-        std::cout << "[ERRO] : " << log_str << "\n";
-    }
+    static void errorMsg(const LogString& log_str) noexcept;
 };
 
 } // namespace zutils
