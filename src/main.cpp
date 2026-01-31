@@ -1,7 +1,7 @@
-#include <log.hpp>
+#include "log.hpp"
 
 int main(void)
 {
-    zutils::Log::dbg("Hello, World {}", 13);
+    zutils::Log::debugMsg("Hello, World");
     return 0;
 }
