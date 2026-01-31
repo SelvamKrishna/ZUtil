@@ -1,0 +1,17 @@
+# Build
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+*.exe
+*.obj
+*.o
+*.a
+*.so
+*.dll
+
+# IDE
+.vscode/
+*.user
+*.suo
+*.ncb
+*.VC.db
