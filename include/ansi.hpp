@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <format>
 #include <ostream>
+#include <string>
 
 namespace zutils {
 
@@ -54,5 +56,44 @@ enum class ANSI : uint8_t {
 };
 
 std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept;
+
+class ColorString final {
+private:
+    ANSI _ansi { ANSI::Reset };
+    std::string _str;
+
+public:
+    ColorString() noexcept = default;
+
+    ColorString(std::string_view str, ANSI ansi = ANSI::Reset) noexcept;
+
+    template <typename... Args>
+    ColorString(const std::format_string<Args...> f_str, Args&&... arg)
+        : _str { std::format(f_str, std::forward<Args>(arg)...) }
+    {}
+
+    template <typename... Args>
+    ColorString(ANSI ansi, const std::format_string<Args...> f_str, Args&&... arg)
+        : _ansi { ansi }
+        , _str { std::format(f_str, std::forward<Args>(arg)...) }
+    {}
+
+    ~ColorString() noexcept = default;
+
+    constexpr ColorString(ColorString&&)                 noexcept = default;
+    constexpr ColorString(const ColorString&)            noexcept = default;
+    constexpr ColorString& operator=(ColorString&&)      noexcept = default;
+    constexpr ColorString& operator=(const ColorString&) noexcept = default;
+
+    void clear() noexcept;
+
+    [[nodiscard]]
+    ANSI getColor() const noexcept;
+
+    void setColor(ANSI ansi_code) noexcept;
+
+    friend std::ostream& operator<<(std::ostream& os, const ColorString& color_str) noexcept;
+};
+
 
 } // namespace zutils

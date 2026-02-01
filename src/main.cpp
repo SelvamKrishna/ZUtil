@@ -2,6 +2,6 @@
 
 int main(void)
 {
-    zutils::Log::debugMsg("Hello, World");
+    zutils::Log::debug("Hello, World {}", 143);
     return 0;
 }
