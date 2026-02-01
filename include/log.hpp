@@ -3,7 +3,7 @@
 #include <format>
 #include <iostream>
 
-namespace zutils {
+namespace zutil {
 
 enum class LogLevel : uint8_t { Debug, Info, Warn, Error };
 
@@ -23,26 +23,26 @@ public:
     template <typename... Args>
     static void debug(const std::format_string<Args...> f_str, Args&&... args) noexcept
     {
-        std::cout << LogLevel::Debug << " : " << std::format(f_str, std::forward<Args>(args)...) << "\n";
+        std::cout << LogLevel::Debug << std::format(f_str, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     static void info(const std::format_string<Args...> f_str, Args&&... args) noexcept
     {
-        std::cout << LogLevel::Info << " : " << std::format(f_str, std::forward<Args>(args)...) << "\n";
+        std::cout << LogLevel::Info << std::format(f_str, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     static void warn(const std::format_string<Args...> f_str, Args&&... args) noexcept
     {
-        std::cout << LogLevel::Warn << " : " << std::format(f_str, std::forward<Args>(args)...) << "\n";
+        std::cerr << LogLevel::Warn << std::format(f_str, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     static void error(const std::format_string<Args...> f_str, Args&&... args) noexcept
     {
-        std::cout << LogLevel::Error << " : " << std::format(f_str, std::forward<Args>(args)...) << "\n";
+        std::cerr << LogLevel::Error << std::format(f_str, std::forward<Args>(args)...) ;
     }
 };
 
-} // namespace zutils
+} // namespace zutil

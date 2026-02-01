@@ -1,6 +1,6 @@
 #include "ansi.hpp"
 
-namespace zutils {
+namespace zutil {
 
 std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
 {
@@ -27,4 +27,4 @@ std::ostream& operator<<(std::ostream& os, const ColorString& color_str) noexcep
     return os << color_str._ansi << color_str._str << ANSI::Reset;
 }
 
-} // namespace zutils
+} // namespace zutil

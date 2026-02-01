@@ -5,7 +5,7 @@
 #include <ostream>
 #include <string>
 
-namespace zutils {
+namespace zutil {
 
 enum class ANSI : uint8_t {
     Reset          = 0,
@@ -95,5 +95,4 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const ColorString& color_str) noexcept;
 };
 
-
-} // namespace zutils
+} // namespace zutil

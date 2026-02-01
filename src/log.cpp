@@ -1,18 +1,18 @@
 #include "log.hpp"
 #include "ansi.hpp"
 
-namespace zutils {
+namespace zutil {
 
 std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept
 {
     static const ColorString TAGS[4] {
-        ColorString { ANSI::Blue   , "[DBUG]" },
-        ColorString { ANSI::Green  , "[INFO]" },
-        ColorString { ANSI::Yellow , "[WARN]" },
-        ColorString { ANSI::Red    , "[ERRO]" },
+        { ANSI::Blue   , "[DBUG]" },
+        { ANSI::Green  , "[INFO]" },
+        { ANSI::Yellow , "[WARN]" },
+        { ANSI::Red    , "[ERRO]" },
     };
 
-    return os << TAGS[static_cast<size_t>(log_lvl)];
+    return os << "\n" << TAGS[static_cast<size_t>(log_lvl)] << " : ";
 }
 
-} // namespace zutils
+} // namespace zutil
