@@ -9,7 +9,10 @@ std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
 
 ColorString::ColorString(std::string_view str, ANSI ansi) noexcept : _ansi {ansi}, _str {str} {}
 
-void clear() noexcept;
+void ColorString::clear() noexcept
+{
+    this->_str.clear();
+}
 
 [[nodiscard]]
 ANSI ColorString::getColor() const noexcept

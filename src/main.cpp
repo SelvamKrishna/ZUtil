@@ -2,9 +2,9 @@
 
 int main(void)
 {
-    zutil::Log::debug("Hello, World {}", 143);
-    zutil::Log::info("Hello, World {}", 143);
-    zutil::Log::warn("Hello, World {}", 143);
-    zutil::Log::error("Hello, World {}", 143);
+    zutil::log::debug("Hello, World {}", 143);
+    zutil::log::info("Hello, World {}", 143);
+    zutil::log::warn("Hello, World {}", 143);
+    zutil::log::error("Hello, World {}", 143);
     return 0;
 }
