@@ -1,10 +1,7 @@
-#include "log.hpp"
+#include "../example/basic_logging_utility.hpp"
 
 int main(void)
 {
-    zutil::log::debug("Hello, World {}", 143);
-    zutil::log::info("Hello, World {}", 143);
-    zutil::log::warn("Hello, World {}", 143);
-    zutil::log::error("Hello, World {}", 143);
+    zutil::example::logFnOverview();
     return 0;
 }
