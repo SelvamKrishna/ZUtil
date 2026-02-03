@@ -3,5 +3,6 @@
 int main(void)
 {
     zutil::example::logFnOverview();
+    zutil::example::conditionLogFnOverview();
     return 0;
 }
