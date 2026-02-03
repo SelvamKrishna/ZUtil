@@ -7,11 +7,13 @@
 
 namespace zutil {
 
-#ifndef Z_DISABLE_ANSI
-    inline constexpr bool DISABLE_ANSI {false};
-#else
-    inline constexpr bool DISABLE_ANSI {true};
-#endif
+inline constexpr bool DISABLE_ANSI {
+    #ifdef Z_DISABLE_ANSI
+        true
+    #else
+        false
+    #endif
+};
 
 enum class ANSI : uint8_t {
     Reset          = 0,
@@ -61,14 +63,14 @@ enum class ANSI : uint8_t {
     BG_EX_White    = 107,
 };
 
-#ifndef Z_DISABLE_ANSI
-std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept;
-#else
+#ifdef Z_DISABLE_ANSI
 inline std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
 {
     (void)ansi;
     return os;
 }
+#else
+std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept;
 #endif
 
 class ColorString final {

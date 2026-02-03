@@ -1,4 +1,5 @@
 #include "log.hpp"
+#include "validate.hpp"
 
 namespace zutil::example {
 
@@ -19,6 +20,11 @@ inline void conditionLogFn() noexcept
     zutil::log::infoIf(false, "Message must NOT be displayed");
     zutil::log::warnIf(true, "Message must be displayed");
     zutil::log::errorIf(err_code > 0, "Error messages: ERR_CODE = {}", err_code);
+}
+
+inline void assertionFn()
+{
+    zutil::assertCnd(false, "Message MUST be displayed");
 }
 
 } // namespace zutil::example

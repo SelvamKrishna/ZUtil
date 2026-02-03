@@ -8,11 +8,13 @@ namespace zutil {
 enum class LogLevel : uint8_t { Debug, Info, Warn, Error };
 std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept;
 
-#ifndef Z_DISABLE_LOGGING
-    inline constexpr bool DISABLE_LOGGING {false};
-#else
-    inline constexpr bool DISABLE_LOGGING {true};
-#endif
+inline constexpr bool DISABLE_LOGGING {
+    #ifdef Z_DISABLE_LOGGING
+        true
+    #else
+        false
+    #endif
+};
 
 namespace log {
 
