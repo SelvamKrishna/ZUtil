@@ -2,7 +2,7 @@
 
 namespace zutil::example {
 
-inline void logFnOverview() noexcept
+inline void logFn() noexcept
 {
     zutil::log::debug("Debug messages");
     zutil::log::info("Information messages");
@@ -10,11 +10,14 @@ inline void logFnOverview() noexcept
     zutil::log::error("Error messages: ERR_CODE = {}", 404);
 }
 
-inline void conditionLogFnOverview() noexcept
+inline void conditionLogFn() noexcept
 {
-    log::infoIf(false, "Message must NOT be displayed");
-    log::warnIf(true, "Message must be displayed");
+    int result = 13;
     int err_code = 404;
+
+    zutil::log::debugIf(result > 10, Z_VAR_SPLAT(result));
+    zutil::log::infoIf(false, "Message must NOT be displayed");
+    zutil::log::warnIf(true, "Message must be displayed");
     zutil::log::errorIf(err_code > 0, "Error messages: ERR_CODE = {}", err_code);
 }
 

@@ -7,6 +7,12 @@
 
 namespace zutil {
 
+#ifndef Z_DISABLE_ANSI
+    inline constexpr bool DISABLE_ANSI {false};
+#else
+    inline constexpr bool DISABLE_ANSI {true};
+#endif
+
 enum class ANSI : uint8_t {
     Reset          = 0,
     Bold           = 1,
@@ -55,7 +61,15 @@ enum class ANSI : uint8_t {
     BG_EX_White    = 107,
 };
 
+#ifndef Z_DISABLE_ANSI
 std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept;
+#else
+inline std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
+{
+    (void)ansi;
+    return os;
+}
+#endif
 
 class ColorString final {
 private:
@@ -92,7 +106,36 @@ public:
 
     void setColor(ANSI ansi_code) noexcept;
 
+    [[nodiscard]]
+    const std::string& getString() const noexcept;
+
+    void setString(std::string_view text) noexcept;
+
     friend std::ostream& operator<<(std::ostream& os, const ColorString& color_str) noexcept;
 };
 
 } // namespace zutil
+
+template <>
+struct std::formatter<zutil::ANSI> {
+    constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
+
+    auto format(const zutil::ANSI &ansi, std::format_context &ctx) const
+    {
+        return (zutil::DISABLE_ANSI)
+            ? std::format_to(ctx.out(), "")
+            : std::format_to(ctx.out(), "\033[{}m", static_cast<int>(ansi));
+    }
+};
+
+template <>
+struct std::formatter<zutil::ColorString> {
+    constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
+
+    auto format(const zutil::ColorString &color_str, std::format_context &ctx) const
+    {
+        return (zutil::DISABLE_ANSI)
+            ? std::format_to(ctx.out(), "{}", color_str.getString())
+            : std::format_to(ctx.out(), "{}{}{}", color_str.getColor(), color_str.getString(), zutil::ANSI::Reset);
+    }
+};
