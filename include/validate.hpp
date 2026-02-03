@@ -59,3 +59,9 @@ inline void assertCnd(bool condition, const std::format_string<Args...> f_str, A
 }
 
 } // namespace zutil
+
+#ifndef Z_CND_SPLAT
+
+#define Z_CND_SPLAT(cnd) (cnd), "{}", #cnd
+
+#endif

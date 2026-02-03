@@ -1,8 +1,11 @@
-#include "../example/basic_logging_utility.hpp"
+#include "../example/logging.hpp"
 
 int main(void)
 {
-    zutil::example::logFnOverview();
-    zutil::example::conditionLogFn();
+    // zutil::example::logFn();
+    // zutil::example::conditionLogFn();
+    // zutil::example::assertionFn(); // Uncomment to test assertion failure
+    zutil::example::testFn();
+
     return 0;
 }

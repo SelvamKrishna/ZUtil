@@ -24,7 +24,19 @@ inline void conditionLogFn() noexcept
 
 inline void assertionFn()
 {
+    zutil::assertCnd(true, "Message MUST NOT be displayed");
     zutil::assertCnd(false, "Message MUST be displayed");
+}
+
+inline void testFn()
+{
+    zutil::testCase(true, "This test MUST PASS");
+    zutil::testCase(false, "This test MUST FAIL");
+
+    int value = 42;
+
+    zutil::testCase(value == 42, "Value is correct: {}", value);
+    zutil::testCase(Z_CND_SPLAT(value > 10));
 }
 
 } // namespace zutil::example
