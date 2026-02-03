@@ -12,7 +12,21 @@ std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept
         { ANSI::Red    , "[ERRO]" },
     };
 
-    return os << "\n" << TAGS[static_cast<size_t>(log_lvl)] << " : ";
+    return os << TAGS[static_cast<size_t>(log_lvl)] << " : ";
+}
+
+Logger::Logger(const std::string_view log_prefix)
+    : _log_prefix(std::string(log_prefix))
+{}
+
+Logger::Logger(std::vector<std::string> log_parts)
+{
+    std::string prefix;
+
+    for (const std::string& PART : log_parts)
+        prefix += PART;
+
+    this->_log_prefix = prefix;
 }
 
 } // namespace zutil
