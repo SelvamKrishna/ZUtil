@@ -29,4 +29,15 @@ Logger::Logger(std::vector<std::string> log_parts)
     this->_log_prefix = prefix;
 }
 
+void Logger::addPrefix(const std::string_view prefix) noexcept
+{
+    this->_log_prefix += std::string(prefix);
+}
+
+[[nodiscard]]
+const std::string& Logger::getPrefix() const noexcept
+{
+    return this->_log_prefix;
+}
+
 } // namespace zutil

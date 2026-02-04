@@ -2,10 +2,10 @@
 
 int main(void)
 {
-    // zutil::example::logFn();
-    // zutil::example::conditionLogFn();
-    // zutil::example::assertionFn(); // Uncomment to test assertion failure
-    zutil::example::testFn();
+    example::logFn();
+    example::conditionLogFn();
+    // example::assertionFn(); // Uncomment to test assertion failure
+    example::testFn();
 
     return 0;
 }

@@ -7,13 +7,11 @@
 
 namespace zutil {
 
-inline constexpr bool DISABLE_ANSI {
-    #ifdef Z_DISABLE_ANSI
-        true
-    #else
-        false
-    #endif
-};
+#ifdef Z_DISABLE_ANSI
+inline constexpr bool DISABLE_ANSI {true};
+#else
+inline constexpr bool DISABLE_ANSI {false};
+#endif
 
 enum class ANSI : uint8_t {
     Reset          = 0,
