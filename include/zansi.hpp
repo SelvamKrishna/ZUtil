@@ -71,33 +71,33 @@ inline std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
 std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept;
 #endif
 
-class ColorString final {
+class ANSIString final {
 private:
     ANSI        _ansi { ANSI::Reset };
     std::string _str;
 
 public:
-    ColorString() noexcept = default;
+    ANSIString() noexcept = default;
 
-    ColorString(std::string_view str, ANSI ansi = ANSI::Reset) noexcept;
+    ANSIString(std::string_view str, ANSI ansi = ANSI::Reset) noexcept;
 
     template <typename... Args>
-    ColorString(const std::format_string<Args...> f_str, Args&&... arg)
+    ANSIString(const std::format_string<Args...> f_str, Args&&... arg)
         : _str { std::format(f_str, std::forward<Args>(arg)...) }
     {}
 
     template <typename... Args>
-    ColorString(ANSI ansi, const std::format_string<Args...> f_str, Args&&... arg)
+    ANSIString(ANSI ansi, const std::format_string<Args...> f_str, Args&&... arg)
         : _ansi { ansi }
         , _str  { std::format(f_str, std::forward<Args>(arg)...) }
     {}
 
-    ~ColorString() noexcept = default;
+    ~ANSIString() noexcept = default;
 
-    ColorString(ColorString&&)                 noexcept = default;
-    ColorString(const ColorString&)            noexcept = default;
-    ColorString& operator=(ColorString&&)      noexcept = default;
-    ColorString& operator=(const ColorString&) noexcept = default;
+    ANSIString(ANSIString&&)                 noexcept = default;
+    ANSIString(const ANSIString&)            noexcept = default;
+    ANSIString& operator=(ANSIString&&)      noexcept = default;
+    ANSIString& operator=(const ANSIString&) noexcept = default;
 
     void clear() noexcept;
 
@@ -111,7 +111,10 @@ public:
 
     void setString(std::string_view text) noexcept;
 
-    friend std::ostream& operator<<(std::ostream& os, const ColorString& color_str) noexcept;
+    [[nodiscard]]
+    std::string getParsedString() const noexcept;
+
+    friend std::ostream& operator<<(std::ostream& os, const ANSIString& color_str) noexcept;
 };
 
 } // namespace zutil
@@ -129,13 +132,11 @@ struct std::formatter<zutil::ANSI> {
 };
 
 template <>
-struct std::formatter<zutil::ColorString> {
+struct std::formatter<zutil::ANSIString> {
     constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
 
-    auto format(const zutil::ColorString &color_str, std::format_context &ctx) const
+    auto format(const zutil::ANSIString &ansi_str, std::format_context &ctx) const
     {
-        return (zutil::DISABLE_ANSI)
-            ? std::format_to(ctx.out(), "{}", color_str.getString())
-            : std::format_to(ctx.out(), "{}{}{}", color_str.getColor(), color_str.getString(), zutil::ANSI::Reset);
+        return std::format_to(ctx.out(), "{}", ansi_str.getParsedString());
     }
 };

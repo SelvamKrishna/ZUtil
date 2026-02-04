@@ -47,7 +47,7 @@ public:
         : _log_prefix(std::format(f_str, std::forward<Args>(args)...))
     {}
 
-    explicit Logger(std::vector<std::string> log_parts);
+    explicit Logger(std::vector<zutil::ANSIString> log_parts);
 
     ~Logger() = default;
 
@@ -62,6 +62,6 @@ public:
 #ifndef Z_VAR_SPLAT
 
 #define Z_VAR_SPLAT(var) \
-    "{} = ({})", ::zutil::ColorString{::zutil::ANSI::Magenta, #var}, (var)
+    "{} = ({})", ::zutil::ANSIString{::zutil::ANSI::Magenta, #var}, (var)
 
 #endif

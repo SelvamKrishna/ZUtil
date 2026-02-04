@@ -9,25 +9,6 @@
 
 namespace zutil {
 
-#ifdef Z_DISABLE_TESTING
-inline constexpr bool DISABLE_TESTING {true};
-#else
-inline constexpr bool DISABLE_TESTING {false};
-#endif
-
-template <typename... Args>
-inline void testCase(bool condition, const std::format_string<Args...> f_str, Args&&... args) noexcept
-{
-    if constexpr (DISABLE_TESTING) return;
-    std::cout
-        << "\n"
-        << ColorString{ANSI::Blue, "[TEST]"}
-        << ((condition) ? ColorString{ANSI::Green, "[PASS]"} : ColorString{ANSI::Red, "[FAIL]"})
-        << " : "
-        << std::format(f_str, std::forward<Args>(args)...)
-    ;
-}
-
 template <bool Always = false, typename... Args>
 inline void assertCnd(
     bool condition,
@@ -40,8 +21,8 @@ inline void assertCnd(
 
     const std::string PREFIX = std::format(
         "\n{} {}",
-        ColorString{ANSI::BG_Red, "[ASSERT FAILED]"},
-        ColorString{ANSI::EX_Black, "{}:{} ({})", loc.file_name(), loc.line(), loc.function_name()}
+        ANSIString{ANSI::BG_Red, "[ASSERT FAILED]"},
+        ANSIString{ANSI::EX_Black, "{}:{} ({})", loc.file_name(), loc.line(), loc.function_name()}
     );
 
     std::cerr << PREFIX << " : " << std::format(f_str, std::forward<Args>(args)...) << std::endl;

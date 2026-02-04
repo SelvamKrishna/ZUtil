@@ -1,5 +1,7 @@
-#include "zlog.hpp"
+
 #include "zassert.hpp"
+#include "zlog.hpp"
+#include "ztest.hpp"
 
 namespace example {
 
