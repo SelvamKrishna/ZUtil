@@ -7,8 +7,8 @@ project(zutil
 
 add_executable(zutil
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ansi.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/log.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/zansi.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/zlog.cpp
 )
 
 target_compile_features(zutil PRIVATE cxx_std_23)
