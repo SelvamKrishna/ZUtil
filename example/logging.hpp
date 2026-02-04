@@ -1,5 +1,5 @@
-#include "log.hpp"
-#include "validate.hpp"
+#include "zlog.hpp"
+#include "zassert.hpp"
 
 namespace example {
 
@@ -25,7 +25,10 @@ inline void conditionLogFn() noexcept
 inline void assertionFn()
 {
     zutil::assertCnd(true, "Message MUST NOT be displayed");
-    zutil::assertCnd(false, "Message MUST be displayed");
+    zutil::assertCnd(true, "Message MUST NOT be displayed");
+
+    zutil::assertCnd(false, "Message MUST be displayed in Debug builds");
+    zutil::assertCnd<1>(false, "Message MUST be displayed in both Debug and Release builds");
 }
 
 inline void testFn()
@@ -36,7 +39,7 @@ inline void testFn()
     int value = 42;
 
     zutil::testCase(value == 42, "Value is correct: {}", value);
-    zutil::testCase(Z_CND_SPLAT(value > 10));
+    zutil::testCase(Z_CND_SPLAT(value > 100));
 }
 
 } // namespace example

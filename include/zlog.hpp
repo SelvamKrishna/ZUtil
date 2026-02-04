@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ansi.hpp" // IWYU pragma: keep
+#include "zansi.hpp" // IWYU pragma: keep
 
 #include <format>
 #include <iostream>
@@ -22,7 +22,7 @@ template <LogLevel Level = LogLevel::DBG, typename... Args>
 inline void log(const std::format_string<Args...> f_str, Args&&... args) noexcept
 {
     if constexpr (DISABLE_LOGGING) return;
-    constexpr std::ostream& os = (Level == LogLevel::ERR || Level == LogLevel::WARN) ? std::cerr : std::cout;
+    constexpr std::ostream& os = (Level >= LogLevel::WARN) ? std::cerr : std::cout;
     os << '\n' << Level << std::format(f_str, std::forward<Args>(args)...);
 }
 
