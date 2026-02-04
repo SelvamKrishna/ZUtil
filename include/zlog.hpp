@@ -37,7 +37,7 @@ class Logger {
 private:
     std::string _log_prefix;
 
-public:
+protected:
     Logger() = delete;
 
     explicit Logger(const std::string_view log_prefix);
@@ -55,6 +55,22 @@ public:
 
     [[nodiscard]]
     const std::string& getPrefix() const noexcept;
+
+    template <LogLevel Level = LogLevel::DBG, typename... Args>
+    void log(const std::format_string<Args...> f_str, Args&&... args) const noexcept
+    {
+        if constexpr (DISABLE_LOGGING) return;
+        constexpr std::ostream& os = (Level >= LogLevel::WARN) ? std::cerr : std::cout;
+        os << '\n' << _log_prefix << " : " << Level << std::format(f_str, std::forward<Args>(args)...);
+    }
+
+    template <LogLevel Level = LogLevel::DBG, typename... Args>
+    void logIf(bool condition, const std::format_string<Args...> f_str, Args&&... args) const noexcept
+    {
+        if (!condition) return;
+        zutil::log<Level>(f_str, std::forward<Args>(args)...);
+    }
+
 };
 
 } // namespace zutil

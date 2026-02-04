@@ -44,4 +44,45 @@ inline void testFn()
     zutil::testCase(Z_CND_SPLAT(value > 100));
 }
 
+class App : public zutil::Logger {
+private:
+    bool _is_running = false;
+
+public:
+    App() : zutil::Logger({
+        zutil::ANSIString {zutil::ANSI::Magenta, "[SYS]"},
+        zutil::ANSIString {zutil::ANSI::Magenta, "[APP]"},
+    })
+    {
+        this->log<zutil::INFO>("Initialized");
+    }
+
+    void run()
+    {
+        if (!this->_is_running)
+        {
+            _is_running = true;
+        }
+        else
+        {
+            this->log<zutil::WARN>("Run function called multiple times.");
+            return;
+        }
+
+        this->log<zutil::INFO>("Running");
+    }
+
+    ~App()
+    {
+        this->log<zutil::INFO>("Destroyed");
+    }
+};
+
+inline void loggerClass()
+{
+    App app;
+    app.run();
+    app.run();
+}
+
 } // namespace example
