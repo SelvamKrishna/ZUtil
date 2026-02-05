@@ -1,6 +1,6 @@
 #pragma once
 
-#include "zansi.hpp" // IWYU pragma: keep
+#include "_pro_string.hpp"
 
 #include <format>
 #include <iostream>
@@ -47,7 +47,7 @@ protected:
         : _log_prefix(std::format(f_str, std::forward<Args>(args)...))
     {}
 
-    explicit Logger(std::vector<zutil::ANSIString> log_parts);
+    explicit Logger(std::vector<zutil::ProString> log_parts);
 
     ~Logger() = default;
 
@@ -70,7 +70,6 @@ protected:
         if (!condition) return;
         zutil::log<Level>(f_str, std::forward<Args>(args)...);
     }
-
 };
 
 } // namespace zutil

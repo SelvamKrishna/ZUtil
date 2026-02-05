@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <format>
 #include <ostream>
-#include <string>
 
 namespace zutil {
 
@@ -71,52 +70,6 @@ inline std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
 std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept;
 #endif
 
-class ANSIString final {
-private:
-    ANSI        _ansi { ANSI::Reset };
-    std::string _str;
-
-public:
-    ANSIString() noexcept = default;
-
-    ANSIString(std::string_view str, ANSI ansi = ANSI::Reset) noexcept;
-
-    template <typename... Args>
-    ANSIString(const std::format_string<Args...> f_str, Args&&... arg)
-        : _str { std::format(f_str, std::forward<Args>(arg)...) }
-    {}
-
-    template <typename... Args>
-    ANSIString(ANSI ansi, const std::format_string<Args...> f_str, Args&&... arg)
-        : _ansi { ansi }
-        , _str  { std::format(f_str, std::forward<Args>(arg)...) }
-    {}
-
-    ~ANSIString() noexcept = default;
-
-    ANSIString(ANSIString&&)                 noexcept = default;
-    ANSIString(const ANSIString&)            noexcept = default;
-    ANSIString& operator=(ANSIString&&)      noexcept = default;
-    ANSIString& operator=(const ANSIString&) noexcept = default;
-
-    void clear() noexcept;
-
-    [[nodiscard]]
-    ANSI getColor() const noexcept;
-
-    void setColor(ANSI ansi_code) noexcept;
-
-    [[nodiscard]]
-    const std::string& getString() const noexcept;
-
-    void setString(std::string_view text) noexcept;
-
-    [[nodiscard]]
-    std::string getParsedString() const noexcept;
-
-    friend std::ostream& operator<<(std::ostream& os, const ANSIString& color_str) noexcept;
-};
-
 } // namespace zutil
 
 template <>
@@ -128,15 +81,5 @@ struct std::formatter<zutil::ANSI> {
         return (zutil::DISABLE_ANSI)
             ? std::format_to(ctx.out(), "")
             : std::format_to(ctx.out(), "\033[{}m", static_cast<int>(ansi));
-    }
-};
-
-template <>
-struct std::formatter<zutil::ANSIString> {
-    constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
-
-    auto format(const zutil::ANSIString &ansi_str, std::format_context &ctx) const
-    {
-        return std::format_to(ctx.out(), "{}", ansi_str.getParsedString());
     }
 };

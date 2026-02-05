@@ -1,7 +1,7 @@
 #pragma once
 
 #include "zconfig.hpp"
-#include "zansi.hpp"
+#include "_pro_string.hpp"
 
 #include <format>
 #include <iostream>
@@ -21,8 +21,8 @@ inline void assertCnd(
 
     const std::string PREFIX = std::format(
         "\n{} {}",
-        ANSIString{ANSI::BG_Red, "[ASSERT FAILED]"},
-        ANSIString{ANSI::EX_Black, "{}:{} ({})", loc.file_name(), loc.line(), loc.function_name()}
+        ProString{ANSI::BG_Red, "[ASSERT FAILED]"},
+        ProString{ANSI::EX_Black, "{}:{} ({})", loc.file_name(), loc.line(), loc.function_name()}
     );
 
     std::cerr << PREFIX << " : " << std::format(f_str, std::forward<Args>(args)...) << std::endl;

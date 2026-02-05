@@ -1,6 +1,6 @@
 #pragma once
 
-#include "zansi.hpp"
+#include "_pro_string.hpp"
 
 #include <format>
 #include <iostream>
@@ -19,8 +19,8 @@ inline void testCase(bool condition, const std::format_string<Args...> f_str, Ar
     if constexpr (DISABLE_TESTING) return;
 
     std::cout
-        << ANSIString{ANSI::Blue, "\n[TEST]"}
-        << ((condition) ? ANSIString{ANSI::Green, "[PASS]"} : ANSIString{ANSI::Red, "[FAIL]"})
+        << ProString{ANSI::Blue, "\n[TEST]"}
+        << ((condition) ? ProString{ANSI::Green, "[PASS]"} : ProString{ANSI::Red, "[FAIL]"})
         << " : "
         << std::format(f_str, std::forward<Args>(args)...)
     ;

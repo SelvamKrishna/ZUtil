@@ -1,11 +1,11 @@
-#include "zansi.hpp"
+#include "_pro_string.hpp"
 #include "zlog.hpp"
 
 namespace zutil {
 
 std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept
 {
-    static const ANSIString TAGS[4] {
+    static const ProString TAGS[4] {
         { ANSI::Blue   , "[DBUG]" },
         { ANSI::Green  , "[INFO]" },
         { ANSI::Yellow , "[WARN]" },
@@ -19,11 +19,11 @@ Logger::Logger(const std::string_view log_prefix)
     : _log_prefix(std::string(log_prefix))
 {}
 
-Logger::Logger(std::vector<zutil::ANSIString> log_parts)
+Logger::Logger(std::vector<zutil::ProString> log_parts)
 {
     std::string prefix;
 
-    for (const zutil::ANSIString& PART : log_parts)
+    for (const zutil::ProString& PART : log_parts)
         prefix += PART.getParsedString();
 
     this->_log_prefix = prefix;

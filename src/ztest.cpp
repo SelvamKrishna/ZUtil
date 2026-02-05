@@ -1,3 +1,4 @@
+#include "_pro_string.hpp"
 #include "ztest.hpp"
 
 namespace zutil {
@@ -13,7 +14,7 @@ void TestSuite::_logDescription() const noexcept
     if constexpr (DISABLE_TESTING) return;
 
     std::cout
-        << ANSIString{ANSI::Blue, "\n[TEST][SUMMARY]"}
+        << ProString{ANSI::Blue, "\n[TEST][SUMMARY]"}
         << " : "
         << _description
     ;
@@ -24,7 +25,7 @@ TestSuite::~TestSuite() noexcept
     if constexpr (DISABLE_TESTING) return;
 
     std::cout
-        << ANSIString{ANSI::Blue, "\n[TEST][SUMMARY]"}
+        << ProString{ANSI::Blue, "\n[TEST][SUMMARY]"}
         << std::format(" : ({} / {})", _passed_cases, _passed_cases + _failed_cases)
         << std::endl
     ;
