@@ -19,46 +19,50 @@ inline void testCase(bool condition, const std::format_string<Args...> f_str, Ar
     if constexpr (DISABLE_TESTING) return;
 
     std::cout
-        << "\n"
-        << ANSIString{ANSI::Blue, "[TEST]"}
+        << ANSIString{ANSI::Blue, "\n[TEST]"}
         << ((condition) ? ANSIString{ANSI::Green, "[PASS]"} : ANSIString{ANSI::Red, "[FAIL]"})
         << " : "
         << std::format(f_str, std::forward<Args>(args)...)
     ;
 }
 
-class TestUnit final {
+class TestSuite final {
 private:
-    bool _case_output;
+    std::string _description;
+    size_t _passed_cases = 0;
+    size_t _failed_cases = 0;
+
+    void _logDescription() const noexcept;
 
 public:
-    TestUnit(bool case_output) noexcept : _case_output(case_output) {}
-    ~TestUnit() noexcept = default;
-
-    constexpr TestUnit(TestUnit&&)                 noexcept = default;
-    constexpr TestUnit(const TestUnit&)            noexcept = default;
-    constexpr TestUnit& operator=(TestUnit&&)      noexcept = default;
-    constexpr TestUnit& operator=(const TestUnit&) noexcept = default;
-
-    template <typename LHS, typename RHS>
-    [[nodiscard]]
-    static TestUnit fromEq(LHS lhs, RHS rhs)
-    {
-        return TestUnit(lhs == rhs);
-    }
-
-    template <typename LHS, typename RHS>
-    [[nodiscard]]
-    static TestUnit fromNeq(LHS lhs, RHS rhs)
-    {
-        return TestUnit(lhs != rhs);
-    }
+    TestSuite(std::string_view description) noexcept;
 
     template <typename... Args>
-    void log(const std::format_string<Args...> f_str, Args&&... args) noexcept
+    TestSuite(const std::format_string<Args...> f_str, Args&&... args) noexcept
+        : _description(std::format(f_str, std::forward<Args>(args)...))
     {
-        testCase(_case_output, f_str, std::forward<Args>(args)...);
+        _logDescription();
+    }
+
+    ~TestSuite() noexcept;
+
+    constexpr TestSuite(TestSuite&&)                 noexcept = default;
+    constexpr TestSuite(const TestSuite&)            noexcept = default;
+    constexpr TestSuite& operator=(TestSuite&&)      noexcept = default;
+    constexpr TestSuite& operator=(const TestSuite&) noexcept = default;
+
+    template <typename... Args>
+    void addCase(const bool test_result, const std::format_string<Args...> f_str, Args&&... args) noexcept
+    {
+        ::zutil::testCase(test_result, f_str, std::forward<Args>(args)...);
+        (test_result) ? ++_passed_cases : ++_failed_cases;
     }
 };
 
 } // namespace zutil
+
+#ifndef Z_CND_SPLAT
+
+#define Z_CND_SPLAT(cnd) (cnd), "{}", #cnd
+
+#endif

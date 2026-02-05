@@ -1,7 +1,4 @@
-
-#include "zassert.hpp"
 #include "zlog.hpp"
-#include "ztest.hpp"
 
 namespace example {
 
@@ -24,26 +21,6 @@ inline void conditionLogFn() noexcept
     zutil::logIf<zutil::ERR>(err_code > 0, "Error messages: ERR_CODE = {}", err_code);
 }
 
-inline void assertionFn()
-{
-    zutil::assertCnd(true, "Message MUST NOT be displayed");
-    zutil::assertCnd(true, "Message MUST NOT be displayed");
-
-    zutil::assertCnd(false, "Message MUST be displayed in Debug builds");
-    zutil::assertCnd<1>(false, "Message MUST be displayed in both Debug and Release builds");
-}
-
-inline void testFn()
-{
-    zutil::testCase(true, "This test MUST PASS");
-    zutil::testCase(false, "This test MUST FAIL");
-
-    int value = 42;
-
-    zutil::testCase(value == 42, "Value is correct: {}", value);
-    zutil::testCase(Z_CND_SPLAT(value > 100));
-}
-
 class App : public zutil::Logger {
 private:
     bool _is_running = false;
@@ -59,16 +36,8 @@ public:
 
     void run()
     {
-        if (!this->_is_running)
-        {
-            _is_running = true;
-        }
-        else
-        {
-            this->log<zutil::WARN>("Run function called multiple times.");
-            return;
-        }
-
+        if (this->_is_running) return this->log<zutil::WARN>("Run function called multiple times.");
+        _is_running = true;
         this->log<zutil::INFO>("Running");
     }
 
