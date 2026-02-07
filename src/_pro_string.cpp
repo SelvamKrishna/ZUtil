@@ -6,6 +6,11 @@ ProString::ProString(std::string_view str, ANSI ansi) noexcept : _ansi {ansi}, _
 
 ProString::ProString(const char* str, zutil::ANSI ansi) noexcept : _ansi {ansi} , _str {str} {}
 
+ProString::ProString(const std::source_location& loc) noexcept
+    : _ansi { ANSI::EX_Black }
+    , _str  { std::format("{}:{} ({})", loc.file_name(), loc.line(), loc.function_name()) }
+{}
+
 void ProString::clear() noexcept
 {
     this->_str.clear();

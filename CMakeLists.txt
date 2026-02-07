@@ -7,7 +7,8 @@ project(zutil
 
 add_executable(zutil
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/zansi.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/_pro_string.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/zassert.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/zlog.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ztest.cpp
 )

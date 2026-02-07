@@ -8,21 +8,19 @@ inline void assertionFn()
     int ERR_CODE = 0;
 
     zutil::assertCnd(ERR_CODE == 0, "Message MUST NOT be displayed");
-    zutil::assertCnd(ERR_CODE != 0, "Error code is non-zero");
-
-    zutil::assertCnd(false, "Message MUST be displayed in Debug builds");
+    zutil::assertCnd(Z_CND_SPLAT(ERR_CODE != 0));
     zutil::assertCnd<1>(false, "Message MUST be displayed in both Debug and Release builds");
 }
 
 inline void testFn()
 {
-    zutil::testCase(true, "This test MUST PASS");
-    zutil::testCase(false, "This test MUST FAIL");
+    zutil::test(true, "This test MUST PASS");
+    zutil::test(false, "This test MUST FAIL");
 
     int value = 42;
 
-    zutil::testCase(value == 42, "Value is correct: {}", value);
-    zutil::testCase(Z_CND_SPLAT(value > 100));
+    zutil::test(value == 42, {"Value is correct: {}", value});
+    zutil::test(Z_CND_SPLAT(value > 100));
 }
 
 struct TestStruct {

@@ -4,21 +4,14 @@ namespace example {
 
 inline void logFn() noexcept
 {
-    zutil::log<zutil::DBG>("Debug messages");
-    zutil::log<zutil::INFO>("Information messages");
-    zutil::log<zutil::WARN>("Warning messages");
-    zutil::log<zutil::ERR>("Error messages: ERR_CODE = {}", 404);
-}
+    zutil::log(zutil::DBG, "Debug messages");
+    zutil::log(zutil::INFO, "Information messages");
+    zutil::log(zutil::WARN, "Warning messages");
 
-inline void conditionLogFn() noexcept
-{
-    int result = 13;
     int err_code = 404;
 
-    zutil::logIf<zutil::DBG>(result > 10, Z_VAR_SPLAT(result));
-    zutil::logIf<zutil::INFO>(false, "Message must NOT be displayed");
-    zutil::logIf<zutil::WARN>(true, "Message must be displayed");
-    zutil::logIf<zutil::ERR>(err_code > 0, "Error messages: ERR_CODE = {}", err_code);
+    if (err_code > 0)
+        zutil::log(zutil::ERR, {"Error messages: ERR_CODE = {}", err_code});
 }
 
 class App : public zutil::Logger {
@@ -27,23 +20,24 @@ private:
 
 public:
     App() : zutil::Logger({
-        zutil::ANSIString {zutil::ANSI::Magenta, "[SYS]"},
-        zutil::ANSIString {zutil::ANSI::Magenta, "[APP]"},
+        zutil::ProString {zutil::ANSI::Magenta, "[SYS]"},
+        zutil::ProString {zutil::ANSI::Magenta, "[APP]"},
     })
     {
-        this->log<zutil::INFO>("Initialized");
+        this->log(zutil::INFO, "Initialized");
     }
 
     void run()
     {
-        if (this->_is_running) return this->log<zutil::WARN>("Run function called multiple times.");
+        if (this->_is_running)
+            return this->log(zutil::WARN, "Run function called multiple times.");
         _is_running = true;
-        this->log<zutil::INFO>("Running");
+        this->log(zutil::INFO, "Running");
     }
 
     ~App()
     {
-        this->log<zutil::INFO>("Destroyed");
+        this->log(zutil::INFO, "Destroyed");
     }
 };
 

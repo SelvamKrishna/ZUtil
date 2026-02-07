@@ -5,6 +5,7 @@
 #include <format>
 #include <ostream>
 #include <string>
+#include <source_location>
 
 namespace zutil {
 
@@ -19,6 +20,8 @@ public:
     ProString(std::string_view str, zutil::ANSI ansi = zutil::ANSI::Reset) noexcept;
 
     ProString(const char* str, zutil::ANSI ansi = zutil::ANSI::Reset) noexcept;
+
+    ProString(const std::source_location& loc) noexcept;
 
     template <typename... Args>
     ProString(const std::format_string<Args...> f_str, Args&&... arg)

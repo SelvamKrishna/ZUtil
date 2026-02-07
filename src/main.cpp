@@ -3,13 +3,11 @@
 
 int main(void)
 {
-    // example::logFn();
-    // example::conditionLogFn();
-    // example::loggerClass();
+    example::logFn();
+    example::loggerClass();
 
     // example::assertionFn(); // Uncomment to test assertion failure
-    // example::testFn();
-    // example::testUnitFn();
+    example::testFn();
     example::testSuiteFn();
 
     return 0;

@@ -60,15 +60,13 @@ enum class ANSI : uint8_t {
     BG_EX_White    = 107,
 };
 
-#ifdef Z_DISABLE_ANSI
 inline std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
 {
-    (void)ansi;
-    return os;
+    return (DISABLE_ANSI)
+        ? os
+        : os << "\033[" << static_cast<int>(ansi) << "m"
+    ;
 }
-#else
-std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept;
-#endif
 
 } // namespace zutil
 

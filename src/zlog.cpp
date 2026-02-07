@@ -15,8 +15,13 @@ std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept
     return os << TAGS[static_cast<size_t>(log_lvl)] << " : ";
 }
 
-Logger::Logger(const std::string_view log_prefix)
-    : _log_prefix(std::string(log_prefix))
+void _log(LogLevel level, ProString message) noexcept
+{
+    if (!DISABLE_LOGGING) std::cout << '\n' << level << message;
+}
+
+Logger::Logger(ProString log_prefix)
+    : _log_prefix(log_prefix.getParsedString())
 {}
 
 Logger::Logger(std::vector<zutil::ProString> log_parts)
@@ -27,6 +32,11 @@ Logger::Logger(std::vector<zutil::ProString> log_parts)
         prefix += PART.getParsedString();
 
     this->_log_prefix = prefix;
+}
+
+void Logger::log(LogLevel level, ProString message) noexcept
+{
+    ::zutil::log(level, message);
 }
 
 void Logger::addPrefix(const std::string_view prefix) noexcept

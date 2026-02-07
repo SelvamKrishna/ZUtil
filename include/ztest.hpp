@@ -2,9 +2,6 @@
 
 #include "_pro_string.hpp"
 
-#include <format>
-#include <iostream>
-
 namespace zutil {
 
 #ifdef Z_DISABLE_TESTING
@@ -13,36 +10,28 @@ inline constexpr bool DISABLE_TESTING {true};
 inline constexpr bool DISABLE_TESTING {false};
 #endif
 
-template <typename... Args>
-inline void testCase(bool condition, const std::format_string<Args...> f_str, Args&&... args) noexcept
+void _test(bool condition, ProString description, ProString prefix) noexcept;
+
+inline void test(bool condition, ProString description, ProString prefix = {"\n[TEST]", ANSI::Blue}) noexcept
 {
     if constexpr (DISABLE_TESTING) return;
-
-    std::cout
-        << ProString{ANSI::Blue, "\n[TEST]"}
-        << ((condition) ? ProString{ANSI::Green, "[PASS]"} : ProString{ANSI::Red, "[FAIL]"})
-        << " : "
-        << std::format(f_str, std::forward<Args>(args)...)
-    ;
+    _test(condition, description, prefix);
 }
 
 class TestSuite final {
 private:
-    std::string _description;
+    ProString _description;
     size_t _passed_cases = 0;
     size_t _failed_cases = 0;
 
+    static constexpr bool _IS_DISABLED {DISABLE_TESTING};
+
     void _logDescription() const noexcept;
+    void _logSummary() const noexcept;
+    void _logCaseCount() const noexcept;
 
 public:
-    TestSuite(std::string_view description) noexcept;
-
-    template <typename... Args>
-    TestSuite(const std::format_string<Args...> f_str, Args&&... args) noexcept
-        : _description(std::format(f_str, std::forward<Args>(args)...))
-    {
-        _logDescription();
-    }
+    TestSuite(ProString description) noexcept;
 
     ~TestSuite() noexcept;
 
@@ -51,18 +40,13 @@ public:
     constexpr TestSuite& operator=(TestSuite&&)      noexcept = default;
     constexpr TestSuite& operator=(const TestSuite&) noexcept = default;
 
-    template <typename... Args>
-    void addCase(const bool test_result, const std::format_string<Args...> f_str, Args&&... args) noexcept
-    {
-        ::zutil::testCase(test_result, f_str, std::forward<Args>(args)...);
-        (test_result) ? ++_passed_cases : ++_failed_cases;
-    }
+    void addCase(const bool test_result, ProString description) noexcept;
 };
 
 } // namespace zutil
 
 #ifndef Z_CND_SPLAT
 
-#define Z_CND_SPLAT(cnd) (cnd), "{}", #cnd
+#define Z_CND_SPLAT(cnd) (cnd), {"{}", #cnd}
 
 #endif

@@ -2,7 +2,6 @@
 
 #include "_pro_string.hpp"
 
-#include <format>
 #include <iostream>
 #include <vector>
 
@@ -12,25 +11,17 @@ enum LogLevel : uint8_t { DBG, INFO, WARN, ERR };
 
 std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept;
 
+void _log(LogLevel level, ProString message) noexcept;
+
 #ifdef Z_DISABLE_LOGGING
 inline constexpr bool DISABLE_LOGGING {true};
 #else
 inline constexpr bool DISABLE_LOGGING {false};
 #endif
 
-template <LogLevel Level = LogLevel::DBG, typename... Args>
-inline void log(const std::format_string<Args...> f_str, Args&&... args) noexcept
+inline void log(LogLevel level, ProString message) noexcept
 {
-    if constexpr (DISABLE_LOGGING) return;
-    constexpr std::ostream& os = (Level >= LogLevel::WARN) ? std::cerr : std::cout;
-    os << '\n' << Level << std::format(f_str, std::forward<Args>(args)...);
-}
-
-template <LogLevel Level = LogLevel::DBG, typename... Args>
-inline void logIf(bool condition, const std::format_string<Args...> f_str, Args&&... args) noexcept
-{
-    if (!condition) return;
-    zutil::log<Level>(f_str, std::forward<Args>(args)...);
+    if constexpr (!DISABLE_LOGGING) _log(level, message);
 }
 
 class Logger {
@@ -40,12 +31,7 @@ private:
 protected:
     Logger() = delete;
 
-    explicit Logger(const std::string_view log_prefix);
-
-    template <typename... Args>
-    explicit Logger(const std::format_string<Args...> f_str, Args&&... args) noexcept
-        : _log_prefix(std::format(f_str, std::forward<Args>(args)...))
-    {}
+    explicit Logger(ProString log_prefix);
 
     explicit Logger(std::vector<zutil::ProString> log_parts);
 
@@ -56,20 +42,7 @@ protected:
     [[nodiscard]]
     const std::string& getPrefix() const noexcept;
 
-    template <LogLevel Level = LogLevel::DBG, typename... Args>
-    void log(const std::format_string<Args...> f_str, Args&&... args) const noexcept
-    {
-        if constexpr (DISABLE_LOGGING) return;
-        constexpr std::ostream& os = (Level >= LogLevel::WARN) ? std::cerr : std::cout;
-        os << '\n' << _log_prefix << " : " << Level << std::format(f_str, std::forward<Args>(args)...);
-    }
-
-    template <LogLevel Level = LogLevel::DBG, typename... Args>
-    void logIf(bool condition, const std::format_string<Args...> f_str, Args&&... args) const noexcept
-    {
-        if (!condition) return;
-        zutil::log<Level>(f_str, std::forward<Args>(args)...);
-    }
+    void log(LogLevel level, ProString message) noexcept;
 };
 
 } // namespace zutil
@@ -77,6 +50,6 @@ protected:
 #ifndef Z_VAR_SPLAT
 
 #define Z_VAR_SPLAT(var) \
-    "{} = ({})", ::zutil::ANSIString{::zutil::ANSI::Magenta, #var}, (var)
+    "{} = ({})", ::zutil::ProString{::zutil::ANSI::Magenta, #var}, (var)
 
 #endif
