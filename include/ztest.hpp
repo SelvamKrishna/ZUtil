@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_pro_string.hpp"
+#include "zexport.hpp"
 
 namespace zutil {
 
@@ -10,7 +11,7 @@ inline constexpr bool DISABLE_TESTING {true};
 inline constexpr bool DISABLE_TESTING {false};
 #endif
 
-void _test(bool condition, ProString description, ProString prefix) noexcept;
+ZUTIL_API void _test(bool condition, ProString description, ProString prefix) noexcept;
 
 inline void test(bool condition, ProString description, ProString prefix = {"\n[TEST]", ANSI::Blue}) noexcept
 {
@@ -18,7 +19,7 @@ inline void test(bool condition, ProString description, ProString prefix = {"\n[
     _test(condition, description, prefix);
 }
 
-class TestSuite final {
+class ZUTIL_API TestSuite final {
 private:
     ProString _description;
     size_t _passed_cases = 0;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_pro_string.hpp"
+#include "zexport.hpp"
 
 #include <iostream>
 #include <vector>
@@ -9,9 +10,9 @@ namespace zutil {
 
 enum LogLevel : uint8_t { DBG, INFO, WARN, ERR };
 
-std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept;
+ZUTIL_API std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept;
 
-void _log(LogLevel level, ProString message) noexcept;
+ZUTIL_API void _log(LogLevel level, ProString message) noexcept;
 
 #ifdef Z_DISABLE_LOGGING
 inline constexpr bool DISABLE_LOGGING {true};
@@ -24,7 +25,7 @@ inline void log(LogLevel level, ProString message) noexcept
     if constexpr (!DISABLE_LOGGING) _log(level, message);
 }
 
-class Logger {
+class ZUTIL_API Logger {
 private:
     std::string _log_prefix;
 

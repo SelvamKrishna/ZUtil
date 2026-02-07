@@ -1,6 +1,7 @@
 #pragma once
 
 #include "_pro_string.hpp"
+#include "zexport.hpp"
 
 #include <source_location>
 
@@ -12,7 +13,7 @@ inline constexpr bool RELEASE_BUILD {true};
 inline constexpr bool RELEASE_BUILD {false};
 #endif
 
-void _assertCnd(bool condition, ProString description, const std::source_location& loc) noexcept;
+ZUTIL_API void _assertCnd(bool condition, ProString description, const std::source_location& loc) noexcept;
 
 template <bool Always = {false}>
 inline void assertCnd(

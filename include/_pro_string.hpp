@@ -1,6 +1,7 @@
 #pragma once
 
 #include "zansi.hpp"
+#include "zexport.hpp"
 
 #include <format>
 #include <ostream>
@@ -9,7 +10,7 @@
 
 namespace zutil {
 
-class ProString {
+class ZUTIL_API ProString {
 private:
     zutil::ANSI _ansi { ANSI::Reset };
     std::string _str;

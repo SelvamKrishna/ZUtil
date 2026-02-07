@@ -3,6 +3,8 @@
 
 int main(void)
 {
+    std::cout << "Running main application..." << '\n';
+
     example::logFn();
     example::loggerClass();
 

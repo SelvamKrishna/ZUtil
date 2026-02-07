@@ -62,10 +62,7 @@ enum class ANSI : uint8_t {
 
 inline std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
 {
-    return (DISABLE_ANSI)
-        ? os
-        : os << "\033[" << static_cast<int>(ansi) << "m"
-    ;
+    return (DISABLE_ANSI) ? os : os << "\033[" << static_cast<int>(ansi) << "m";
 }
 
 } // namespace zutil
