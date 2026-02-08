@@ -36,6 +36,11 @@ protected:
 
     explicit Logger(std::vector<zutil::ProString> log_parts);
 
+    constexpr Logger(Logger&&)                 noexcept = default;
+    constexpr Logger(const Logger&)            noexcept = default;
+    constexpr Logger& operator=(Logger&&)      noexcept = default;
+    constexpr Logger& operator=(const Logger&) noexcept = default;
+
     ~Logger() = default;
 
     void addPrefix(const std::string_view prefix) noexcept;
@@ -44,6 +49,24 @@ protected:
     const std::string& getPrefix() const noexcept;
 
     void log(LogLevel level, ProString message) noexcept;
+};
+
+class ZUTIL_API Operation {
+private:
+    const std::string _OP_NAME;
+    const bool _TRACE {false};
+
+public:
+    Operation() = delete;
+
+    Operation(ProString op_name, bool trace = false) noexcept;
+
+    constexpr Operation(Operation&&)                 noexcept = default;
+    constexpr Operation(const Operation&)            noexcept = default;
+    constexpr Operation& operator=(Operation&&)      noexcept = delete;
+    constexpr Operation& operator=(const Operation&) noexcept = delete;
+
+    ~Operation() noexcept;
 };
 
 } // namespace zutil

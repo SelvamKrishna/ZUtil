@@ -50,4 +50,19 @@ const std::string& Logger::getPrefix() const noexcept
     return this->_log_prefix;
 }
 
+
+Operation::Operation(ProString op_name, bool trace) noexcept
+    : _OP_NAME { op_name.getParsedString() }
+    , _TRACE   { trace }
+{
+    if (!_TRACE) return;
+    ::zutil::log(LogLevel::DBG, {"Starting : {}", _OP_NAME});
+}
+
+Operation::~Operation() noexcept
+{
+    if (!_TRACE) return;
+    ::zutil::log(LogLevel::DBG, {"Finished : {}", _OP_NAME});
+}
+
 } // namespace zutil

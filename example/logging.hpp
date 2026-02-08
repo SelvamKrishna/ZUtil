@@ -48,4 +48,15 @@ inline void loggerClass()
     app.run();
 }
 
+inline void operationLogging()
+{
+    {
+        zutil::Operation op1("Outer Operation", true);
+
+        {
+            zutil::Operation op2("Inner Operation", true);
+        }
+    }
+}
+
 } // namespace example
