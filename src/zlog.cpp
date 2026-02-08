@@ -50,10 +50,10 @@ const std::string& Logger::getPrefix() const noexcept
     return this->_log_prefix;
 }
 
-
-Operation::Operation(ProString op_name, bool trace) noexcept
+Operation::Operation(ProString op_name, bool trace, const std::source_location& loc) noexcept
     : _OP_NAME { op_name.getParsedString() }
     , _TRACE   { trace }
+    , _LOC     { ProString{ANSI::EX_Black, "[{}:{}]", loc.file_name(), loc.line()}.getParsedString() }
 {
     if (!_TRACE) return;
     ::zutil::log(LogLevel::DBG, {"Starting : {}", _OP_NAME});
@@ -63,6 +63,29 @@ Operation::~Operation() noexcept
 {
     if (!_TRACE) return;
     ::zutil::log(LogLevel::DBG, {"Finished : {}", _OP_NAME});
+}
+
+void Operation::_logFailure(ProString message, LogLevel level) const noexcept
+{
+    ::zutil::log(level, ProString{"{} {} : {}", _LOC, _OP_NAME, message});
+}
+
+[[noreturn]]
+void Operation::failAbort(ProString message) const noexcept
+{
+    this->_logFailure(message, LogLevel::ERR);
+    std::abort();
+}
+
+[[noreturn]]
+void Operation::failThrow(std::exception error) const noexcept(false)
+{
+    throw error;
+}
+
+void Operation::failWarn(ProString message) const noexcept
+{
+    this->_logFailure(message, LogLevel::WARN);
 }
 
 } // namespace zutil

@@ -7,7 +7,8 @@ int main(void)
 
     // example::logFn();
     // example::loggerClass();
-    example::operationLogging();
+    // example::operationLogging();
+    example::operationFailLogging();
 
     // example::assertionFn(); // Uncomment to test assertion failure
     // example::testFn();

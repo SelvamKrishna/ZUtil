@@ -59,4 +59,15 @@ inline void operationLogging()
     }
 }
 
+inline void operationFailLogging()
+{
+    zutil::Operation op("Failing Operation", true);
+
+    op.failWarn("This is a warning inside the operation.");
+
+    op.failAbort("This is a fatal error inside the operation.");
+
+    op.failThrow(std::runtime_error("This is an exception inside the operation."));
+}
+
 } // namespace example

@@ -55,11 +55,18 @@ class ZUTIL_API Operation {
 private:
     const std::string _OP_NAME;
     const bool _TRACE {false};
+    const std::string _LOC;
+
+    void _logFailure(ProString message, LogLevel level) const noexcept;
 
 public:
     Operation() = delete;
 
-    Operation(ProString op_name, bool trace = false) noexcept;
+    Operation(
+        ProString op_name,
+        bool trace = false,
+        const std::source_location& loc = std::source_location::current()
+    ) noexcept;
 
     constexpr Operation(Operation&&)                 noexcept = default;
     constexpr Operation(const Operation&)            noexcept = default;
@@ -67,6 +74,22 @@ public:
     constexpr Operation& operator=(const Operation&) noexcept = delete;
 
     ~Operation() noexcept;
+
+    [[noreturn]]
+    void failAbort(ProString message) const noexcept;
+
+    [[noreturn]]
+    void failThrow(std::exception error) const noexcept(false);
+
+    void failWarn(ProString message) const noexcept;
+
+    template <typename ReturnT>
+    [[nodiscard]]
+    ReturnT failReturn(const ReturnT& value, ProString message) const noexcept
+    {
+        failWarn(message);
+        return value;
+    }
 };
 
 } // namespace zutil
