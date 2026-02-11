@@ -2,21 +2,21 @@
 
 namespace example {
 
-inline void logFn() noexcept
+inline void BasicLogging() noexcept
 {
-    zutil::log(zutil::DBG, "Debug messages");
-    zutil::log(zutil::INFO, "Information messages");
-    zutil::log(zutil::WARN, "Warning messages");
+    zutil::Log(zutil::DBG, "Debug messages");
+    zutil::Log(zutil::INFO, "Information messages");
+    zutil::Log(zutil::WARN, "Warning messages");
 
-    int err_code = 404;
+    int errCode = 404;
 
-    if (err_code > 0)
-        zutil::log(zutil::ERR, {"Error messages: ERR_CODE = {}", err_code});
+    if (errCode > 0)
+        zutil::Log(zutil::ERR, {"Error messages: ERR_CODE = {}", errCode});
 }
 
 class App : public zutil::Logger {
 private:
-    bool _is_running = false;
+    bool _isRunning = false;
 
 public:
     App() : zutil::Logger({
@@ -24,50 +24,47 @@ public:
         zutil::ProString {zutil::ANSI::Magenta, "[APP]"},
     })
     {
-        this->log(zutil::INFO, "Initialized");
+        this->Log(zutil::INFO, "Initialized");
     }
 
     void run()
     {
-        if (this->_is_running)
-            return this->log(zutil::WARN, "Run function called multiple times.");
-        _is_running = true;
-        this->log(zutil::INFO, "Running");
+        if (this->_isRunning)
+            return this->Log(zutil::WARN, "Run function called multiple times.");
+
+        _isRunning = true;
+        this->Log(zutil::INFO, "Running");
     }
 
     ~App()
     {
-        this->log(zutil::INFO, "Destroyed");
+        this->Log(zutil::INFO, "Destroyed");
     }
 };
 
-inline void loggerClass()
+inline void LoggerClass()
 {
     App app;
     app.run();
     app.run();
 }
 
-inline void operationLogging()
+inline void OperationScopeLogging()
 {
-    {
-        zutil::Operation op1("Outer Operation", true);
+    zutil::Operation op1("Outer Operation", true);
 
-        {
-            zutil::Operation op2("Inner Operation", true);
-        }
+    {
+        zutil::Operation op2("Inner Operation", true);
     }
 }
 
-inline void operationFailLogging()
+inline void OperationFailLogging()
 {
     zutil::Operation op("Failing Operation", true);
 
-    op.failWarn("This is a warning inside the operation.");
-
-    op.failAbort("This is a fatal error inside the operation.");
-
-    op.failThrow(std::runtime_error("This is an exception inside the operation."));
+    op.FailWarn("This is a warning inside the operation.");
+    op.FailThrow(std::runtime_error("This is an exception inside the operation."));
+    op.FailAbort("This is a fatal error inside the operation.");
 }
 
 } // namespace example

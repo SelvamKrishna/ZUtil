@@ -60,9 +60,9 @@ enum class ANSI : uint8_t {
     BG_EX_White    = 107,
 };
 
-inline std::ostream& operator<<(std::ostream& os, const ANSI& ansi) noexcept
+inline std::ostream& operator<<(std::ostream& outStream, const ANSI& ansiCode) noexcept
 {
-    return (DISABLE_ANSI) ? os : os << "\033[" << static_cast<int>(ansi) << "m";
+    return (DISABLE_ANSI) ? outStream : outStream << "\033[" << static_cast<int>(ansiCode) << "m";
 }
 
 } // namespace zutil
@@ -71,10 +71,11 @@ template <>
 struct std::formatter<zutil::ANSI> {
     constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
 
-    auto format(const zutil::ANSI &ansi, std::format_context &ctx) const
+    auto format(const zutil::ANSI &ansiCode, std::format_context &ctx) const
     {
         return (zutil::DISABLE_ANSI)
             ? std::format_to(ctx.out(), "")
-            : std::format_to(ctx.out(), "\033[{}m", static_cast<int>(ansi));
+            : std::format_to(ctx.out(), "\033[{}m", static_cast<int>(ansiCode))
+        ;
     }
 };

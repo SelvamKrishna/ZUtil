@@ -3,24 +3,24 @@
 
 namespace example {
 
-inline void assertionFn()
+inline void BasicAssertion()
 {
-    int ERR_CODE = 0;
+    int errCode = 0;
 
-    zutil::assertCnd(ERR_CODE == 0, "Message MUST NOT be displayed");
-    zutil::assertCnd(Z_CND_SPLAT(ERR_CODE != 0));
-    zutil::assertCnd<1>(false, "Message MUST be displayed in both Debug and Release builds");
+    zutil::Assert(errCode == 0, "Message MUST NOT be displayed");
+    zutil::Assert(Z_CND_SPLAT(errCode != 0));
+    zutil::Assert<1>(false, "Displayed in both Debug and Release builds");
 }
 
-inline void testFn()
+inline void UnitTesting()
 {
-    zutil::test(true, "This test MUST PASS");
-    zutil::test(false, "This test MUST FAIL");
+    zutil::Test(true, "This test MUST PASS");
+    zutil::Test(false, "This test MUST FAIL");
 
     int value = 42;
 
-    zutil::test(value == 42, {"Value is correct: {}", value});
-    zutil::test(Z_CND_SPLAT(value > 100));
+    zutil::Test(value == 42, {"Value is correct: {}", value});
+    zutil::Test(Z_CND_SPLAT(value > 100));
 }
 
 struct TestStruct {
@@ -38,19 +38,19 @@ struct TestStruct {
     }
 };
 
-inline void testSuiteFn()
+inline void SuiteTesting()
 {
     zutil::TestSuite suite("Example Test Suite");
 
-    TestStruct obj1 {10, 3.14};
-    TestStruct obj2 {10, 3.14};
-    TestStruct obj3 {20, 2.71};
+    TestStruct objA {10, 3.14};
+    TestStruct objB {10, 3.14};
+    TestStruct objC {20, 2.71};
 
-    suite.addCase(obj1 == obj2, "obj1 equals obj2");
-    suite.addCase(Z_CND_SPLAT(obj1 != obj3));
-    suite.addCase(obj1 != obj3, "obj1 not equals obj3");
-    suite.addCase(std::string("hello") == std::string("hello"), "Strings are equal");
-    suite.addCase(3.14 != 2.71, "Pi is not equal to e");
+    suite.AddCase(objA == objB, "objA equals objB");
+    suite.AddCase(Z_CND_SPLAT(objA != objC));
+    suite.AddCase(objA != objC, "objA not equals objC");
+    suite.AddCase(std::string("hello") == std::string("hello"), "Strings are equal");
+    suite.AddCase(3.14 != 2.71, "Pi is not equal to e");
 }
 
 } // namespace example

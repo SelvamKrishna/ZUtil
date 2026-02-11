@@ -13,23 +13,23 @@ inline constexpr bool RELEASE_BUILD {true};
 inline constexpr bool RELEASE_BUILD {false};
 #endif
 
-ZUTIL_API void _assertCnd(bool condition, ProString description, const std::source_location& loc) noexcept;
+ZUTIL_API void _Assert(bool condition, ProString description, const std::source_location& sourceLocation) noexcept;
 
 template <bool Always = {false}>
-inline void assertCnd(
+inline void Assert(
     bool condition,
     ProString description,
-    const std::source_location& loc = std::source_location::current()
+    const std::source_location& sourceLocation = std::source_location::current()
 )
 {
     if constexpr (Always || !RELEASE_BUILD)
-        _assertCnd(condition, description, loc);
+        ::zutil::_Assert(condition, description, sourceLocation);
 }
 
 } // namespace zutil
 
 #ifndef Z_CND_SPLAT
 
-#define Z_CND_SPLAT(cnd) (cnd), {"{}", #cnd}
+#define Z_CND_SPLAT(condition) (condition), {"{}", #condition}
 
 #endif

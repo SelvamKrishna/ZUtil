@@ -5,14 +5,13 @@ int main(void)
 {
     std::cout << "Running main application..." << '\n';
 
-    // example::logFn();
-    // example::loggerClass();
-    // example::operationLogging();
-    example::operationFailLogging();
-
-    // example::assertionFn(); // Uncomment to test assertion failure
-    // example::testFn();
-    // example::testSuiteFn();
+    example::BasicLogging();
+    example::LoggerClass();
+    example::OperationScopeLogging();
+    // example::OperationFailLogging(); // Uncomment to test operation failure
+    example::BasicAssertion(); // Uncomment to test assertion failure
+    example::UnitTesting();
+    example::SuiteTesting();
 
     return 0;
 }
