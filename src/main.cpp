@@ -1,7 +1,18 @@
-#include "../example/basic_logging_utility.hpp"
+#include "../example/logging.hpp"
+#include "../example/testing.hpp"
 
 int main(void)
 {
-    zutil::example::logFnOverview();
+    std::cout << "Running main application..." << '\n';
+
+    // example::logFn();
+    // example::loggerClass();
+    // example::operationLogging();
+    example::operationFailLogging();
+
+    // example::assertionFn(); // Uncomment to test assertion failure
+    // example::testFn();
+    // example::testSuiteFn();
+
     return 0;
 }
