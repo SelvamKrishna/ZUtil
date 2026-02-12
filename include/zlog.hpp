@@ -12,7 +12,7 @@ enum LogLevel : uint8_t { DBG, INFO, WARN, ERR };
 
 ZUTIL_API std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept;
 
-ZUTIL_API void _Log(LogLevel logLevel, ProString message) noexcept;
+ZUTIL_API void _Log(LogLevel logLevel, ProString message, std::string context) noexcept;
 
 #ifdef Z_DISABLE_LOGGING
 inline constexpr bool DISABLE_LOGGING {true};
@@ -20,19 +20,14 @@ inline constexpr bool DISABLE_LOGGING {true};
 inline constexpr bool DISABLE_LOGGING {false};
 #endif
 
-inline void Log(LogLevel level, ProString message) noexcept
+inline void Log(LogLevel level, ProString message, std::string context = {}) noexcept
 {
-    if constexpr (!DISABLE_LOGGING) ::zutil::_Log(level, message);
+    if constexpr (!DISABLE_LOGGING) ::zutil::_Log(level, message, context);
 }
 
 class ZUTIL_API Logger {
 private:
     std::string _logContext;
-
-    void _LogContext() noexcept
-    {
-        if constexpr (!DISABLE_LOGGING) std::cout << this->_logContext;
-    }
 
 protected:
     Logger() = delete;
@@ -59,8 +54,8 @@ protected:
 class ZUTIL_API Operation {
 private:
     const std::string _OPERATION_DESCRIPTION;
-    const bool _VERBOSE {false};
     const std::string _SOURCE_LOCATION_STRING;
+    const bool _IS_VERBOSE {false};
 
     void _LogFailure(ProString message, LogLevel logLevel) const noexcept;
 

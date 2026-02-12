@@ -15,9 +15,9 @@ std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noex
     return outStream << TRACE_TAGS[static_cast<size_t>(logLevel)] << " : ";
 }
 
-void _Log(LogLevel logLevel, ProString message) noexcept
+void _Log(LogLevel logLevel, ProString message, std::string context) noexcept
 {
-    std::cout << '\n' << logLevel << message;
+    std::cout << '\n' << context << logLevel << message;
 }
 
 Logger::Logger(ProString logContext)
@@ -36,8 +36,7 @@ Logger::Logger(std::vector<zutil::ProString> logContextCollection)
 
 void Logger::Log(LogLevel logLevel, ProString message) noexcept
 {
-    this->_LogContext();
-    ::zutil::Log(logLevel, message);
+    ::zutil::Log(logLevel, message, this->GetContext());
 }
 
 void Logger::AddContext(const std::string_view context) noexcept
@@ -57,22 +56,22 @@ Operation::Operation(
     const std::source_location& sourceLocation
 ) noexcept
     : _OPERATION_DESCRIPTION  { operationDescription.GetParsedString() }
-    , _VERBOSE                { isVerbose }
     , _SOURCE_LOCATION_STRING { ProString{sourceLocation}.GetParsedString() }
+    , _IS_VERBOSE             { isVerbose }
 {
-    if (!_VERBOSE) return;
+    if (!_IS_VERBOSE) return;
     ::zutil::Log(LogLevel::DBG, {"Starting : {}", _OPERATION_DESCRIPTION});
 }
 
 Operation::~Operation() noexcept
 {
-    if (!_VERBOSE) return;
+    if (!_IS_VERBOSE) return;
     ::zutil::Log(LogLevel::DBG, {"Finished : {}", _OPERATION_DESCRIPTION});
 }
 
-void Operation::_LogFailure(ProString message, LogLevel level) const noexcept
+void Operation::_LogFailure(ProString message, LogLevel logLevel) const noexcept
 {
-    ::zutil::Log(level, ProString{"{} {} : {}", _SOURCE_LOCATION_STRING, _OPERATION_DESCRIPTION, message});
+    ::zutil::Log(logLevel, ProString{"{} {} : {}", _SOURCE_LOCATION_STRING, _OPERATION_DESCRIPTION, message});
 }
 
 [[noreturn]]

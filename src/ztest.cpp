@@ -7,12 +7,12 @@ namespace zutil {
 
 void _Test(bool condition, ProString description, ProString contextTag) noexcept
 {
-    static const ProString TEST_TAGS[2] {
+    static const ProString TEST_RESULT_TAGS[2] {
         { ANSI::Red   , "[FAIL]" },
         { ANSI::Green , "[PASS]" },
     };
 
-    std::cout << contextTag << TEST_TAGS[condition] << " : " << description;
+    std::cout << contextTag << TEST_RESULT_TAGS[condition] << " : " << description;
 }
 
 void TestSuite::_LogDescription() const noexcept
@@ -36,11 +36,10 @@ void TestSuite::_LogCaseCount() const noexcept
     ;
 }
 
-TestSuite::TestSuite(ProString description) noexcept
-    : _description {description}
+TestSuite::TestSuite(ProString description) noexcept : _description { description }
 {
     if constexpr (_IS_DISABLED) return;
-    _LogDescription();
+    this->_LogDescription();
 }
 
 TestSuite::~TestSuite() noexcept

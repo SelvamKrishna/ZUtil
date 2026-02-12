@@ -3,13 +3,13 @@
 namespace zutil {
 
 ProString::ProString(std::string_view string, ANSI ansiCode) noexcept
-    : _ansiCode {ansiCode}
-    , _string   {string}
+    : _ansiCode { ansiCode }
+    , _string   { string }
 {}
 
 ProString::ProString(const char* string, zutil::ANSI ansiCode) noexcept
-    : _ansiCode {ansiCode}
-    , _string   {string}
+    : _ansiCode { ansiCode }
+    , _string   { string }
 {}
 
 ProString::ProString(const std::source_location& sourceLocation, bool isVerbose) noexcept

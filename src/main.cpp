@@ -9,7 +9,7 @@ int main(void)
     example::LoggerClass();
     example::OperationScopeLogging();
     // example::OperationFailLogging(); // Uncomment to test operation failure
-    example::BasicAssertion(); // Uncomment to test assertion failure
+    // example::BasicAssertion();       // Uncomment to test assertion failure
     example::UnitTesting();
     example::SuiteTesting();
 
