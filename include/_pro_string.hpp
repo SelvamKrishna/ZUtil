@@ -12,28 +12,28 @@ namespace zutil {
 
 class ZUTIL_API ProString {
 private:
-    zutil::ANSI _ansi { ANSI::Reset };
-    std::string _str;
+    zutil::ANSI _ansiCode { ANSI::Reset };
+    std::string _string;
 
 public:
     ProString() noexcept = default;
 
-    ProString(std::string_view str, zutil::ANSI ansi = zutil::ANSI::Reset) noexcept;
+    ProString(std::string_view string, zutil::ANSI ansiCode = zutil::ANSI::Reset) noexcept;
 
-    ProString(const char* str, zutil::ANSI ansi = zutil::ANSI::Reset) noexcept;
-
-    ProString(const std::source_location& loc) noexcept;
+    ProString(const char* string, zutil::ANSI ansiCode = zutil::ANSI::Reset) noexcept;
 
     template <typename... Args>
-    ProString(const std::format_string<Args...> f_str, Args&&... arg)
-        : _str { std::format(f_str, std::forward<Args>(arg)...) }
+    ProString(const std::format_string<Args...> formatString, Args&&... formatArgs)
+        : _string { std::format(formatString, std::forward<Args>(formatArgs)...) }
     {}
 
     template <typename... Args>
-    ProString(zutil::ANSI ansi, const std::format_string<Args...> f_str, Args&&... arg)
-        : _ansi { ansi }
-        , _str  { std::format(f_str, std::forward<Args>(arg)...) }
+    ProString(zutil::ANSI ansiCode, const std::format_string<Args...> formatString, Args&&... formatArgs)
+        : _ansiCode { ansiCode }
+        , _string   { std::format(formatString, std::forward<Args>(formatArgs)...) }
     {}
+
+    ProString(const std::source_location& sourceLocation, bool isVerbose = false) noexcept;
 
     ~ProString() noexcept = default;
 
@@ -42,22 +42,22 @@ public:
     ProString& operator=(ProString&&)      noexcept = default;
     ProString& operator=(const ProString&) noexcept = default;
 
-    void clear() noexcept;
+    void Clear() noexcept;
 
     [[nodiscard]]
-    zutil::ANSI getColor() const noexcept;
+    zutil::ANSI GetColor() const noexcept;
 
-    void setColor(zutil::ANSI ansi_code) noexcept;
-
-    [[nodiscard]]
-    const std::string& getString() const noexcept;
-
-    void setString(std::string_view text) noexcept;
+    void SetColor(zutil::ANSI ansiCode) noexcept;
 
     [[nodiscard]]
-    std::string getParsedString() const noexcept;
+    const std::string& GetString() const noexcept;
 
-    friend std::ostream& operator<<(std::ostream& os, const ProString& color_str) noexcept;
+    void SetString(std::string_view string) noexcept;
+
+    [[nodiscard]]
+    std::string GetParsedString() const noexcept;
+
+    friend std::ostream& operator<<(std::ostream& outStream, const ProString& proString) noexcept;
 };
 
 } // namespace zutil
@@ -66,8 +66,8 @@ template <>
 struct std::formatter<zutil::ProString> {
     constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
 
-    auto format(const zutil::ProString &pro_str, std::format_context &ctx) const
+    auto format(const zutil::ProString &proString, std::format_context &ctx) const
     {
-        return std::format_to(ctx.out(), "{}", pro_str.getParsedString());
+        return std::format_to(ctx.out(), "{}", proString.GetParsedString());
     }
 };

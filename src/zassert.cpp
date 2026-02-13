@@ -4,14 +4,13 @@
 
 namespace zutil {
 
-void _assertCnd(bool condition, ProString description, const std::source_location& loc) noexcept
+void _Assert(bool condition, ProString description, const std::source_location& sourceLocation) noexcept
 {
 	if (condition) return;
 
     std::cerr
-        << '\n'
-        << ProString{"[ASSERT]", ANSI::BG_Red} << ProString{loc} << " : " << description
-        << std::endl
+        << ProString{"\n[ASSERT]", ANSI::BG_Red} << ProString{sourceLocation, true}
+        << " : " << description << std::endl
     ;
 
     std::abort();

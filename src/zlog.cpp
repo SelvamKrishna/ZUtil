@@ -3,89 +3,93 @@
 
 namespace zutil {
 
-std::ostream& operator<<(std::ostream& os, const LogLevel& log_lvl) noexcept
+std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept
 {
-    static const ProString TAGS[4] {
+    static const ProString TRACE_TAGS[4] {
         { ANSI::Blue   , "[DBUG]" },
         { ANSI::Green  , "[INFO]" },
         { ANSI::Yellow , "[WARN]" },
         { ANSI::Red    , "[ERRO]" },
     };
 
-    return os << TAGS[static_cast<size_t>(log_lvl)] << " : ";
+    return outStream << TRACE_TAGS[static_cast<size_t>(logLevel)] << " : ";
 }
 
-void _log(LogLevel level, ProString message) noexcept
+void _Log(LogLevel logLevel, ProString message, std::string context) noexcept
 {
-    if (!DISABLE_LOGGING) std::cout << '\n' << level << message;
+    std::cout << '\n' << context << logLevel << message;
 }
 
-Logger::Logger(ProString log_prefix)
-    : _log_prefix(log_prefix.getParsedString())
+Logger::Logger(ProString logContext)
+    : _logContext(logContext.GetParsedString())
 {}
 
-Logger::Logger(std::vector<zutil::ProString> log_parts)
+Logger::Logger(std::vector<zutil::ProString> logContextCollection)
 {
-    std::string prefix;
+    std::string combinedContext;
 
-    for (const zutil::ProString& PART : log_parts)
-        prefix += PART.getParsedString();
+    for (const zutil::ProString& CONTEXT_PORTION : logContextCollection)
+        combinedContext += CONTEXT_PORTION.GetParsedString();
 
-    this->_log_prefix = prefix;
+    this->_logContext = combinedContext;
 }
 
-void Logger::log(LogLevel level, ProString message) noexcept
+void Logger::Log(LogLevel logLevel, ProString message) noexcept
 {
-    ::zutil::log(level, message);
+    ::zutil::Log(logLevel, message, this->GetContext());
 }
 
-void Logger::addPrefix(const std::string_view prefix) noexcept
+void Logger::AddContext(const std::string_view context) noexcept
 {
-    this->_log_prefix += std::string(prefix);
+    this->_logContext += std::string(context);
 }
 
 [[nodiscard]]
-const std::string& Logger::getPrefix() const noexcept
+const std::string& Logger::GetContext() const noexcept
 {
-    return this->_log_prefix;
+    return this->_logContext;
 }
 
-Operation::Operation(ProString op_name, bool trace, const std::source_location& loc) noexcept
-    : _OP_NAME { op_name.getParsedString() }
-    , _TRACE   { trace }
-    , _LOC     { ProString{ANSI::EX_Black, "[{}:{}]", loc.file_name(), loc.line()}.getParsedString() }
+Operation::Operation(
+    ProString operationDescription,
+    bool isVerbose,
+    const std::source_location& sourceLocation
+) noexcept
+    : _OPERATION_DESCRIPTION  { operationDescription.GetParsedString() }
+    , _SOURCE_LOCATION_STRING { ProString{sourceLocation}.GetParsedString() }
+    , _IS_VERBOSE             { isVerbose }
 {
-    if (!_TRACE) return;
-    ::zutil::log(LogLevel::DBG, {"Starting : {}", _OP_NAME});
+    if (!_IS_VERBOSE) return;
+    ::zutil::Log(LogLevel::DBG, {"Starting : {}", _OPERATION_DESCRIPTION});
 }
 
 Operation::~Operation() noexcept
 {
-    if (!_TRACE) return;
-    ::zutil::log(LogLevel::DBG, {"Finished : {}", _OP_NAME});
+    if (!_IS_VERBOSE) return;
+    ::zutil::Log(LogLevel::DBG, {"Finished : {}", _OPERATION_DESCRIPTION});
 }
 
-void Operation::_logFailure(ProString message, LogLevel level) const noexcept
+void Operation::_LogFailure(ProString message, LogLevel logLevel) const noexcept
 {
-    ::zutil::log(level, ProString{"{} {} : {}", _LOC, _OP_NAME, message});
+    ::zutil::Log(logLevel, ProString{"{} {} : {}", _SOURCE_LOCATION_STRING, _OPERATION_DESCRIPTION, message});
 }
 
 [[noreturn]]
-void Operation::failAbort(ProString message) const noexcept
+void Operation::FailAbort(ProString message) const noexcept
 {
-    this->_logFailure(message, LogLevel::ERR);
+    this->_LogFailure(message, LogLevel::ERR);
     std::abort();
 }
 
 [[noreturn]]
-void Operation::failThrow(std::exception error) const noexcept(false)
+void Operation::FailThrow(std::exception error) const noexcept(false)
 {
     throw error;
 }
 
-void Operation::failWarn(ProString message) const noexcept
+void Operation::FailWarn(ProString message) const noexcept
 {
-    this->_logFailure(message, LogLevel::WARN);
+    this->_LogFailure(message, LogLevel::WARN);
 }
 
 } // namespace zutil

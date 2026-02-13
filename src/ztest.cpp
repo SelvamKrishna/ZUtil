@@ -5,54 +5,71 @@
 
 namespace zutil {
 
-void _test(bool condition, ProString description, ProString prefix) noexcept
+void _Test(bool condition, ProString description, ProString contextTag) noexcept
 {
-    static const ProString TAGS[2] {
+    static const ProString TEST_RESULT_TAGS[2] {
         { ANSI::Red   , "[FAIL]" },
         { ANSI::Green , "[PASS]" },
     };
 
-    std::cout << prefix << TAGS[condition] << " : " << description;
+    std::cout << contextTag << TEST_RESULT_TAGS[condition] << " : " << description;
 }
 
-void TestSuite::_logDescription() const noexcept
+void TestSuite::_LogDescription() const noexcept
 {
-    std::cout << '\n' << ProString{ANSI::Blue, "[TEST][SUITE]"} << " : " << _description;
+    std::cout << ProString{ANSI::Blue, "\n[TEST][SUITE]"} << " : " << this->_description;
 }
 
-void TestSuite::_logSummary() const noexcept
+void TestSuite::_LogSummary() const noexcept
 {
-    std::cout << '\n' << ProString{ANSI::Blue, "[TEST][SUITE]"};
-    this->_logCaseCount();
+    std::cout << ProString{ANSI::Blue, "\n[TEST][SUITE]"};
+    this->_LogCaseCount();
 }
 
-void TestSuite::_logCaseCount() const noexcept
+void TestSuite::_LogCaseCount() const noexcept
 {
     std::cout
-        << "\n\tPassed Cases : " << _passed_cases
-        << "\n\tFailed Cases : " << _failed_cases
-        << "\n\tTotal Cases  : " << (_passed_cases + _failed_cases)
+        << "\n\tPassed Cases : " << this->GetPassedCount()
+        << "\n\tFailed Cases : " << this->GetFailedCount()
+        << "\n\tTotal Cases  : " << this->GetTotalCount()
         << '\n';
     ;
 }
 
-TestSuite::TestSuite(ProString description) noexcept
-    : _description {description}
+TestSuite::TestSuite(ProString description) noexcept : _description { description }
 {
     if constexpr (_IS_DISABLED) return;
-    _logDescription();
+    this->_LogDescription();
 }
 
 TestSuite::~TestSuite() noexcept
 {
     if constexpr (_IS_DISABLED) return;
-    _logSummary();
+    this->_LogSummary();
 }
 
-void TestSuite::addCase(const bool test_result, ProString description) noexcept
+[[nodiscard]]
+size_t TestSuite::GetPassedCount() const noexcept
 {
-    ::zutil::test(test_result, description, {"\n\t"});
-    (test_result) ? ++_passed_cases : ++_failed_cases;
+    return this->_passedCases;
+}
+
+[[nodiscard]]
+size_t TestSuite::GetFailedCount() const noexcept
+{
+    return this->_failedCases;
+}
+
+[[nodiscard]]
+size_t TestSuite::GetTotalCount() const noexcept
+{
+    return this->GetPassedCount() + this->GetFailedCount();
+}
+
+void TestSuite::AddCase(const bool testResult, ProString testDescription) noexcept
+{
+    ::zutil::Test(testResult, testDescription, {"\n\t"});
+    (testResult == true) ? this->_passedCases ++ : this->_failedCases ++ ;
 }
 
 };

@@ -2,54 +2,72 @@
 
 namespace zutil {
 
-ProString::ProString(std::string_view str, ANSI ansi) noexcept : _ansi {ansi}, _str {str} {}
-
-ProString::ProString(const char* str, zutil::ANSI ansi) noexcept : _ansi {ansi} , _str {str} {}
-
-ProString::ProString(const std::source_location& loc) noexcept
-    : _ansi { ANSI::EX_Black }
-    , _str  { std::format("{}:{} ({})", loc.file_name(), loc.line(), loc.function_name()) }
+ProString::ProString(std::string_view string, ANSI ansiCode) noexcept
+    : _ansiCode { ansiCode }
+    , _string   { string }
 {}
 
-void ProString::clear() noexcept
+ProString::ProString(const char* string, zutil::ANSI ansiCode) noexcept
+    : _ansiCode { ansiCode }
+    , _string   { string }
+{}
+
+ProString::ProString(const std::source_location& sourceLocation, bool isVerbose) noexcept
+    : _ansiCode { ANSI::EX_Black }
 {
-    this->_str.clear();
+    this->_string = (isVerbose)
+        ? std::format(
+            "[{} ({}:{})]",
+            sourceLocation.function_name(),
+            sourceLocation.file_name(),
+            sourceLocation.line()
+        )
+        : std::format(
+            "[{}:{}]",
+            sourceLocation.file_name(),
+            sourceLocation.line()
+        )
+    ;
+}
+
+void ProString::Clear() noexcept
+{
+    this->_string.clear();
 }
 
 [[nodiscard]]
-ANSI ProString::getColor() const noexcept
+ANSI ProString::GetColor() const noexcept
 {
-    return this->_ansi;
+    return this->_ansiCode;
 }
 
-void ProString::setColor(ANSI ansi_code) noexcept
+void ProString::SetColor(ANSI ansiCode) noexcept
 {
-    this->_ansi = ansi_code;
-}
-
-[[nodiscard]]
-const std::string& ProString::getString() const noexcept
-{
-    return this->_str;
-}
-
-void ProString::setString(std::string_view text) noexcept
-{
-    this->_str = text;
-}
-
-std::ostream& operator<<(std::ostream& os, const ProString& color_str) noexcept
-{
-    return os << color_str._ansi << color_str._str << ANSI::Reset;
+    this->_ansiCode = ansiCode;
 }
 
 [[nodiscard]]
-std::string ProString::getParsedString() const noexcept
+const std::string& ProString::GetString() const noexcept
+{
+    return this->_string;
+}
+
+void ProString::SetString(std::string_view string) noexcept
+{
+    this->_string = string;
+}
+
+std::ostream& operator<<(std::ostream& outStream, const ProString& proString) noexcept
+{
+    return outStream << proString.GetColor() << proString.GetString() << ANSI::Reset;
+}
+
+[[nodiscard]]
+std::string ProString::GetParsedString() const noexcept
 {
     return (DISABLE_ANSI)
-        ? this->_str
-        : std::format("{}{}{}", this->_ansi, this->_str, ANSI::Reset);
+        ? this->GetString()
+        : std::format("{}{}{}", this->GetColor(), this->GetString(), ANSI::Reset);
 }
-
 
 } // namespace zutil
