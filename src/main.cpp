@@ -11,16 +11,40 @@ int main(void)
 {
     std::cout << "Running main application..." << '\n';
 
-    // RunAllTests();
-
+#if 1
+    RunAllTests();
+#else
     Playgrond();
+#endif
 
     return 0;
 }
 
+#include <fstream>
+
 void Playgrond()
 {
+    // Writing to a file
+    std::ofstream outFile("example.txt");
 
+    if (!outFile.is_open())
+        throw std::runtime_error {"Error opening file for writing!"};
+
+    outFile << "Hello, World!\n";
+    outFile << "This is a test file.\n";
+    outFile.close();
+
+    // Reading from a file
+    std::ifstream inFile("example.txt");
+    std::string line;
+
+    if (!inFile.is_open())
+        throw std::runtime_error {"Error opening file for reading!"};
+
+    while (std::getline(inFile, line))
+        std::cout << line << std::endl;
+
+    inFile.close();
 }
 
 void RunAllTests()

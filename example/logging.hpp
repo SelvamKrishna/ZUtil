@@ -1,3 +1,5 @@
+#pragma once
+
 #include "zlog.hpp"
 
 namespace example {

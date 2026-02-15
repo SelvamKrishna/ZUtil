@@ -1,3 +1,5 @@
+#pragma once
+
 #include "zassert.hpp"
 #include "ztest.hpp"
 

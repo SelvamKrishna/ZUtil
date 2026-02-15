@@ -22,7 +22,8 @@ public:
 
     template <typename... Args>
     ProString(const std::format_string<Args...> formatString, Args&&... formatArgs)
-        : _string { std::format(formatString, std::forward<Args>(formatArgs)...) }
+        : _ansiCode { ANSI::Reset }
+        , _string   { std::format(formatString, std::forward<Args>(formatArgs)...) }
     {}
 
     template <typename... Args>
@@ -33,20 +34,14 @@ public:
 
     ProString(const std::source_location& sourceLocation, bool isVerbose = false) noexcept;
 
-    void Clear() noexcept;
-
-    [[nodiscard]]
-    zutil::ANSI GetColor() const noexcept;
+    [[nodiscard]] zutil::ANSI        GetColor()        const noexcept;
+    [[nodiscard]] const std::string& GetString()       const noexcept;
+    [[nodiscard]] std::string        GetParsedString() const noexcept;
 
     void SetColor(zutil::ANSI ansiCode) noexcept;
-
-    [[nodiscard]]
-    const std::string& GetString() const noexcept;
-
     void SetString(std::string_view string) noexcept;
 
-    [[nodiscard]]
-    std::string GetParsedString() const noexcept;
+    void Clear() noexcept;
 
     friend std::ostream& operator<<(std::ostream& outStream, const ProString& proString) noexcept;
 };
@@ -55,9 +50,9 @@ public:
 
 template <>
 struct std::formatter<zutil::ProString> {
-    constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
+    constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
-    auto format(const zutil::ProString &proString, std::format_context &ctx) const
+    auto format(const zutil::ProString &proString, std::format_context &ctx) const -> std::back_insert_iterator<std::_Fmt_buffer<char>>
     {
         return std::format_to(ctx.out(), "{}", proString.GetParsedString());
     }
