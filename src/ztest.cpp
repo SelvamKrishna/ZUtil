@@ -5,7 +5,7 @@
 
 namespace zutil {
 
-void _Test(bool condition, const ProString& description, ProString contextTag) noexcept
+void _Test(bool condition, const ProString& description, const ProString& contextTag) noexcept
 {
     std::cout
         << contextTag

@@ -5,14 +5,14 @@ namespace zutil {
 
 std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept
 {
-    static const ProString TRACE_TAGS[4] {
-        { ANSI::Blue   , "[DBUG]" },
-        { ANSI::Green  , "[INFO]" },
-        { ANSI::Yellow , "[WARN]" },
-        { ANSI::Red    , "[ERRO]" },
-    };
-
-    return outStream << TRACE_TAGS[static_cast<size_t>(logLevel)] << " : ";
+    switch (logLevel)
+    {
+        case LogLevel::DBG : return outStream << ProString { ANSI::Blue     , "[DBUG]" } << " : " ;
+        case LogLevel::INFO: return outStream << ProString { ANSI::Green    , "[INFO]" } << " : " ;
+        case LogLevel::WARN: return outStream << ProString { ANSI::Yellow   , "[WARN]" } << " : " ;
+        case LogLevel::ERR : return outStream << ProString { ANSI::Red      , "[ERRO]" } << " : " ;
+        default:             return outStream << ProString { ANSI::EX_Black , "[UNKN]" } << " : " ;
+    }
 }
 
 void _Log(LogLevel logLevel, const ProString& message, const ProString& context) noexcept
@@ -36,7 +36,7 @@ Logger::Logger(const std::vector<zutil::ProString>& logContextCollection)
 
 void Logger::Log(LogLevel logLevel, const ProString& message) noexcept
 {
-    ::zutil::Log(logLevel, message, this->GetContext());
+    ::zutil::Log(logLevel, message, {this->GetContext()});
 }
 
 void Logger::AddContext(const ProString& context) noexcept { this->_logContext += context.GetParsedString(); }
@@ -58,7 +58,7 @@ Operation::~Operation() noexcept
 
 void Operation::_LogFailure(const ProString& message, LogLevel logLevel) const noexcept
 {
-    const std::string SOURCE_LOCATION_STRING = ProString{_SOURCE_LOCATION}.GetParsedString();
+    static const std::string SOURCE_LOCATION_STRING = ProString{_SOURCE_LOCATION}.GetParsedString();
     ::zutil::Log(logLevel, {"{} {} : {}", SOURCE_LOCATION_STRING, _DESCRIPTION, message});
 }
 

@@ -71,7 +71,7 @@ template <>
 struct std::formatter<zutil::ANSI> {
     constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
-    auto format(const zutil::ANSI &ansiCode, std::format_context &ctx) const -> std::back_insert_iterator<std::_Fmt_buffer<char>>
+    auto format(const zutil::ANSI &ansiCode, std::format_context &ctx) const
     {
         return (zutil::DISABLE_ANSI)
             ? std::format_to(ctx.out(), "")

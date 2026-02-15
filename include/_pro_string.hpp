@@ -52,7 +52,7 @@ template <>
 struct std::formatter<zutil::ProString> {
     constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
-    auto format(const zutil::ProString &proString, std::format_context &ctx) const -> std::back_insert_iterator<std::_Fmt_buffer<char>>
+    auto format(const zutil::ProString &proString, std::format_context &ctx) const
     {
         return std::format_to(ctx.out(), "{}", proString.GetParsedString());
     }

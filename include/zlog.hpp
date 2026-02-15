@@ -14,7 +14,7 @@ inline constexpr bool DISABLE_LOGGING {true};
 inline constexpr bool DISABLE_LOGGING {false};
 #endif
 
-enum LogLevel : uint8_t { DBG, INFO, WARN, ERR };
+enum LogLevel : uint8_t { DBG, INFO, WARN, ERR, _COUNT };
 
 ZUTIL_API std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept;
 
