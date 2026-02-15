@@ -23,7 +23,7 @@ inline void Test(
     ::zutil::_Test(condition, description, contextTag);
 }
 
-class ZUTIL_API TestSuite final {
+struct ZUTIL_API TestSuite final {
 private:
     ProString _description;
     size_t _passedCases = 0;

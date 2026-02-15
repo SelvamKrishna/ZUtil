@@ -10,14 +10,12 @@
 
 namespace zutil {
 
-class ZUTIL_API ProString {
+struct ZUTIL_API ProString {
 private:
     zutil::ANSI _ansiCode { ANSI::Reset };
     std::string _string;
 
 public:
-    ProString() noexcept = default;
-
     ProString(std::string_view string, zutil::ANSI ansiCode = zutil::ANSI::Reset) noexcept;
 
     ProString(const char* string, zutil::ANSI ansiCode = zutil::ANSI::Reset) noexcept;
@@ -34,13 +32,6 @@ public:
     {}
 
     ProString(const std::source_location& sourceLocation, bool isVerbose = false) noexcept;
-
-    ~ProString() noexcept = default;
-
-    ProString(ProString&&)                 noexcept = default;
-    ProString(const ProString&)            noexcept = default;
-    ProString& operator=(ProString&&)      noexcept = default;
-    ProString& operator=(const ProString&) noexcept = default;
 
     void Clear() noexcept;
 

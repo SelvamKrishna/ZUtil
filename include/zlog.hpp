@@ -25,7 +25,7 @@ inline void Log(LogLevel level, ProString message, std::string context = {}) noe
     if constexpr (!DISABLE_LOGGING) ::zutil::_Log(level, message, context);
 }
 
-class ZUTIL_API Logger {
+struct ZUTIL_API Logger {
 private:
     std::string _logContext;
 
@@ -51,7 +51,7 @@ protected:
     void Log(LogLevel logLevel, ProString message) noexcept;
 };
 
-class ZUTIL_API Operation {
+struct ZUTIL_API Operation {
 private:
     const std::string _OPERATION_DESCRIPTION;
     const std::string _SOURCE_LOCATION_STRING;
