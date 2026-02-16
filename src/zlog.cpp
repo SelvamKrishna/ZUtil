@@ -20,9 +20,7 @@ void _Log(LogLevel logLevel, const ProString& message, const ProString& context)
     std::cout << '\n' << context << logLevel << message;
 }
 
-Logger::Logger(const ProString& logContext)
-    : _logContext(logContext.GetParsedString())
-{}
+Logger::Logger(const ProString& logContext) : _logContext(logContext.GetParsedString()) {}
 
 Logger::Logger(const std::vector<zutil::ProString>& logContextCollection)
 {
@@ -43,7 +41,15 @@ void Logger::AddContext(const ProString& context) noexcept { this->_logContext +
 
 [[nodiscard]] const std::string& Logger::GetContext() const noexcept { return this->_logContext; }
 
-Operation::Operation(const ProString& operationDescription, bool isVerbose, std::source_location sourceLocation) noexcept
+ScopeDiagnostic::ScopeDiagnostic(const std::source_location& sourceLocation, bool isVerbose) noexcept
+    : _DESCRIPTION     { sourceLocation.function_name() }
+    , _SOURCE_LOCATION { sourceLocation }
+    , _IS_VERBOSE      { isVerbose }
+{
+    if (_IS_VERBOSE) ::zutil::Log(LogLevel::DBG, {">> {}", _DESCRIPTION});
+}
+
+ScopeDiagnostic::ScopeDiagnostic(const ProString& operationDescription, bool isVerbose, std::source_location sourceLocation) noexcept
     : _DESCRIPTION     { operationDescription.GetParsedString() }
     , _SOURCE_LOCATION { sourceLocation }
     , _IS_VERBOSE      { isVerbose }
@@ -51,23 +57,23 @@ Operation::Operation(const ProString& operationDescription, bool isVerbose, std:
     if (_IS_VERBOSE) ::zutil::Log(LogLevel::DBG, {">> {}", _DESCRIPTION});
 }
 
-Operation::~Operation() noexcept
+ScopeDiagnostic::~ScopeDiagnostic() noexcept
 {
     if (_IS_VERBOSE) ::zutil::Log(LogLevel::DBG, {"<< {}", _DESCRIPTION});
 }
 
-void Operation::_LogFailure(const ProString& message, LogLevel logLevel) const noexcept
+void ScopeDiagnostic::_LogFailure(const ProString& message, LogLevel logLevel) const noexcept
 {
     static const std::string SOURCE_LOCATION_STRING = ProString{_SOURCE_LOCATION}.GetParsedString();
     ::zutil::Log(logLevel, {"{} {} : {}", SOURCE_LOCATION_STRING, _DESCRIPTION, message});
 }
 
-[[noreturn]] void Operation::FailAbort(const ProString& message) const noexcept
+[[noreturn]] void ScopeDiagnostic::FailAbort(const ProString& message) const noexcept
 {
     this->_LogFailure(message, LogLevel::ERR);
     std::abort();
 }
 
-void Operation::FailWarn(const ProString& message) const noexcept { this->_LogFailure(message, LogLevel::WARN); }
+void ScopeDiagnostic::FailWarn(const ProString& message) const noexcept { this->_LogFailure(message, LogLevel::WARN); }
 
 } // namespace zutil

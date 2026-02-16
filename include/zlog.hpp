@@ -1,7 +1,7 @@
 #pragma once
 
+#include "_export.hpp"
 #include "_pro_string.hpp"
-#include "zexport.hpp"
 
 #include <iostream>
 #include <vector>
@@ -42,7 +42,7 @@ protected:
     void Log(LogLevel logLevel, const ProString& message) noexcept;
 };
 
-struct ZUTIL_API Operation {
+struct ZUTIL_API ScopeDiagnostic {
 private:
     const std::string          _DESCRIPTION;
     const std::source_location _SOURCE_LOCATION;
@@ -51,27 +51,23 @@ private:
     void _LogFailure(const ProString& message, LogLevel logLevel) const noexcept;
 
 public:
-    Operation() = delete;
+    ScopeDiagnostic(
+        const std::source_location& sourceLocation = std::source_location::current(),
+        bool isVerbose = false
+    ) noexcept;
 
-    Operation(
+    ScopeDiagnostic(
         const ProString& operationDesc,
         bool isVerbose = false,
         std::source_location sourceLocation = std::source_location::current()
     ) noexcept;
 
-    constexpr Operation& operator=(Operation&&)      noexcept = delete;
-    constexpr Operation& operator=(const Operation&) noexcept = delete;
+    constexpr ScopeDiagnostic& operator=(ScopeDiagnostic&&)      noexcept = delete;
+    constexpr ScopeDiagnostic& operator=(const ScopeDiagnostic&) noexcept = delete;
 
-    ~Operation() noexcept;
+    ~ScopeDiagnostic() noexcept;
 
     [[noreturn]] void FailAbort(const ProString& message) const noexcept;
-
-    template<typename ExceptionT>
-    [[noreturn]] void FailThrow(ExceptionT&& exceptionMessage) const
-    {
-        this->_LogFailure(exceptionMessage.what(), LogLevel::ERR);
-        throw std::forward<ExceptionT>(exceptionMessage);
-    }
 
     void FailWarn(const ProString& message) const noexcept;
 };

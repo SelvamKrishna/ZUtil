@@ -9,7 +9,7 @@ void _Test(bool condition, const ProString& description, const ProString& contex
 {
     std::cout
         << contextTag
-        << ((condition) ? ProString { ANSI::Green, "[PASS]" } : ProString{ ANSI::Red, "[FAIL]" })
+        << (condition ? ProString { ANSI::Green, "[PASS]" } : ProString{ ANSI::Red, "[FAIL]" })
         << " : "
         << description
     ;
@@ -17,12 +17,12 @@ void _Test(bool condition, const ProString& description, const ProString& contex
 
 void TestSuite::_LogDescription() const noexcept
 {
-    std::cout << ProString{ANSI::Blue, "\n[TEST][SUITE]"} << " : " << this->_description;
+    std::cout << ProString { ANSI::Blue, "\n[TEST][SUITE]" } << " : " << this->_description;
 }
 
 void TestSuite::_LogSummary() const noexcept
 {
-    std::cout << ProString{ANSI::Blue, "\n[TEST][SUITE]"};
+    std::cout << ProString { ANSI::Blue, "\n[TEST][SUITE]" };
     this->_LogCaseCount();
 }
 
@@ -36,15 +36,12 @@ void TestSuite::_LogCaseCount() const noexcept
     ;
 }
 
-TestSuite::TestSuite(const ProString& description) noexcept : _description {description}
+TestSuite::TestSuite(const ProString& description) noexcept : _description {description.GetParsedString()}
 {
     if constexpr (!_IS_DISABLED) this->_LogDescription();
 }
 
-TestSuite::~TestSuite() noexcept
-{
-    if constexpr (!_IS_DISABLED) this->_LogSummary();
-}
+TestSuite::~TestSuite() noexcept { if constexpr (!_IS_DISABLED) this->_LogSummary(); }
 
 [[nodiscard]] size_t TestSuite::GetPassedCount() const noexcept { return this->_passedCases; }
 [[nodiscard]] size_t TestSuite::GetFailedCount() const noexcept { return this->_failedCases; }

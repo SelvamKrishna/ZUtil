@@ -29,13 +29,35 @@ public:
         this->Log(zutil::INFO, "Initialized");
     }
 
-    void run()
+    void Run()
     {
         if (this->_isRunning)
             return this->Log(zutil::WARN, "Run function called multiple times.");
 
         _isRunning = true;
         this->Log(zutil::INFO, "Running");
+    }
+
+    void Operate(int errCode)
+    {
+        zutil::ScopeDiagnostic op;
+
+        if (errCode > 0)
+            op.FailWarn({"Failed with error code: {}", errCode});
+
+        if (errCode == -1)
+            op.FailAbort("Failed with critical error");
+    }
+
+    void VerboseOperate(int errCode)
+    {
+        zutil::ScopeDiagnostic op {"Verbose Operation", true};
+
+        if (errCode > 0)
+            op.FailWarn({"Failed with error code: {}", errCode});
+
+        if (errCode == -1)
+            op.FailAbort("Failed with critical error");
     }
 
     ~App()
@@ -47,26 +69,17 @@ public:
 inline void LoggerClass()
 {
     App app;
-    app.run();
-    app.run();
+    app.Run();
+    app.Run();
 }
 
-inline void OperationScopeLogging()
+inline void ScopeDiagnosticOverview()
 {
-    zutil::Operation op1("Outer Operation", true);
-
-    {
-        zutil::Operation op2("Inner Operation", true);
-    }
-}
-
-inline void OperationFailLogging()
-{
-    zutil::Operation op("Failing Operation", true);
-
-    op.FailWarn("This is a warning inside the operation.");
-    op.FailThrow(std::runtime_error("This is an exception inside the operation."));
-    op.FailAbort("This is a fatal error inside the operation.");
+    App app;
+    app.Operate(0);
+    app.Operate(404);
+    app.VerboseOperate(0);
+    // app.VerboseOperate(-1); // This will cause the program to abort
 }
 
 } // namespace example

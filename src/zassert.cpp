@@ -9,8 +9,13 @@ void _Assert(bool condition, ProString description, const std::source_location& 
 	if (condition) return;
 
     std::cerr
-        << ProString{"\n[ASSERT]", ANSI::BG_Red} << ProString{sourceLocation, true}
-        << " : " << description << std::endl
+        << std::format(
+            "{}{} : {}",
+            ProString{"\n[ASSERT]", ANSI::BG_Red},
+            ProString{sourceLocation, true},
+            (description.GetString().empty() ? ProString{"No description provided."} : description)
+        )
+        << std::endl
     ;
 
     std::abort();

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "_export.hpp"
 #include "_pro_string.hpp"
-#include "zexport.hpp"
 
 namespace zutil {
 
@@ -25,9 +25,9 @@ inline void Test(
 
 struct ZUTIL_API TestSuite final {
 private:
-    ProString _description;
-    size_t    _passedCases { 0 };
-    size_t    _failedCases { 0 };
+    std::string _description;
+    size_t      _passedCases { 0 };
+    size_t      _failedCases { 0 };
 
     static constexpr bool _IS_DISABLED {DISABLE_TESTING};
 

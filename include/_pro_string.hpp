@@ -1,7 +1,7 @@
 #pragma once
 
+#include "_export.hpp"
 #include "zansi.hpp"
-#include "zexport.hpp"
 
 #include <format>
 #include <ostream>
