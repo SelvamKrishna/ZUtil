@@ -26,6 +26,8 @@ inline void Log(LogLevel level, const ProString& message, const ProString& conte
 }
 
 struct ZUTIL_API Logger {
+    friend struct ScopeDiagnostic;
+
 private:
     std::string _logContext;
 
@@ -39,27 +41,25 @@ protected:
 
     void AddContext(const ProString& context) noexcept;
 
-    void Log(LogLevel logLevel, const ProString& message) noexcept;
+    void Log(LogLevel logLevel, const ProString& message) const noexcept;
 };
 
 struct ZUTIL_API ScopeDiagnostic {
 private:
     const std::string          _DESCRIPTION;
     const std::source_location _SOURCE_LOCATION;
+    const Logger*              _LOGGER_PTR {nullptr};
     const bool                 _IS_VERBOSE {false};
 
-    void _LogFailure(const ProString& message, LogLevel logLevel) const noexcept;
+    void _LogDescription(std::string_view prefix) const noexcept;
+    void _LogFailure(LogLevel logLevel, const ProString& message) const noexcept;
 
 public:
     ScopeDiagnostic(
-        const std::source_location& sourceLocation = std::source_location::current(),
-        bool isVerbose = false
-    ) noexcept;
-
-    ScopeDiagnostic(
-        const ProString& operationDesc,
+        const ProString& operationDesc = "",
+        const Logger* classLogger = nullptr,
         bool isVerbose = false,
-        std::source_location sourceLocation = std::source_location::current()
+        const std::source_location& sourceLocation = std::source_location::current()
     ) noexcept;
 
     constexpr ScopeDiagnostic& operator=(ScopeDiagnostic&&)      noexcept = delete;
@@ -73,10 +73,3 @@ public:
 };
 
 } // namespace zutil
-
-#ifndef Z_VAR_SPLAT
-
-#define Z_VAR_SPLAT(variable) \
-    "{} = ({})", ::zutil::ProString{::zutil::ANSI::Magenta, #variable}, (variable)
-
-#endif

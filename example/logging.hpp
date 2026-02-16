@@ -40,7 +40,7 @@ public:
 
     void Operate(int errCode)
     {
-        zutil::ScopeDiagnostic op;
+        zutil::ScopeDiagnostic op {"", this};
 
         if (errCode > 0)
             op.FailWarn({"Failed with error code: {}", errCode});
@@ -51,7 +51,7 @@ public:
 
     void VerboseOperate(int errCode)
     {
-        zutil::ScopeDiagnostic op {"Verbose Operation", true};
+        zutil::ScopeDiagnostic op {"Verbose Operation", this, true};
 
         if (errCode > 0)
             op.FailWarn({"Failed with error code: {}", errCode});
@@ -79,6 +79,7 @@ inline void ScopeDiagnosticOverview()
     app.Operate(0);
     app.Operate(404);
     app.VerboseOperate(0);
+    app.VerboseOperate(404);
     // app.VerboseOperate(-1); // This will cause the program to abort
 }
 

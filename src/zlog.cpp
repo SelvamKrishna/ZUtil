@@ -32,7 +32,7 @@ Logger::Logger(const std::vector<zutil::ProString>& logContextCollection)
     this->_logContext = combinedContext;
 }
 
-void Logger::Log(LogLevel logLevel, const ProString& message) noexcept
+void Logger::Log(LogLevel logLevel, const ProString& message) const noexcept
 {
     ::zutil::Log(logLevel, message, {this->GetContext()});
 }
@@ -41,39 +41,46 @@ void Logger::AddContext(const ProString& context) noexcept { this->_logContext +
 
 [[nodiscard]] const std::string& Logger::GetContext() const noexcept { return this->_logContext; }
 
-ScopeDiagnostic::ScopeDiagnostic(const std::source_location& sourceLocation, bool isVerbose) noexcept
-    : _DESCRIPTION     { sourceLocation.function_name() }
+ScopeDiagnostic::ScopeDiagnostic(
+    const ProString& operationDesc,
+    const Logger* classLogger,
+    bool isVerbose,
+    const std::source_location& sourceLocation
+) noexcept
+    : _DESCRIPTION     { operationDesc.GetString().empty() ? sourceLocation.function_name() : operationDesc.GetParsedString() }
     , _SOURCE_LOCATION { sourceLocation }
+    , _LOGGER_PTR      { classLogger }
     , _IS_VERBOSE      { isVerbose }
 {
-    if (_IS_VERBOSE) ::zutil::Log(LogLevel::DBG, {">> {}", _DESCRIPTION});
+    if (this->_IS_VERBOSE) this->_LogDescription(">>");
 }
 
-ScopeDiagnostic::ScopeDiagnostic(const ProString& operationDescription, bool isVerbose, std::source_location sourceLocation) noexcept
-    : _DESCRIPTION     { operationDescription.GetParsedString() }
-    , _SOURCE_LOCATION { sourceLocation }
-    , _IS_VERBOSE      { isVerbose }
+ScopeDiagnostic::~ScopeDiagnostic() noexcept { if (this->_IS_VERBOSE) this->_LogDescription("<<"); }
+
+void ScopeDiagnostic::_LogDescription(std::string_view prefix) const noexcept
 {
-    if (_IS_VERBOSE) ::zutil::Log(LogLevel::DBG, {">> {}", _DESCRIPTION});
+    (this->_LOGGER_PTR == nullptr)
+        ?           ::zutil::Log(LogLevel::DBG, {"{} {}", prefix, this->_DESCRIPTION})
+        : this->_LOGGER_PTR->Log(LogLevel::DBG, {"{} {}", prefix, this->_DESCRIPTION})
+    ;
 }
 
-ScopeDiagnostic::~ScopeDiagnostic() noexcept
+void ScopeDiagnostic::_LogFailure(LogLevel logLevel, const ProString& message) const noexcept
 {
-    if (_IS_VERBOSE) ::zutil::Log(LogLevel::DBG, {"<< {}", _DESCRIPTION});
-}
+    static const std::string SOURCE_LOCATION_STRING = ProString{this->_SOURCE_LOCATION}.GetParsedString();
 
-void ScopeDiagnostic::_LogFailure(const ProString& message, LogLevel logLevel) const noexcept
-{
-    static const std::string SOURCE_LOCATION_STRING = ProString{_SOURCE_LOCATION}.GetParsedString();
-    ::zutil::Log(logLevel, {"{} {} : {}", SOURCE_LOCATION_STRING, _DESCRIPTION, message});
+    (this->_LOGGER_PTR == nullptr)
+        ?           ::zutil::Log(logLevel, {"{} {} : {}", SOURCE_LOCATION_STRING, this->_DESCRIPTION, message})
+        : this->_LOGGER_PTR->Log(logLevel, {"{} {} : {}", SOURCE_LOCATION_STRING, this->_DESCRIPTION, message})
+    ;
 }
 
 [[noreturn]] void ScopeDiagnostic::FailAbort(const ProString& message) const noexcept
 {
-    this->_LogFailure(message, LogLevel::ERR);
+    this->_LogFailure(LogLevel::ERR, message);
     std::abort();
 }
 
-void ScopeDiagnostic::FailWarn(const ProString& message) const noexcept { this->_LogFailure(message, LogLevel::WARN); }
+void ScopeDiagnostic::FailWarn(const ProString& message) const noexcept { this->_LogFailure(LogLevel::WARN, message); }
 
 } // namespace zutil

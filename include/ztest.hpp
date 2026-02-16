@@ -53,9 +53,3 @@ public:
 };
 
 } // namespace zutil
-
-#ifndef Z_CND_SPLAT
-
-#define Z_CND_SPLAT(condition) (condition), {"{}", #condition}
-
-#endif
