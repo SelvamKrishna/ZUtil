@@ -62,8 +62,8 @@ public:
         const std::source_location& sourceLocation = std::source_location::current()
     ) noexcept;
 
-    constexpr ScopeDiagnostic& operator=(ScopeDiagnostic&&)      noexcept = delete;
-    constexpr ScopeDiagnostic& operator=(const ScopeDiagnostic&) noexcept = delete;
+    ScopeDiagnostic& operator=(ScopeDiagnostic&&)      noexcept = delete;
+    ScopeDiagnostic& operator=(const ScopeDiagnostic&) noexcept = delete;
 
     ~ScopeDiagnostic() noexcept;
 

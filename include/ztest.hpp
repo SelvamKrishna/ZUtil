@@ -40,11 +40,6 @@ public:
 
     ~TestSuite() noexcept;
 
-    constexpr TestSuite(TestSuite&&)                 noexcept = default;
-    constexpr TestSuite(const TestSuite&)            noexcept = default;
-    constexpr TestSuite& operator=(TestSuite&&)      noexcept = default;
-    constexpr TestSuite& operator=(const TestSuite&) noexcept = default;
-
     [[nodiscard]] size_t GetPassedCount() const noexcept;
     [[nodiscard]] size_t GetFailedCount() const noexcept;
     [[nodiscard]] size_t GetTotalCount()  const noexcept;

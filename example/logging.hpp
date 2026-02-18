@@ -34,7 +34,7 @@ public:
         if (this->_isRunning)
             return this->Log(zutil::WARN, "Run function called multiple times.");
 
-        _isRunning = true;
+        this->_isRunning = true;
         this->Log(zutil::INFO, "Running");
     }
 
