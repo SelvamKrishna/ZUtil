@@ -1,5 +1,8 @@
+#pragma once
+
 #include "zassert.hpp"
 #include "ztest.hpp"
+#include "zmacros.hpp"
 
 namespace example {
 

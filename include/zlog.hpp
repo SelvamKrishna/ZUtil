@@ -1,18 +1,12 @@
 #pragma once
 
+#include "_export.hpp"
 #include "_pro_string.hpp"
-#include "zexport.hpp"
 
 #include <iostream>
 #include <vector>
 
 namespace zutil {
-
-enum LogLevel : uint8_t { DBG, INFO, WARN, ERR };
-
-ZUTIL_API std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept;
-
-ZUTIL_API void _Log(LogLevel logLevel, ProString message, std::string context) noexcept;
 
 #ifdef Z_DISABLE_LOGGING
 inline constexpr bool DISABLE_LOGGING {true};
@@ -20,83 +14,62 @@ inline constexpr bool DISABLE_LOGGING {true};
 inline constexpr bool DISABLE_LOGGING {false};
 #endif
 
-inline void Log(LogLevel level, ProString message, std::string context = {}) noexcept
+enum LogLevel : uint8_t { DBG, INFO, WARN, ERR, _COUNT };
+
+ZUTIL_API std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept;
+
+ZUTIL_API void _Log(LogLevel logLevel, const ProString& message, const ProString& context) noexcept;
+
+inline void Log(LogLevel level, const ProString& message, const ProString& context = {""}) noexcept
 {
     if constexpr (!DISABLE_LOGGING) ::zutil::_Log(level, message, context);
 }
 
-class ZUTIL_API Logger {
+struct ZUTIL_API Logger {
+    friend struct ScopeDiagnostic;
+
 private:
     std::string _logContext;
 
 protected:
     Logger() = delete;
 
-    explicit Logger(ProString logContext);
+    explicit Logger(const ProString& logContext);
+    explicit Logger(const std::vector<zutil::ProString>& logContextCollection);
 
-    explicit Logger(std::vector<zutil::ProString> logContextCollection);
+    [[nodiscard]] const std::string& GetContext() const noexcept;
 
-    constexpr Logger(Logger&&)                 noexcept = default;
-    constexpr Logger(const Logger&)            noexcept = default;
-    constexpr Logger& operator=(Logger&&)      noexcept = default;
-    constexpr Logger& operator=(const Logger&) noexcept = default;
+    void AddContext(const ProString& context) noexcept;
 
-    ~Logger() = default;
-
-    void AddContext(const std::string_view context) noexcept;
-
-    [[nodiscard]]
-    const std::string& GetContext() const noexcept;
-
-    void Log(LogLevel logLevel, ProString message) noexcept;
+    void Log(LogLevel logLevel, const ProString& message) const noexcept;
 };
 
-class ZUTIL_API Operation {
+struct ZUTIL_API ScopeDiagnostic {
 private:
-    const std::string _OPERATION_DESCRIPTION;
-    const std::string _SOURCE_LOCATION_STRING;
-    const bool _IS_VERBOSE {false};
+    const std::string          _DESCRIPTION;
+    const std::source_location _SOURCE_LOCATION;
+    const Logger*              _LOGGER_PTR {nullptr};
+    const bool                 _IS_VERBOSE {false};
 
-    void _LogFailure(ProString message, LogLevel logLevel) const noexcept;
+    void _LogDescription(std::string_view prefix) const noexcept;
+    void _LogFailure(LogLevel logLevel, const ProString& message) const noexcept;
 
 public:
-    Operation() = delete;
-
-    Operation(
-        ProString operationDesc,
+    ScopeDiagnostic(
+        const ProString& operationDesc = "",
+        const Logger* classLogger = nullptr,
         bool isVerbose = false,
         const std::source_location& sourceLocation = std::source_location::current()
     ) noexcept;
 
-    constexpr Operation(Operation&&)                 noexcept = default;
-    constexpr Operation(const Operation&)            noexcept = default;
-    constexpr Operation& operator=(Operation&&)      noexcept = delete;
-    constexpr Operation& operator=(const Operation&) noexcept = delete;
+    ScopeDiagnostic& operator=(ScopeDiagnostic&&)      noexcept = delete;
+    ScopeDiagnostic& operator=(const ScopeDiagnostic&) noexcept = delete;
 
-    ~Operation() noexcept;
+    ~ScopeDiagnostic() noexcept;
 
-    [[noreturn]]
-    void FailAbort(ProString message) const noexcept;
+    [[noreturn]] void FailAbort(const ProString& message) const noexcept;
 
-    [[noreturn]]
-    void FailThrow(std::exception exception) const noexcept(false);
-
-    void FailWarn(ProString message) const noexcept;
-
-    template <typename ReturnT>
-    [[nodiscard]]
-    ReturnT FailReturn(const ReturnT& returnValue, ProString message) const noexcept
-    {
-        this->FailWarn(message);
-        return returnValue;
-    }
+    void FailWarn(const ProString& message) const noexcept;
 };
 
 } // namespace zutil
-
-#ifndef Z_VAR_SPLAT
-
-#define Z_VAR_SPLAT(variable) \
-    "{} = ({})", ::zutil::ProString{::zutil::ANSI::Magenta, #variable}, (variable)
-
-#endif
