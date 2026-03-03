@@ -1,5 +1,6 @@
 #pragma once
 
-namespace example {
+namespace example
+{
 
 } // namespace example

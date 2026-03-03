@@ -10,17 +10,15 @@ void RunAllTests();
 int main(void)
 {
     std::cout << "Running main application..." << '\n';
-
 #if 1
     RunAllTests();
 #else
     Playgrond();
 #endif
-
     return 0;
 }
 
-void RunAllTests()
+void RunAllTests(void)
 {
     example::BasicLogging();
     example::LoggerClass();
@@ -30,7 +28,6 @@ void RunAllTests()
     example::SuiteTesting();
 }
 
-void Playgrond()
+void Playgrond(void)
 {
-
 }

@@ -5,25 +5,27 @@
 
 #include <source_location>
 
-namespace zutil {
+namespace zutil
+{
 
 #ifdef NDEBUG
-inline constexpr bool RELEASE_BUILD {true};
+    inline constexpr bool RELEASE_BUILD {true};
 #else
-inline constexpr bool RELEASE_BUILD {false};
+    inline constexpr bool RELEASE_BUILD {false};
 #endif
 
-ZUTIL_API void _Assert(bool condition, ProString description, const std::source_location& sourceLocation) noexcept;
+    ZUTIL_API void _Assert(bool condition, ProString description, const std::source_location& sourceLocation) noexcept;
 
-template <bool Always = {false}>
-inline void Assert(
-    bool condition,
-    ProString description,
-    const std::source_location& sourceLocation = std::source_location::current()
-)
-{
-    if constexpr (Always || !RELEASE_BUILD)
-        ::zutil::_Assert(condition, description, sourceLocation);
-}
+    // --- Checks condition if failed aborts process ---
+    template <bool Always = {false}>
+    inline void Assert(
+        bool condition,
+        ProString description,
+        const std::source_location& sourceLocation = std::source_location::current()
+    )
+    {
+        if constexpr (Always || !RELEASE_BUILD)
+            ::zutil::_Assert(condition, description, sourceLocation);
+    }
 
 } // namespace zutil
