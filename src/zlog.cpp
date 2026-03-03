@@ -65,7 +65,7 @@ void ScopeDiagnostic::_LogDescription(std::string_view prefix) const noexcept
     ;
 }
 
-void ScopeDiagnostic::_LogFailure(LogLevel logLevel, const ProString& message) const noexcept
+void ScopeDiagnostic::_LogMessage(LogLevel logLevel, const ProString& message) const noexcept
 {
     static const std::string SOURCE_LOCATION_STRING = ProString{this->_SOURCE_LOCATION}.GetParsedString();
 
@@ -77,10 +77,12 @@ void ScopeDiagnostic::_LogFailure(LogLevel logLevel, const ProString& message) c
 
 [[noreturn]] void ScopeDiagnostic::FailAbort(const ProString& message) const noexcept
 {
-    this->_LogFailure(LogLevel::ERR, message);
+    this->_LogMessage(LogLevel::ERR, message);
     std::abort();
 }
 
-void ScopeDiagnostic::FailWarn(const ProString& message) const noexcept { this->_LogFailure(LogLevel::WARN, message); }
+void ScopeDiagnostic::FailWarn(const ProString& message) const noexcept { this->_LogMessage(LogLevel::WARN, message); }
+
+void ScopeDiagnostic::Success(const ProString& message) const noexcept { this->_LogMessage(LogLevel::INFO, message); }
 
 } // namespace zutil

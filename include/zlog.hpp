@@ -52,7 +52,7 @@ private:
     const bool                 _IS_VERBOSE {false};
 
     void _LogDescription(std::string_view prefix) const noexcept;
-    void _LogFailure(LogLevel logLevel, const ProString& message) const noexcept;
+    void _LogMessage(LogLevel logLevel, const ProString& message) const noexcept;
 
 public:
     ScopeDiagnostic(
@@ -70,6 +70,7 @@ public:
     [[noreturn]] void FailAbort(const ProString& message) const noexcept;
 
     void FailWarn(const ProString& message) const noexcept;
+    void Success (const ProString& message) const noexcept;
 };
 
 } // namespace zutil

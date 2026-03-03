@@ -6,4 +6,3 @@
 #include "./include/zansi.hpp"       // IWYU pragma: keep
 #include "./include/zassert.hpp"     // IWYU pragma: keep
 #include "./include/zlog.hpp"        // IWYU pragma: keep
-#include "./include/ztest.hpp"       // IWYU pragma: keep
