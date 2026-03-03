@@ -14,6 +14,7 @@ namespace zutil
 
     ZUTIL_API void _Test(bool condition, const ProString& description, const ProString& contextTag) noexcept;
 
+    // --- Test's condition and logs the result ---
     inline void Test(
         bool condition,
         const ProString& description,
@@ -24,6 +25,9 @@ namespace zutil
         ::zutil::_Test(condition, description, contextTag);
     }
 
+    // ---
+    // Test's multiple cases and provides general summary
+    // ---
     struct ZUTIL_API TestSuite final
     {
     private:

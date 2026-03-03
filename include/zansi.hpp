@@ -13,6 +13,9 @@ namespace zutil
     inline constexpr bool DISABLE_ANSI {false};
 #endif
 
+    // ---
+    // Supported ANSI color codes
+    // ---
     enum class ANSI : uint8_t
     {
         Reset          = 0,

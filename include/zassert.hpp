@@ -16,6 +16,7 @@ namespace zutil
 
     ZUTIL_API void _Assert(bool condition, ProString description, const std::source_location& sourceLocation) noexcept;
 
+    // --- Checks condition if failed aborts process ---
     template <bool Always = {false}>
     inline void Assert(
         bool condition,

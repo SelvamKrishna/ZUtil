@@ -20,11 +20,15 @@ namespace zutil
 
     ZUTIL_API void _Log(LogLevel logLevel, const ProString& message, const ProString& context) noexcept;
 
+    // --- Logs message to console with added context and log level ---
     inline void Log(LogLevel level, const ProString& message, const ProString& context = {""}) noexcept
     {
         if constexpr (!DISABLE_LOGGING) ::zutil::_Log(level, message, context);
     }
 
+    // ---
+    // Provides logging Context for classes / structs
+    // ---
     struct ZUTIL_API Logger
     {
         friend struct ScopeDiagnostic;
@@ -40,11 +44,16 @@ namespace zutil
 
         [[nodiscard]] const std::string& GetContext() const noexcept;
 
+        // --- Add context to prefix ---
         void AddContext(const ProString& context) noexcept;
 
+        // --- Logs message with object context prefix ---
         void Log(LogLevel logLevel, const ProString& message) const noexcept;
     };
 
+    // ---
+    // Provides methods to log contexted success / failure of operations
+    // ---
     struct ZUTIL_API ScopeDiagnostic
     {
     private:
@@ -69,9 +78,13 @@ namespace zutil
 
         ~ScopeDiagnostic() noexcept;
 
+        // --- Logs error message w/ context and aborts process ---
         [[noreturn]] void FailAbort(const ProString& message) const noexcept;
 
+        // --- Logs warning message w/ context ---
         void FailWarn(const ProString& message) const noexcept;
+
+        // --- Logs operation success message w/ context ---
         void Success (const ProString& message) const noexcept;
     };
 

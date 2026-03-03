@@ -11,6 +11,10 @@
 namespace zutil
 {
 
+    // ---
+    // String Wrapper with added ANSI color coding
+    // NOTE: implicit std::format_string conversion
+    // ---
     struct ZUTIL_API ProString
     {
     private:
