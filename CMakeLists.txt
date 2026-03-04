@@ -44,5 +44,5 @@ set_target_properties(zutil PROPERTIES
 target_compile_definitions(zutil PRIVATE ZUTIL_BUILD)
 
 # --- Testing Library ---
-# add_executable(zutil_tests src/main.cpp)
-# target_link_libraries(zutil_tests PRIVATE zutil)
+add_executable(zutil_tests src/main.cpp)
+target_link_libraries(zutil_tests PRIVATE zutil)
