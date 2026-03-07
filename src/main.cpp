@@ -5,7 +5,7 @@
 #include "../example/logging.hpp"       // IWYU pragma: keep
 #include "../example/testing.hpp"       // IWYU pragma: keep
 
-void Playgrond();
+void Playground();
 void RunAllTests();
 
 int main(void)
@@ -32,10 +32,10 @@ void RunAllTests(void)
     // example::SuiteTesting();
 
     // example::FastAccessBuffer();
-    example::SparseSetInsertion();
-    example::DoubleBuffer();
+    // example::SparseSetInsertion();
+    // example::DoubleBuffer();
 }
 
-void Playgrond(void)
+void Playground(void)
 {
 }
