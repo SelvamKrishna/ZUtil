@@ -20,6 +20,7 @@ namespace zutil
         struct _IdentifiedData { size_t id; DataT data; };
 
         std::vector<_IdentifiedData> _dataBuffer;
+        std::vector<size_t> _freeIDs;
         size_t _currentID = 0;
 
         using DataRef  =       DataT&;
@@ -46,13 +47,28 @@ namespace zutil
         // RETURNS: the unique ID of the loaded data
         [[nodiscard]] size_t Insert(DataT&& data)
         {
-            size_t id = this->_currentID++;
+            size_t id;
+
+            if (this->_freeIDs.empty())
+            {
+                id = this->_freeIDs.back();
+                this->_freeIDs.pop_back();
+            }
+            else
+            {
+                id = this->_currentID ++;
+            }
+
             this->_dataBuffer.emplace_back(_IdentifiedData {id, std::move(data)});
             return id;
         }
 
         // --- Remove data from the buffer using it's id ---
-        void Remove(size_t dataID) { this->_dataBuffer.erase(this->_GetDataIter(dataID)); }
+        void Remove(size_t dataID)
+        {
+            this->_dataBuffer.erase(this->_GetDataIter(dataID));
+            this->_freeIDs.emplace_back(dataID);
+        }
 
         [[nodiscard]] DataRef  At(size_t dataID)       { return this->_GetDataIter(dataID)->data; }
         [[nodiscard]] CDataRef At(size_t dataID) const { return this->_GetDataIter(dataID)->data; }

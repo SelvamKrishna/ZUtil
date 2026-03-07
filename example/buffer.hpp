@@ -29,6 +29,8 @@ namespace example
         zutil::Test(Z_CND_SPLAT(testBuffer.Size() == 2));
         testBuffer.Remove(dataID1);
         zutil::Test(Z_CND_SPLAT(testBuffer.Size() == 1));
+        testBuffer.Remove(dataID2);
+        zutil::Test(Z_CND_SPLAT(testBuffer.Size() == 0));
     }
 
     inline void BufferStressTest() noexcept
