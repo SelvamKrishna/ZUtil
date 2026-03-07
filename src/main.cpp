@@ -31,9 +31,8 @@ void RunAllTests(void)
     // example::UnitTesting();
     // example::SuiteTesting();
 
-    // example::BufferInsertion();
-    // example::BufferRemoveing();
-    // example::BufferStressTest();
+    example::FA_Buffer();
+    example::SparseSetInsertion();
 }
 
 void Playgrond(void)

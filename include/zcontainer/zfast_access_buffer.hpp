@@ -10,8 +10,8 @@ namespace zutil
 {
 
     // ---
-    // Stores items and provides fast accessing
-    // Note: Insertion and Deletion are O(n) operations
+    // Stores items in an ascending order to provide O(log n) lookup
+    // NOTE: Insertion is O(1), Removeing is O(n)
     // ---
     template <typename DataT>
     struct ZUTIL_API FastAccessBuffer
@@ -43,6 +43,14 @@ namespace zutil
     public:
         explicit FastAccessBuffer(size_t reserveBuffer = 32) { this->_dataBuffer.reserve(reserveBuffer); }
 
+        // --- Check's if data with ID exists within buffer ---
+        [[nodiscard]] bool Contains(size_t dataID) const noexcept
+        {
+            try { auto _testIter = this->_GetDataIter(dataID); }
+            catch (std::out_of_range) { return false; }
+            return true;
+        }
+
         // --- Add data to the buffer ---
         // RETURNS: the unique ID of the loaded data
         [[nodiscard]] size_t Insert(DataT&& data)
@@ -63,7 +71,7 @@ namespace zutil
             return id;
         }
 
-        // --- Remove data from the buffer using it's id ---
+        // --- Remove data from the buffer using it's ID ---
         void Remove(size_t dataID)
         {
             this->_dataBuffer.erase(this->_GetDataIter(dataID));

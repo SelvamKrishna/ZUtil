@@ -1,6 +1,8 @@
 #pragma once
 
 #include "zcontainer/zfast_access_buffer.hpp"
+#include "zcontainer/zspares_set.hpp"
+
 #include "ztest.hpp"
 #include "zmacros.hpp"
 
@@ -10,40 +12,54 @@ namespace example
 {
     struct TestData { float fVal; int iVal; };
 
-    inline void BufferInsertion() noexcept
+    inline void FA_Buffer() noexcept
     {
+        zutil::TestSuite test {"FastAccessBuffer"};
+
         zutil::FastAccessBuffer<TestData> testBuffer {8};
         size_t dataID1 = testBuffer.Insert(TestData{1.0, 1});
         size_t dataID2 = testBuffer.Insert(TestData{2.0, 2});
 
-        zutil::Test(Z_CND_SPLAT(testBuffer.At(dataID1).iVal == 1));
-        zutil::Test(Z_CND_SPLAT(testBuffer.At(dataID2).iVal == 2));
-    }
+        test.AddCase(Z_CND_SPLAT(testBuffer.At(dataID1).iVal == 1));
+        test.AddCase(Z_CND_SPLAT(testBuffer.At(dataID2).iVal == 2));
 
-    inline void BufferRemoveing() noexcept
-    {
-        zutil::FastAccessBuffer<TestData> testBuffer {8};
-        size_t dataID1 = testBuffer.Insert(TestData{1.0, 1});
-        size_t dataID2 = testBuffer.Insert(TestData{2.0, 2});
-
-        zutil::Test(Z_CND_SPLAT(testBuffer.Size() == 2));
+        test.AddCase(Z_CND_SPLAT(testBuffer.Size() == 2));
         testBuffer.Remove(dataID1);
-        zutil::Test(Z_CND_SPLAT(testBuffer.Size() == 1));
+        test.AddCase(Z_CND_SPLAT(testBuffer.Size() == 1));
         testBuffer.Remove(dataID2);
-        zutil::Test(Z_CND_SPLAT(testBuffer.Size() == 0));
+        test.AddCase(Z_CND_SPLAT(testBuffer.Size() == 0));
     }
 
-    inline void BufferStressTest() noexcept
+    inline void SparseSetInsertion() noexcept
     {
-        zutil::FastAccessBuffer<TestData> testBuffer {32};
-        std::vector<size_t> indexes;
-        indexes.reserve(32);
+        zutil::TestSuite test {"SparesSet"};
 
-        for (int i = 0; i < 32; i ++)
-            indexes[i] = testBuffer.Insert(TestData{static_cast<float>(i), i});
+        zutil::SparseSet<TestData> testBuffer {8, 8};
+        testBuffer.Insert(1, TestData{1.0, 1});
+        testBuffer.Insert(2, TestData{2.0, 2});
 
-        for (int i = 0; i < 32; i ++)
-            zutil::Test(Z_CND_SPLAT(testBuffer.At(indexes[i]).iVal == i));
+        try {
+            testBuffer.Insert(2, TestData{2.0, 2});
+        } catch (std::invalid_argument err) {
+            test.AddCase(true, err.what());
+        }
+
+        test.AddCase(Z_CND_SPLAT(testBuffer.Contains(2)));
+        test.AddCase(Z_CND_SPLAT(!testBuffer.Contains(3)));
+        test.AddCase(Z_CND_SPLAT(testBuffer.Size() == 2));
+
+        testBuffer.Remove(1);
+        testBuffer.Remove(2);
+
+        try {
+            testBuffer.Remove(3);
+        } catch (std::invalid_argument err) {
+            test.AddCase(true, err.what());
+        }
+
+        test.AddCase(Z_CND_SPLAT(!testBuffer.Contains(1)));
+        test.AddCase(Z_CND_SPLAT(!testBuffer.Contains(2)));
+        test.AddCase(Z_CND_SPLAT(testBuffer.Size() == 0));
     }
 
 } // namespace example
