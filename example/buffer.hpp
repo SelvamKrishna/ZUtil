@@ -1,6 +1,6 @@
 #pragma once
 
-#include "zbuffer.hpp"
+#include "zcontainer/zfast_access_buffer.hpp"
 #include "ztest.hpp"
 #include "zmacros.hpp"
 

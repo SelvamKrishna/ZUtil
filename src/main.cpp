@@ -10,12 +10,15 @@ void RunAllTests();
 
 int main(void)
 {
-    std::cout << "Running main application..." << '\n';
+    std::cout << "\n---Test Start---\n";
+
 #if 1
     RunAllTests();
 #else
-    Playgrond();
+    Playground();
 #endif
+
+    std::cout << "\n---Test End---\n";
     return 0;
 }
 
@@ -28,9 +31,9 @@ void RunAllTests(void)
     // example::UnitTesting();
     // example::SuiteTesting();
 
-    example::BufferInsertion();
-    example::BufferRemoveing();
-    example::BufferStressTest();
+    // example::BufferInsertion();
+    // example::BufferRemoveing();
+    // example::BufferStressTest();
 }
 
 void Playgrond(void)

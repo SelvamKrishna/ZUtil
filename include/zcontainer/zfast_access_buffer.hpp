@@ -49,7 +49,7 @@ namespace zutil
         {
             size_t id;
 
-            if (this->_freeIDs.empty())
+            if (!this->_freeIDs.empty())
             {
                 id = this->_freeIDs.back();
                 this->_freeIDs.pop_back();
