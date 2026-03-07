@@ -2,6 +2,7 @@
 
 #include "zcontainer/zfast_access_buffer.hpp"
 #include "zcontainer/zspares_set.hpp"
+#include "zcontainer/zdouble_buffer.hpp"
 
 #include "ztest.hpp"
 #include "zmacros.hpp"
@@ -12,9 +13,9 @@ namespace example
 {
     struct TestData { float fVal; int iVal; };
 
-    inline void FA_Buffer() noexcept
+    inline void FastAccessBuffer() noexcept
     {
-        zutil::TestSuite test {"FastAccessBuffer"};
+        zutil::TestSuite test {__PRETTY_FUNCTION__};
 
         zutil::FastAccessBuffer<TestData> testBuffer {8};
         size_t dataID1 = testBuffer.Insert(TestData{1.0, 1});
@@ -32,7 +33,7 @@ namespace example
 
     inline void SparseSetInsertion() noexcept
     {
-        zutil::TestSuite test {"SparesSet"};
+        zutil::TestSuite test {__PRETTY_FUNCTION__};
 
         zutil::SparseSet<TestData> testBuffer {8, 8};
         testBuffer.Insert(1, TestData{1.0, 1});
@@ -60,6 +61,31 @@ namespace example
         test.AddCase(Z_CND_SPLAT(!testBuffer.Contains(1)));
         test.AddCase(Z_CND_SPLAT(!testBuffer.Contains(2)));
         test.AddCase(Z_CND_SPLAT(testBuffer.Size() == 0));
+    }
+
+    inline void DoubleBuffer() noexcept
+    {
+        zutil::TestSuite test {__PRETTY_FUNCTION__};
+        zutil::DoubleBuffer<TestData> testBuffer;
+
+        test.AddCase(Z_CND_SPLAT(testBuffer.Read().fVal == 0.0));
+        test.AddCase(Z_CND_SPLAT(testBuffer.Read().iVal == 0));
+
+        testBuffer.Write().fVal = 1.0;
+        testBuffer.Write().iVal = 1;
+
+        testBuffer.Swap();
+
+        testBuffer.Write().fVal = 2.0;
+        testBuffer.Write().iVal = 2;
+
+        test.AddCase(Z_CND_SPLAT(testBuffer.Read().fVal == 1.0));
+        test.AddCase(Z_CND_SPLAT(testBuffer.Read().iVal == 1));
+
+        testBuffer.Swap();
+
+        test.AddCase(Z_CND_SPLAT(testBuffer.Read().fVal == 2.0));
+        test.AddCase(Z_CND_SPLAT(testBuffer.Read().iVal == 2));
     }
 
 } // namespace example

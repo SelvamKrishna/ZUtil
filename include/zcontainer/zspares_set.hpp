@@ -9,6 +9,10 @@
 namespace zutil
 {
 
+    // ---
+    // Stores items of unique ID's, used in Entity-Component-Systems.
+    // Densly packed data, Sparesly packed ID's
+    // ---
     template<typename DataT>
     struct ZUTIL_API SparseSet
     {
@@ -28,6 +32,7 @@ namespace zutil
             this->_denseData.reserve(denseReserve);
         }
 
+        // --- Add value to buffer and binds it to the ID : O(1) ---
         void Insert(size_t id, DataT value)
         {
             if (this->Contains(id)) throw std::invalid_argument {
@@ -41,6 +46,7 @@ namespace zutil
             this->_denseData.push_back(std::move(value));
         }
 
+        // --- Remove value from buffer using ID : O(1) ---
         void Remove(size_t dataID)
         {
             if (!this->Contains(dataID)) throw std::invalid_argument {
@@ -59,6 +65,7 @@ namespace zutil
             this->_denseData.pop_back();
         }
 
+        // --- Checks if data with ID exists : O(1) ---
         [[nodiscard]] bool Contains(size_t dataID) const noexcept
         {
             if (dataID >= this->_sparseIDs.size()) return false;

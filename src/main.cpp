@@ -10,7 +10,7 @@ void RunAllTests();
 
 int main(void)
 {
-    std::cout << "\n---Test Start---\n";
+    Z_ON_DBG std::cout << "\n---Test Start---\n";
 
 #if 1
     RunAllTests();
@@ -18,7 +18,7 @@ int main(void)
     Playground();
 #endif
 
-    std::cout << "\n---Test End---\n";
+    Z_ON_DBG std::cout << "\n---Test End---\n";
     return 0;
 }
 
@@ -31,8 +31,9 @@ void RunAllTests(void)
     // example::UnitTesting();
     // example::SuiteTesting();
 
-    example::FA_Buffer();
+    // example::FastAccessBuffer();
     example::SparseSetInsertion();
+    example::DoubleBuffer();
 }
 
 void Playgrond(void)

@@ -10,8 +10,7 @@ namespace zutil
 {
 
     // ---
-    // Stores items in an ascending order to provide O(log n) lookup
-    // NOTE: Insertion is O(1), Removeing is O(n)
+    // Stores items in an ascending order to provide binary search lookup
     // ---
     template <typename DataT>
     struct ZUTIL_API FastAccessBuffer
@@ -26,6 +25,8 @@ namespace zutil
         using DataRef  =       DataT&;
         using CDataRef = const DataT&;
 
+        // --- RETURNS: iterator for data with matching ID : O (log N)
+        // --- THROWS: std::out_of_range if ID not found
         std::vector<_IdentifiedData>::iterator _GetDataIter(size_t dataID)
         {
             auto it = std::lower_bound(
@@ -43,7 +44,7 @@ namespace zutil
     public:
         explicit FastAccessBuffer(size_t reserveBuffer = 32) { this->_dataBuffer.reserve(reserveBuffer); }
 
-        // --- Check's if data with ID exists within buffer ---
+        // --- Check's if data with ID exists within buffer : O (log N) ---
         [[nodiscard]] bool Contains(size_t dataID) const noexcept
         {
             try { auto _testIter = this->_GetDataIter(dataID); }
@@ -51,8 +52,8 @@ namespace zutil
             return true;
         }
 
-        // --- Add data to the buffer ---
-        // RETURNS: the unique ID of the loaded data
+        // --- Add data to the buffer : θ(1), O(n) ---
+        // --- RETURNS: the unique ID of the loaded data
         [[nodiscard]] size_t Insert(DataT&& data)
         {
             size_t id;
@@ -71,7 +72,7 @@ namespace zutil
             return id;
         }
 
-        // --- Remove data from the buffer using it's ID ---
+        // --- Remove data from the buffer using it's ID : O(n) ---
         void Remove(size_t dataID)
         {
             this->_dataBuffer.erase(this->_GetDataIter(dataID));
