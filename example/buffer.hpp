@@ -21,8 +21,8 @@ namespace example
         size_t dataID1 = testBuffer.Insert(TestData{1.0, 1});
         size_t dataID2 = testBuffer.Insert(TestData{2.0, 2});
 
-        test.AddCase(Z_CND_SPLAT(testBuffer.At(dataID1).iVal == 1));
-        test.AddCase(Z_CND_SPLAT(testBuffer.At(dataID2).iVal == 2));
+        test.AddCase(Z_CND_SPLAT(testBuffer[dataID1].iVal == 1));
+        test.AddCase(Z_CND_SPLAT(testBuffer[dataID2].iVal == 2));
 
         test.AddCase(Z_CND_SPLAT(testBuffer.Size() == 2));
         testBuffer.Remove(dataID1);

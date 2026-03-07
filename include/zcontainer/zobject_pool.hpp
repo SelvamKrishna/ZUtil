@@ -3,67 +3,77 @@
 #include "_export.hpp"
 
 #include <vector>
-#include <format>
-#include <stdexcept>
 
 namespace zutil
 {
 
-    // ---
-    // ---
+    /// ---
+    /// @brief Fixed-size object pool.
+    /// Stores objects in a preallocated buffer and tracks active slots using a bitmap.
+    /// @tparam DataT Type stored in the pool.
+    /// ---
     template<typename DataT>
     struct ZUTIL_API ObjectPool
     {
     private:
-        std::vector<DataT> _objectBuffer;
-        std::vector<bool>  _objectActive;
-
-        const size_t POOL_SIZE;
+        std::vector<DataT> _objectBuffer; ///< Densely packed buffer of data
+        std::vector<bool>  _objectActive; ///< Active flags of all data by index
+        size_t _currentlyActive = 0;      ///< No.of active objects
 
     public:
+        /// @param poolReserve Fixed capacity of the pool
         explicit ObjectPool(size_t poolReserve = 64)
-            : POOL_SIZE {poolReserve}
         {
             this->_objectBuffer.resize(poolReserve);
-            this->_objectActive.resize(poolReserve);
+            this->_objectActive.resize(poolReserve, false);
         }
 
+        /// @brief Acquire an object from the pool
+        /// @param args Arguments used to initialize the object
+        /// @return Pointer to the object, or nullptr if the pool is full
         template <typename... Args>
-        [[nodiscard]] DataT& Acquire(Args&&... args)
+        [[nodiscard]] DataT* Acquire(Args&&... args)
         {
-            for (size_t idx = 0; idx < this->POOL_SIZE; ++ idx)
+            for (size_t idx = 0; idx < this->_objectBuffer.size(); ++ idx)
             {
-                if (!this->_objectActive[idx])
+                if (this->_objectActive[idx] == false)
                 {
                     this->_objectActive[idx] = true;
+                    this->_currentlyActive ++;
+
                     this->_objectBuffer[idx] = DataT {std::forward<Args>(args)...};
-                    return this->_objectBuffer[idx];
+                    return &this->_objectBuffer[idx];
                 }
             }
 
-            throw std::overflow_error { std::format("ObjectPool exhausted. Provided limit {}", this->POOL_SIZE) };
+            return nullptr;
         }
 
+        /// @brief Release an object back to the pool
+        /// @param objectPtr Pointer previously returned by Acquire
+        /// @note objectPtr must belong to this pool
         void Release(DataT* objectPtr)
         {
-            for (size_t idx = 0; idx < this->POOL_SIZE; ++ idx)
-            {
-                if(objectPtr == &this->_objectBuffer[idx])
-                {
-                    this->_objectActive[idx] = false;
-                    return;
-                }
-            }
+            size_t idx = objectPtr - this->_objectBuffer.data();
+            this->_objectActive[idx] = false;
+            this->_currentlyActive --;
         }
 
+        /// @brief Iterate over all active objects in the pool
+        /// @param fn Callable invoked for each active objects
+        /// @note fn must match `void (Data&)` signature
         template <typename Fn>
         void ForEachActive(Fn fn)
         {
-            for (size_t idx = 0; idx < this->POOL_SIZE; ++ idx)
+            for (size_t idx = 0; idx < this->_objectBuffer.size(); ++ idx)
             {
-                if (this->_objectActive[idx]) fn(this->_objectBuffer[idx]);
+                if (this->_objectActive[idx] == true) fn(this->_objectBuffer[idx]);
             }
         }
+
+        /// @brief Check whether the pool has reached capacity
+        /// @return True if no more objects can be acquired
+        [[nodiscard]] constexpr bool IsFull() const noexcept { return this->_currentlyActive == this->_objectBuffer.size(); }
     };
 
 } // namespace zutil

@@ -9,22 +9,28 @@
 namespace zutil
 {
 
-    // ---
-    // Stores items of unique ID's, used in Entity-Component-Systems.
-    // Densly packed data, Sparesly packed ID's
-    // ---
+    /// ---
+    /// @brief Sparse set container providing O(1) insertion, removal, and lookup by ID.
+    /// Stores elements in a dense array while maintaining a sparse lookup table that
+    /// maps external IDs to dense indices. commonly used in Entity Component Systems (ECS)
+    /// where entities are sparse but components must be iterated efficiently.
+    /// @tparam DataT Type of data stored in the sparse set.
+    /// ---
     template<typename DataT>
     struct ZUTIL_API SparseSet
     {
     private:
-        std::vector<size_t> _sparseIDs;
-        std::vector<size_t> _denseIDs;
-        std::vector<DataT>  _denseData;
+        std::vector<size_t> _sparseIDs; ///< Maps external IDs → dense indices
+        std::vector<size_t> _denseIDs;  ///< Maps dense indices → external IDs
+        std::vector<DataT>  _denseData; ///< Contiguous storage of data
 
         using DataRef  =       DataT&;
         using CDataRef = const DataT&;
 
     public:
+        /// @brief Constructs a sparse set with reserved capacity.
+        /// @param sparseReserve Initial capacity for the sparse ID lookup table.
+        /// @param denseReserve  Initial capacity for dense storage.
         explicit SparseSet(size_t sparseReserve = 64, size_t denseReserve = 64)
         {
             this->_sparseIDs.reserve(sparseReserve);
@@ -32,7 +38,11 @@ namespace zutil
             this->_denseData.reserve(denseReserve);
         }
 
-        // --- Add value to buffer and binds it to the ID : O(1) ---
+        /// @brief Inserts a value associated with an ID.
+        /// @param id External ID associated with the value.
+        /// @param value Data to store.
+        /// @throws std::invalid_argument If the ID already exists.
+        /// @note θ(1), O(N)
         void Insert(size_t id, DataT value)
         {
             if (this->Contains(id)) throw std::invalid_argument {
@@ -46,7 +56,10 @@ namespace zutil
             this->_denseData.push_back(std::move(value));
         }
 
-        // --- Remove value from buffer using ID : O(1) ---
+        /// @brief Removes the value associated with an ID.
+        /// @param dataID ID of the element to remove.
+        /// @throws std::invalid_argument If the ID does not exist.
+        /// @note O(1)
         void Remove(size_t dataID)
         {
             if (!this->Contains(dataID)) throw std::invalid_argument {
@@ -65,7 +78,10 @@ namespace zutil
             this->_denseData.pop_back();
         }
 
-        // --- Checks if data with ID exists : O(1) ---
+        /// @brief Checks whether an ID exists in the sparse set.
+        /// @param dataID ID to check.
+        /// @return True if the ID is present.
+        /// @note O(1)
         [[nodiscard]] bool Contains(size_t dataID) const noexcept
         {
             if (dataID >= this->_sparseIDs.size()) return false;
@@ -74,12 +90,14 @@ namespace zutil
             return index < this->_denseIDs.size() && this->_denseIDs[index] == dataID;
         }
 
+        /// @brief Returns the dense storage buffer.
+        /// Useful for fast iteration over all stored elements.
+        /// @return Const reference to the dense data vector.
         const std::vector<DataT>& Dense() const noexcept { return this->_denseData; }
 
-        [[nodiscard]] DataRef  At(size_t dataID)       { return this->_denseData[this->_sparseIDs[dataID]]; }
-        [[nodiscard]] CDataRef At(size_t dataID) const { return this->_denseData[this->_sparseIDs[dataID]]; }
-
-        [[nodiscard]] size_t Size() const noexcept { return this->_denseData.size(); }
+        /// @brief Returns the number of stored elements.
+        /// @return Current number of elements in the dense storage.
+        [[nodiscard]] constexpr size_t Size() const noexcept { return this->_denseData.size(); }
 
         DataRef  operator [] (size_t dataID)       { return this->_denseData[this->_sparseIDs[dataID]]; }
         CDataRef operator [] (size_t dataID) const { return this->_denseData[this->_sparseIDs[dataID]]; }
