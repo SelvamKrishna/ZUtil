@@ -5,7 +5,7 @@
 namespace zutil
 {
 
-    void _Assert(bool condition, ProString description, const std::source_location& sourceLocation) noexcept
+    void _Assert(bool condition, ProString description, const std::source_location& sourceLocation)
     {
         if (condition) return;
 
