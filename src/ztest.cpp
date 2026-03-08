@@ -10,7 +10,7 @@ namespace zutil
     {
         std::cout
             << contextTag
-            << (condition ? ProString { ANSI::Green, "[PASS]" } : ProString{ ANSI::Red, "[FAIL]" })
+            << (condition ? ProString {ANSI::Green, "[PASS]"} : ProString {ANSI::Red, "[FAIL]"})
             << " : "
             << description
         ;
@@ -18,12 +18,12 @@ namespace zutil
 
     void TestSuite::_LogDescription() const noexcept
     {
-        std::cout << ProString { ANSI::Blue, "\n[TEST][SUITE]" } << " : " << this->_description;
+        std::cout << ProString {ANSI::Blue, "\n[TEST][SUITE]"} << " : " << this->_description;
     }
 
     void TestSuite::_LogSummary() const noexcept
     {
-        std::cout << ProString { ANSI::Blue, "\n[TEST][SUITE]" };
+        std::cout << ProString {ANSI::Blue, "\n[TEST][SUITE]"};
         this->_LogCaseCount();
     }
 
@@ -44,15 +44,14 @@ namespace zutil
 
     TestSuite::~TestSuite() noexcept { if constexpr (!_IS_DISABLED) this->_LogSummary(); }
 
-    [[nodiscard]] size_t TestSuite::GetPassedCount() const noexcept { return this->_passedCases; }
-    [[nodiscard]] size_t TestSuite::GetFailedCount() const noexcept { return this->_failedCases; }
-    [[nodiscard]] size_t TestSuite::GetTotalCount()  const noexcept { return this->GetPassedCount() + this->GetFailedCount(); }
+    [[nodiscard]] uint32_t TestSuite::GetPassedCount() const noexcept { return this->_passedCases; }
+    [[nodiscard]] uint32_t TestSuite::GetFailedCount() const noexcept { return this->_failedCases; }
+    [[nodiscard]] uint32_t TestSuite::GetTotalCount()  const noexcept { return this->GetPassedCount() + this->GetFailedCount(); }
 
     void TestSuite::AddCase(bool testResult, const ProString& testDescription) noexcept
     {
-        this->_passedCases += (testResult == true);
+        this->_passedCases += (testResult == true );
         this->_failedCases += (testResult == false);
-
         ::zutil::Test(testResult, testDescription, {"\n\t"});
     }
 

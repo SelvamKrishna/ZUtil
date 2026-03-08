@@ -2,21 +2,26 @@
 
 #include "_export.hpp"
 #include "_pro_string.hpp"
+#include "zmacros.hpp"
 
 #include <source_location>
 
 namespace zutil
 {
+    /// @brief Internal assert logic implementation
+    /// Evaluates a condition and abort's program on failure.
+    /// @param condition Result of the assert condition.
+    /// @param description Description of the test.
+    /// @param sourceLocation file, function, line number for debugging.
+    /// @note This function is intended to be called through zutil::Assert().
+    ZUTIL_API void _Assert(bool condition, ProString description, const std::source_location& sourceLocation);
 
-#ifdef NDEBUG
-    inline constexpr bool RELEASE_BUILD {true};
-#else
-    inline constexpr bool RELEASE_BUILD {false};
-#endif
-
-    ZUTIL_API void _Assert(bool condition, ProString description, const std::source_location& sourceLocation) noexcept;
-
-    // --- Checks condition if failed aborts process ---
+    /// @brief Evaluates a condition and abort's program on failure.
+    /// @tparam Always ensures function operation on all builds.
+    /// @param condition Result of the assert condition.
+    /// @param description Description of the test.
+    /// @param sourceLocation file, function, line number for debugging.
+    /// @note This function become's a compile-time no-op on Release Builds, unless `Always` is set to true.
     template <bool Always = {false}>
     inline void Assert(
         bool condition,
@@ -24,8 +29,7 @@ namespace zutil
         const std::source_location& sourceLocation = std::source_location::current()
     )
     {
-        if constexpr (Always || !RELEASE_BUILD)
-            ::zutil::_Assert(condition, description, sourceLocation);
+        if constexpr (Always || BUILD_DEBUG) ::zutil::_Assert(condition, description, sourceLocation);
     }
 
 } // namespace zutil

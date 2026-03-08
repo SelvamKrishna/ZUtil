@@ -8,64 +8,117 @@
 
 namespace zutil
 {
+
 #ifdef Z_DISABLE_LOGGING
     inline constexpr bool DISABLE_LOGGING {true};
 #else
     inline constexpr bool DISABLE_LOGGING {false};
 #endif
 
-    enum LogLevel : uint8_t { DBG, INFO, WARN, ERR, _COUNT };
+    /// @brief Logging severity levels.
+    /// Used to categorize log messages according to their importance.
+    enum LogLevel : uint8_t
+    {
+        DBG  = 0, ///< Debug information
+        INFO = 1, ///< Informational message
+        WARN = 2, ///< Warning condition
+        ERR  = 3, ///< Error condition
+        _COUNT    ///< Internal count of levels
+    };
 
+    /// @brief Stream insertion operator for LogLevel.
+    /// @param outStream Output stream.
+    /// @param logLevel Log level to print.
+    /// @return Reference to the output stream.
     ZUTIL_API std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept;
 
+    /// @brief Internal logging implementation.
+    /// Outputs a log message with the given severity and context.
+    /// @param logLevel Severity level of the message.
+    /// @param message Message to log.
+    /// @param context Optional contextual information.
+    /// @note Intended to be called through zutil::Log().
     ZUTIL_API void _Log(LogLevel logLevel, const ProString& message, const ProString& context) noexcept;
 
-    // --- Logs message to console with added context and log level ---
+    /// @brief Logs a message with a specified severity level.
+    /// If logging is disabled via `Z_DISABLE_LOGGING`, this function
+    /// becomes a compile-time no-op.
+    /// @param level Log severity level.
+    /// @param message Message to output.
+    /// @param context Optional contextual information.
     inline void Log(LogLevel level, const ProString& message, const ProString& context = {""}) noexcept
     {
         if constexpr (!DISABLE_LOGGING) ::zutil::_Log(level, message, context);
     }
 
-    // ---
-    // Provides logging Context for classes / structs
-    // ---
+    /// @brief Base class that provides contextual logging.
+    /// `Logger` allows derived classes or systems to attach a persistent
+    /// context prefix to all log messages. This is useful for identifying
+    /// the source of logs such as subsystems, managers, or objects.
     struct ZUTIL_API Logger
     {
         friend struct ScopeDiagnostic;
 
     private:
-        std::string _logContext;
+        std::string _logContext; ///< Context prefix applied to log messages
 
     protected:
+        /// @brief Disabled default constructor.
         Logger() = delete;
 
+        /// @brief Constructs a logger with a single context tag.
+        /// @param logContext Context label.
         explicit Logger(const ProString& logContext);
+
+        /// @brief Constructs a logger with multiple context tags.
+        /// Each element is appended to the context prefix.
+        /// @param logContextCollection Collection of context labels.
         explicit Logger(const std::vector<zutil::ProString>& logContextCollection);
 
+        /// @brief Returns the stored logging context.
+        /// @return Context string.
         [[nodiscard]] const std::string& GetContext() const noexcept;
 
-        // --- Add context to prefix ---
+        /// @brief Appends an additional context tag.
+        /// @param context Context label to append.
         void AddContext(const ProString& context) noexcept;
 
-        // --- Logs message with object context prefix ---
+        /// @brief Logs a message using the stored context prefix.
+        /// @param logLevel Severity level.
+        /// @param message Message to log.
         void Log(LogLevel logLevel, const ProString& message) const noexcept;
     };
 
-    // ---
-    // Provides methods to log contexted success / failure of operations
-    // ---
+    /// ---
+    /// @brief RAII diagnostic helper for scoped operations.
+    /// Automatically logs diagnostic information about an operation within scope.
+    /// It is commonly used to report success or failure of operations along with context
+    /// @note The class can optionally attach to a `Logger` instance to
+    /// inherit its logging context.
+    /// ---
     struct ZUTIL_API ScopeDiagnostic
     {
     private:
-        const std::string          _DESCRIPTION;
-        const std::source_location _SOURCE_LOCATION;
-        const Logger*              _LOGGER_PTR {nullptr};
-        const bool                 _IS_VERBOSE {false};
+        std::string          _DESCRIPTION;          ///< Description of the operation
+        std::source_location _SOURCE_LOCATION;      ///< Source location of invocation
+        const Logger*        _LOGGER_PTR {nullptr}; ///< Optional logger context
+        bool                 _IS_VERBOSE {false};   ///< Verbose logging flag
 
+        /// @brief Logs the operation description.
+        /// @param prefix Text prefix applied to the message.
         void _LogDescription(std::string_view prefix) const noexcept;
+
+        /// @brief Logs a message using the configured context.
+        /// @param logLevel Severity level.
+        /// @param message Message to log.
         void _LogMessage(LogLevel logLevel, const ProString& message) const noexcept;
 
     public:
+        /// @brief Constructs a scope diagnostic helper.
+        /// @param operationDesc Description of the operation being performed.
+        /// @param classLogger Optional logger providing context.
+        /// @param isVerbose Enables additional verbose logging.
+        /// @param sourceLocation Automatically captured source location.
         ScopeDiagnostic(
             const ProString& operationDesc = "",
             const Logger* classLogger = nullptr,
@@ -76,16 +129,23 @@ namespace zutil
         ScopeDiagnostic& operator=(ScopeDiagnostic&&)      noexcept = delete;
         ScopeDiagnostic& operator=(const ScopeDiagnostic&) noexcept = delete;
 
+        /// @brief Destructor.
+        /// May log completion or summary information depending on verbosity
+        /// and recorded state.
         ~ScopeDiagnostic() noexcept;
 
-        // --- Logs error message w/ context and aborts process ---
+        /// @brief Logs an error message and aborts the process.
+        /// Intended for unrecoverable failures.
+        /// @param message Error message to log.
         [[noreturn]] void FailAbort(const ProString& message) const noexcept;
 
-        // --- Logs warning message w/ context ---
+        /// @brief Logs a warning indicating operation failure.
+        /// @param message Warning message to log.
         void FailWarn(const ProString& message) const noexcept;
 
-        // --- Logs operation success message w/ context ---
-        void Success (const ProString& message) const noexcept;
+        /// @brief Logs a success message for the operation.
+        /// @param message Success message to log.
+        void Success(const ProString& message) const noexcept;
     };
 
 } // namespace zutil
