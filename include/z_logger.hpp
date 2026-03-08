@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
-namespace zutil
+namespace zen
 {
 
 #ifdef Z_DISABLE_LOGGING
@@ -30,15 +30,15 @@ namespace zutil
     /// @param outStream Output stream.
     /// @param logLevel Log level to print.
     /// @return Reference to the output stream.
-    ZUTIL_API std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept;
+    ZEN_API std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept;
 
     /// @brief Internal logging implementation.
     /// Outputs a log message with the given severity and context.
     /// @param logLevel Severity level of the message.
     /// @param message Message to log.
     /// @param context Optional contextual information.
-    /// @note Intended to be called through zutil::Log().
-    ZUTIL_API void _Log(LogLevel logLevel, const ProString& message, const ProString& context) noexcept;
+    /// @note Intended to be called through zen::Log().
+    ZEN_API void _Log(LogLevel logLevel, const ProString& message, const ProString& context) noexcept;
 
     /// @brief Logs a message with a specified severity level.
     /// If logging is disabled via `Z_DISABLE_LOGGING`, this function
@@ -48,14 +48,14 @@ namespace zutil
     /// @param context Optional contextual information.
     inline void Log(LogLevel level, const ProString& message, const ProString& context = {""}) noexcept
     {
-        if constexpr (!DISABLE_LOGGING) ::zutil::_Log(level, message, context);
+        if constexpr (!DISABLE_LOGGING) ::zen::_Log(level, message, context);
     }
 
     /// @brief Base class that provides contextual logging.
     /// `Logger` allows derived classes or systems to attach a persistent
     /// context prefix to all log messages. This is useful for identifying
     /// the source of logs such as subsystems, managers, or objects.
-    struct ZUTIL_API Logger
+    struct ZEN_API Logger
     {
         friend struct ScopeDiagnostic;
 
@@ -73,7 +73,7 @@ namespace zutil
         /// @brief Constructs a logger with multiple context tags.
         /// Each element is appended to the context prefix.
         /// @param logContextCollection Collection of context labels.
-        explicit Logger(const std::vector<zutil::ProString>& logContextCollection);
+        explicit Logger(const std::vector<zen::ProString>& logContextCollection);
 
         /// @brief Returns the stored logging context.
         /// @return Context string.
@@ -96,7 +96,7 @@ namespace zutil
     /// @note The class can optionally attach to a `Logger` instance to
     /// inherit its logging context.
     /// ---
-    struct ZUTIL_API ScopeDiagnostic
+    struct ZEN_API ScopeDiagnostic
     {
     private:
         std::string          _DESCRIPTION;          ///< Description of the operation
@@ -148,4 +148,4 @@ namespace zutil
         void Success(const ProString& message) const noexcept;
     };
 
-} // namespace zutil
+} // namespace zen

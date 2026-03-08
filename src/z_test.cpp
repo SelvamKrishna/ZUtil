@@ -1,9 +1,10 @@
+#define ZEN_BUILD
 #include "_pro_string.hpp"
-#include "ztest.hpp"
+#include "z_test.hpp"
 
 #include <iostream>
 
-namespace zutil
+namespace zen
 {
 
     void _Test(bool condition, const ProString& description, const ProString& contextTag) noexcept
@@ -52,7 +53,7 @@ namespace zutil
     {
         this->_passedCases += (testResult == true );
         this->_failedCases += (testResult == false);
-        ::zutil::Test(testResult, testDescription, {"\n\t"});
+        ::zen::Test(testResult, testDescription, {"\n\t"});
     }
 
-}; // namespace zutil
+}; // namespace zen

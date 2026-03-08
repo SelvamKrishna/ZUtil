@@ -1,6 +1,7 @@
+#define ZEN_BUILD
 #include "_pro_string.hpp"
 
-namespace zutil
+namespace zen
 {
 
     ProString::ProString(std::string_view string, ANSI ansiCode) noexcept
@@ -8,7 +9,7 @@ namespace zutil
         , _string   { string }
     {}
 
-    ProString::ProString(const char* string, zutil::ANSI ansiCode) noexcept
+    ProString::ProString(const char* string, ANSI ansiCode) noexcept
         : _ansiCode { ansiCode }
         , _string   { string }
     {}
@@ -51,4 +52,4 @@ namespace zutil
         return outStream << proString.GetColor() << proString.GetString() << ANSI::Reset;
     }
 
-} // namespace zutil
+} // namespace zen

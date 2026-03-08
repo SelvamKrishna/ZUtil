@@ -3,7 +3,7 @@
 #include "_export.hpp"
 #include "_pro_string.hpp"
 
-namespace zutil
+namespace zen
 {
 
 #ifdef Z_DISABLE_TESTING
@@ -14,11 +14,11 @@ namespace zutil
 
     /// @brief Internal testing implementation.
     /// Evaluates a condition and logs the result with a description and context tag.
-    /// This function is intended to be called through zutil::Test().
+    /// This function is intended to be called through zen::Test().
     /// @param condition Result of the test condition.
     /// @param description Description of the test.
     /// @param contextTag Optional context tag used for grouping or labeling tests.
-    ZUTIL_API void _Test(bool condition, const ProString& description, const ProString& contextTag) noexcept;
+    ZEN_API void _Test(bool condition, const ProString& description, const ProString& contextTag) noexcept;
 
     /// @brief Evaluates a test condition and logs the result.
     /// If testing is disabled via `Z_DISABLE_TESTING`, this function becomes a compile-time no-op.
@@ -32,7 +32,7 @@ namespace zutil
     ) noexcept
     {
         if constexpr (DISABLE_TESTING) return;
-        ::zutil::_Test(condition, description, contextTag);
+        ::zen::_Test(condition, description, contextTag);
     }
 
     /// ---
@@ -41,7 +41,7 @@ namespace zutil
     /// passed and failed. When the suite goes out of scope, a summary
     /// of the results is automatically logged.
     /// ---
-    struct ZUTIL_API TestSuite final
+    struct ZEN_API TestSuite final
     {
     private:
         std::string _description;     ///< Description of the test suite
@@ -86,4 +86,4 @@ namespace zutil
         void AddCase(bool testResult, const ProString& testDescription) noexcept;
     };
 
-} // namespace zutil
+} // namespace zen
