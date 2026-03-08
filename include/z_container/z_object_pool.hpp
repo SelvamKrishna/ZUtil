@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace zutil
+namespace zen
 {
 
     /// ---
@@ -13,7 +13,7 @@ namespace zutil
     /// @tparam DataT Type stored in the pool.
     /// ---
     template<typename DataT>
-    struct ZUTIL_API ObjectPool
+    struct ZEN_API ObjectPool
     {
     private:
         std::vector<DataT> _objectBuffer; ///< Densely packed buffer of data
@@ -40,7 +40,6 @@ namespace zutil
                 {
                     this->_objectActive[idx] = true;
                     this->_currentlyActive ++;
-
                     this->_objectBuffer[idx] = DataT {std::forward<Args>(args)...};
                     return &this->_objectBuffer[idx];
                 }
@@ -66,9 +65,7 @@ namespace zutil
         void ForEachActive(Fn fn)
         {
             for (size_t idx = 0; idx < this->_objectBuffer.size(); ++ idx)
-            {
                 if (this->_objectActive[idx] == true) fn(this->_objectBuffer[idx]);
-            }
         }
 
         /// @brief Check whether the pool has reached capacity
@@ -76,4 +73,4 @@ namespace zutil
         [[nodiscard]] constexpr bool IsFull() const noexcept { return this->_currentlyActive == this->_objectBuffer.size(); }
     };
 
-} // namespace zutil
+} // namespace zen
