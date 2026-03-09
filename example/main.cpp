@@ -1,7 +1,7 @@
 #include "../zen_core.hpp" // IWYU pragma: keep
-
-#include "../example/logging.hpp"
-#include "../example/testing.hpp"
+#include "../example/logging.hpp" // IWYU pragma: keep
+#include "../example/testing.hpp" // IWYU pragma: keep
+#include "../example/buffer.hpp"  // IWYU pragma: keep
 
 #include <iostream>
 
@@ -27,13 +27,14 @@ void RunAllTests(void)
     example::BasicLogging();
     example::LoggerClass();
     example::ScopeDiagnosticOverview();
-    // example::BasicAssertion();          // Uncomment to test assertion failure
+
+    // example::BasicAssertion(); // Uncomment to test assertion failure
     example::UnitTesting();
     example::SuiteTesting();
 
-    // example::FastAccessBuffer();
-    // example::SparseSetInsertion();
-    // example::DoubleBuffer();
+    example::FastAccessBuffer();
+    example::SparseSetInsertion();
+    example::DoubleBuffer();
 }
 
 void Playground(void)

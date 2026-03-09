@@ -1,4 +1,7 @@
+#ifndef ZEN_BUILD
 #define ZEN_BUILD
+#endif
+
 #include "_pro_string.hpp"
 #include "z_test.hpp"
 

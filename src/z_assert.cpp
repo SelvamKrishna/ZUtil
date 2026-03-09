@@ -1,4 +1,7 @@
+#ifndef ZEN_BUILD
 #define ZEN_BUILD
+#endif
+
 #include "z_assert.hpp"
 
 #include <iostream>
