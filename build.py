@@ -46,6 +46,8 @@ def main() -> None:
         ]
     )
 
+    run_cmd(["cmake", "--build", BUILD_DIRECTORY, "--parallel"])
+
     if "test" in sys.argv:
         print("\033[0;32m[dev] Testing...\033[0m")
         run_cmd([
