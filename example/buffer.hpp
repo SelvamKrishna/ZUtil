@@ -41,7 +41,7 @@ namespace example
 
         try {
             testBuffer.Insert(2, TestData{2.0, 2});
-        } catch (std::invalid_argument err) {
+        } catch (std::invalid_argument& err) {
             test.AddCase(true, err.what());
         }
 
@@ -54,7 +54,7 @@ namespace example
 
         try {
             testBuffer.Remove(3);
-        } catch (std::invalid_argument err) {
+        } catch (std::invalid_argument& err) {
             test.AddCase(true, err.what());
         }
 

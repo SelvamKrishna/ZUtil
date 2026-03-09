@@ -68,28 +68,3 @@ set_target_properties(zenutil PROPERTIES
   CXX_EXTENSIONS NO
   POSITION_INDEPENDENT_CODE ON
 )
-
-# --------------------------------------------------
-# Install rules
-# --------------------------------------------------
-
-install(TARGETS zenutil
-  EXPORT zenutilTargets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-)
-
-install(DIRECTORY include/
-  DESTINATION include
-)
-
-# --------------------------------------------------
-# Export targets for find_package
-# --------------------------------------------------
-
-install(EXPORT zenutilTargets
-  FILE zenutilTargets.cmake
-  NAMESPACE zen::
-  DESTINATION lib/cmake/zenutil
-)
