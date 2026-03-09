@@ -6,10 +6,10 @@ ZEN is a lightweight, cross-platform C++ utility library providing general-purpo
 
 Zen Util Library aims to provide:
 
-. Logging, Testing and Benchmarking tools
-. Simple, reusable utility components
-. Minimal dependencies
-. Cross-platform compatibility
+- Logging, Testing and Benchmarking tools
+- Simple, reusable utility components
+- Minimal dependencies
+- Cross-platform compatibility
 
 ## Setup
 
@@ -24,12 +24,12 @@ cd zenutil
 
 Make sure the following tools are installed:
 
-. **[CMake](https://cmake.org/download/)**
-. **C++ compiler**
-    . GCC/MinGW
-    . Clang
-    . MSVC
-. **[Python (optional)](https://python.org/downloads/)**
+- **[CMake](https://cmake.org/download/)**
+- **C++ compiler**
+    - GCC/MinGW
+    - Clang
+    - MSVC
+- **[Python (optional)](https://python.org/downloads/)**
 
 ## Build Options
 ### Option 1 — Using the Python build script (recommended)
@@ -49,9 +49,9 @@ python build.py test
 
 This script will:
 
-. configure the CMake project
-. build the library
-. optionally run development tests
+- Configure the CMake project
+- Build the library
+- Optionally run development tests
 
 ### Option 2 — Using CMake directly
 
