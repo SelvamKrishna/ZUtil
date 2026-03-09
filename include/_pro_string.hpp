@@ -1,24 +1,24 @@
 #pragma once
 
 #include "_export.hpp"
-#include "zansi.hpp"
+#include "_ansi.hpp"
 
 #include <format>
 #include <ostream>
 #include <string>
 #include <source_location>
 
-namespace zutil
+namespace zen
 {
 
     /// ---
     /// @brief String wrapper with ANSI color support.
     /// `ProString` encapsulates a `std::string` with an associated ANSI color code.
     /// ---
-    struct ZUTIL_API ProString
+    struct ZEN_API ProString
     {
     private:
-        zutil::ANSI _ansiCode { ANSI::Reset }; ///< ANSI code for the string
+        ANSI _ansiCode { ANSI::Reset }; ///< ANSI code for the string
         std::string _string;                   ///< Stored string data
 
     public:
@@ -27,12 +27,12 @@ namespace zutil
         /// @brief Constructs a `ProString` from a `std::string_view`.
         /// @param string String content
         /// @param ansiCode Optional ANSI color (default: Reset)
-        ProString(std::string_view string, zutil::ANSI ansiCode = zutil::ANSI::Reset) noexcept;
+        ProString(std::string_view string, ANSI ansiCode = ANSI::Reset) noexcept;
 
         /// @brief Constructs a `ProString` from a C-style string.
         /// @param string C-style string content
         /// @param ansiCode Optional ANSI color (default: Reset)
-        ProString(const char* string, zutil::ANSI ansiCode = zutil::ANSI::Reset) noexcept;
+        ProString(const char* string, ANSI ansiCode = ANSI::Reset) noexcept;
 
         /// @brief Constructs a `ProString` using `std::format_string`.
         /// @tparam Args Format argument types
@@ -51,7 +51,7 @@ namespace zutil
         /// @param formatString Format string
         /// @param formatArgs Arguments to format
         template <typename... Args>
-        ProString(zutil::ANSI ansiCode, const std::format_string<Args...> formatString, Args&&... formatArgs)
+        ProString(ANSI ansiCode, const std::format_string<Args...> formatString, Args&&... formatArgs)
             : _ansiCode { ansiCode }
             , _string   { std::format(formatString, std::forward<Args>(formatArgs)...) }
         {}
@@ -65,7 +65,7 @@ namespace zutil
 
         /// @brief Returns the ANSI color of the string.
         /// @return ANSI code
-        [[nodiscard]] zutil::ANSI GetColor() const noexcept;
+        [[nodiscard]] ANSI GetColor() const noexcept;
 
         /// @brief Returns the underlying string.
         /// @return Const reference to the string
@@ -77,7 +77,7 @@ namespace zutil
 
         /// @brief Sets the ANSI color for the string.
         /// @param ansiCode ANSI code to assign
-        void SetColor(zutil::ANSI ansiCode) noexcept;
+        void SetColor(ANSI ansiCode) noexcept;
 
         /// @brief Sets the string content.
         /// @param string New string content
@@ -94,16 +94,16 @@ namespace zutil
         friend std::ostream& operator<<(std::ostream& outStream, const ProString& proString) noexcept;
     };
 
-} // namespace zutil
+} // namespace zen
 
-/// @brief Formatter specialization for `zutil::ProString` to support `std::format`.
+/// @brief Formatter specialization for `zen::ProString` to support `std::format`.
 /// Allows `ProString` instances to be used in `std::format` or `std::format_to`.
 template <>
-struct std::formatter<zutil::ProString>
+struct std::formatter<zen::ProString>
 {
     constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
-    auto format(const zutil::ProString &proString, std::format_context &ctx) const
+    auto format(const zen::ProString &proString, std::format_context &ctx) const
     {
         return std::format_to(ctx.out(), "{}", proString.GetParsedString());
     }

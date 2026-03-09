@@ -6,7 +6,7 @@
 #include <format>
 #include <stdexcept>
 
-namespace zutil
+namespace zen
 {
 
     /// ---
@@ -17,7 +17,7 @@ namespace zutil
     /// @tparam DataT Type of data stored in the sparse set.
     /// ---
     template<typename DataT>
-    struct ZUTIL_API SparseSet
+    struct ZEN_API SparseSet
     {
     private:
         std::vector<size_t> _sparseIDs; ///< Maps external IDs → dense indices
@@ -103,4 +103,4 @@ namespace zutil
         CDataRef operator [] (size_t dataID) const { return this->_denseData[this->_sparseIDs[dataID]]; }
     };
 
-} // namespace zutil
+} // namespace zen

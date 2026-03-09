@@ -6,7 +6,7 @@
 #include <format>
 #include <stdexcept>
 
-namespace zutil
+namespace zen
 {
 
     /// ---
@@ -16,7 +16,7 @@ namespace zutil
     /// @tparam DataT Type of data stored in the buffer.
     /// ---
     template <typename DataT>
-    struct ZUTIL_API FastAccessBuffer
+    struct ZEN_API FastAccessBuffer
     {
     private:
         /// @brief Internal structure binding an ID to stored data.
@@ -113,4 +113,4 @@ namespace zutil
         CDataRef operator [] (size_t dataID) const { return this->_GetDataIter(dataID)->data; }
     };
 
-} // namespace zutil
+} // namespace zen

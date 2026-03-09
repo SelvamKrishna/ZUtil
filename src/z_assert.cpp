@@ -1,8 +1,12 @@
-#include "zassert.hpp"
+#ifndef ZEN_BUILD
+#define ZEN_BUILD
+#endif
+
+#include "z_assert.hpp"
 
 #include <iostream>
 
-namespace zutil
+namespace zen
 {
 
     void _Assert(bool condition, ProString description, const std::source_location& sourceLocation)
@@ -22,4 +26,4 @@ namespace zutil
         std::abort();
     }
 
-} // namespace zutil
+} // namespace zen

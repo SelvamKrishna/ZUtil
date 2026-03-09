@@ -1,11 +1,11 @@
 #pragma once
 
-#include "zcontainer/zfast_access_buffer.hpp"
-#include "zcontainer/zspares_set.hpp"
-#include "zcontainer/zdouble_buffer.hpp"
+#include "z_container/z_fast_access_buffer.hpp"
+#include "z_container/z_spares_set.hpp"
+#include "z_container/z_double_buffer.hpp"
 
-#include "ztest.hpp"
-#include "zmacros.hpp"
+#include "z_test.hpp"
+#include "z_macros.hpp"
 
 #include <cassert>
 
@@ -15,9 +15,9 @@ namespace example
 
     inline void FastAccessBuffer() noexcept
     {
-        zutil::TestSuite test {__PRETTY_FUNCTION__};
+        zen::TestSuite test {__PRETTY_FUNCTION__};
 
-        zutil::FastAccessBuffer<TestData> testBuffer {8};
+        zen::FastAccessBuffer<TestData> testBuffer {8};
         size_t dataID1 = testBuffer.Insert(TestData{1.0, 1});
         size_t dataID2 = testBuffer.Insert(TestData{2.0, 2});
 
@@ -33,15 +33,15 @@ namespace example
 
     inline void SparseSetInsertion() noexcept
     {
-        zutil::TestSuite test {__PRETTY_FUNCTION__};
+        zen::TestSuite test {__PRETTY_FUNCTION__};
 
-        zutil::SparseSet<TestData> testBuffer {8, 8};
+        zen::SparseSet<TestData> testBuffer {8, 8};
         testBuffer.Insert(1, TestData{1.0, 1});
         testBuffer.Insert(2, TestData{2.0, 2});
 
         try {
             testBuffer.Insert(2, TestData{2.0, 2});
-        } catch (std::invalid_argument err) {
+        } catch (std::invalid_argument& err) {
             test.AddCase(true, err.what());
         }
 
@@ -54,7 +54,7 @@ namespace example
 
         try {
             testBuffer.Remove(3);
-        } catch (std::invalid_argument err) {
+        } catch (std::invalid_argument& err) {
             test.AddCase(true, err.what());
         }
 
@@ -65,8 +65,8 @@ namespace example
 
     inline void DoubleBuffer() noexcept
     {
-        zutil::TestSuite test {__PRETTY_FUNCTION__};
-        zutil::DoubleBuffer<TestData> testBuffer;
+        zen::TestSuite test {__PRETTY_FUNCTION__};
+        zen::DoubleBuffer<TestData> testBuffer;
 
         test.AddCase(Z_CND_SPLAT(testBuffer.Read().fVal == 0.0));
         test.AddCase(Z_CND_SPLAT(testBuffer.Read().iVal == 0));

@@ -3,14 +3,14 @@
 #include <cstdlib> // IWYU pragma: keep
 #include <cstddef> // IWYU pragma: keep
 
-namespace zutil
+namespace zen
 {
 #ifdef NDEBUG
     inline constexpr bool BUILD_DEBUG = false;
 #else
     inline constexpr bool BUILD_DEBUG = true;
 #endif
-} // namespace zutil
+} // namespace zen
 
 // ============================================================
 // Logging / Debug Helpers
@@ -18,7 +18,7 @@ namespace zutil
 
 /// @brief Expands a variable to `"name = (value)"`.
 #define Z_VAR_SPLAT(variable) \
-    {"{} = ({})", ::zutil::ProString{::zutil::ANSI::Magenta, #variable}, (variable)}
+    {"{} = ({})", ::zen::ProString{::zen::ANSI::Magenta, #variable}, (variable)}
 
 /// @brief Expands a condition and its textual representation.
 #define Z_CND_SPLAT(condition) \
@@ -30,11 +30,11 @@ namespace zutil
 
 /// @brief Execute code only in debug builds.
 #define Z_ON_DBG \
-    if constexpr (::zutil::BUILD_DEBUG)
+    if constexpr (::zen::BUILD_DEBUG)
 
 /// @brief Execute code only in release builds.
 #define Z_ON_RLS \
-    if constexpr (!::zutil::BUILD_DEBUG)
+    if constexpr (!::zen::BUILD_DEBUG)
 
 // ============================================================
 // Compiler Hints

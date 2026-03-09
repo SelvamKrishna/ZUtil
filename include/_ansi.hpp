@@ -4,7 +4,7 @@
 #include <format>
 #include <ostream>
 
-namespace zutil
+namespace zen
 {
 
 #ifdef Z_DISABLE_ANSI
@@ -73,22 +73,22 @@ namespace zutil
     /// @param outStream Output stream.
     /// @param ansiCode ANSI code to insert.
     /// @return Reference to the output stream.
-    inline std::ostream& operator<<(std::ostream& outStream, const ANSI& ansiCode) noexcept
+    inline std::ostream& operator<<(std::ostream& outStream, const ::zen::ANSI& ansiCode) noexcept
     {
         return (DISABLE_ANSI) ? outStream : outStream << "\033[" << static_cast<int>(ansiCode) << "m";
     }
 
-} // namespace zutil
+} // namespace zen
 
-/// @brief Formatter specialization for `zutil::ANSI` to support `std::format`.
+/// @brief Formatter specialization for `::zen::ANSI` to support `std::format`.
 template <>
-struct std::formatter<zutil::ANSI>
+struct std::formatter<::zen::ANSI>
 {
     constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
-    auto format(const zutil::ANSI &ansiCode, std::format_context &ctx) const
+    auto format(const ::zen::ANSI &ansiCode, std::format_context &ctx) const
     {
-        return (zutil::DISABLE_ANSI)
+        return (::zen::DISABLE_ANSI)
             ? std::format_to(ctx.out(), "")
             : std::format_to(ctx.out(), "\033[{}m", static_cast<int>(ansiCode));
     }

@@ -2,19 +2,19 @@
 
 #include "_export.hpp"
 #include "_pro_string.hpp"
-#include "zmacros.hpp"
+#include "z_macros.hpp"
 
 #include <source_location>
 
-namespace zutil
+namespace zen
 {
     /// @brief Internal assert logic implementation
     /// Evaluates a condition and abort's program on failure.
     /// @param condition Result of the assert condition.
     /// @param description Description of the test.
     /// @param sourceLocation file, function, line number for debugging.
-    /// @note This function is intended to be called through zutil::Assert().
-    ZUTIL_API void _Assert(bool condition, ProString description, const std::source_location& sourceLocation);
+    /// @note This function is intended to be called through zen::Assert().
+    ZEN_API void _Assert(bool condition, ProString description, const std::source_location& sourceLocation);
 
     /// @brief Evaluates a condition and abort's program on failure.
     /// @tparam Always ensures function operation on all builds.
@@ -29,7 +29,7 @@ namespace zutil
         const std::source_location& sourceLocation = std::source_location::current()
     )
     {
-        if constexpr (Always || BUILD_DEBUG) ::zutil::_Assert(condition, description, sourceLocation);
+        if constexpr (Always || BUILD_DEBUG) ::zen::_Assert(condition, description, sourceLocation);
     }
 
-} // namespace zutil
+} // namespace zen

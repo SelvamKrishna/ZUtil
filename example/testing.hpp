@@ -1,8 +1,8 @@
 #pragma once
 
-#include "zassert.hpp"
-#include "ztest.hpp"
-#include "zmacros.hpp"
+#include "z_assert.hpp"
+#include "z_test.hpp"
+#include "z_macros.hpp"
 
 namespace example {
 
@@ -10,20 +10,20 @@ namespace example {
     {
         int errCode = 0;
 
-        zutil::Assert(errCode == 0, "Message MUST NOT be displayed");
-        zutil::Assert(Z_CND_SPLAT(errCode != 0));
-        zutil::Assert<1>(false, "Displayed in both Debug and Release builds");
+        zen::Assert(errCode == 0, "Message MUST NOT be displayed");
+        zen::Assert(Z_CND_SPLAT(errCode != 0));
+        zen::Assert<1>(false, "Displayed in both Debug and Release builds");
     }
 
     inline void UnitTesting()
     {
-        zutil::Test(true, "This test MUST PASS");
-        zutil::Test(false, "This test MUST FAIL");
+        zen::Test(true, "This test MUST PASS");
+        zen::Test(false, "This test MUST FAIL");
 
         int value = 42;
 
-        zutil::Test(value == 42, {"Value is correct: {}", value});
-        zutil::Test(Z_CND_SPLAT(value > 100));
+        zen::Test(value == 42, {"Value is correct: {}", value});
+        zen::Test(Z_CND_SPLAT(value > 100));
     }
 
     struct TestStruct
@@ -44,7 +44,7 @@ namespace example {
 
     inline void SuiteTesting()
     {
-        zutil::TestSuite suite("Example Test Suite");
+        zen::TestSuite suite("Example Test Suite");
 
         TestStruct objA {10, 3.14};
         TestStruct objB {10, 3.14};
