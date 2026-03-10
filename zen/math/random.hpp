@@ -2,6 +2,7 @@
 
 #include "../core/_export.hpp"
 #include "../core/types.hpp"
+#include "../container/iterator_wrapper.hpp"
 #include "constants.hpp"
 
 #include <algorithm>
@@ -54,75 +55,57 @@ namespace zen::random
     [[nodiscard]] ZEN_API bool Boolean();
     [[nodiscard]] ZEN_API bool Chance(f32 probability);
 
-    template <typename Iterator>
-    void Shuffle(Iterator begin, Iterator end) { std::shuffle(begin, end, GetEngine()); }
+    template <typename IteratorT>
+    void Shuffle(IteratorT begin, IteratorT end) { std::shuffle(begin, end, GetEngine()); }
 
-    template <typename Iterator>
-    [[nodiscard]] Iterator ChoiceIt(Iterator begin, Iterator end)
+    template <std::forward_iterator IteratorT>
+    [[nodiscard]] IteratorT ChoiceIt(IteratorWrapper<IteratorT> itWrap)
     {
-        using DiffSizeT = typename std::iterator_traits<Iterator>::difference_type;
+        if (itWrap.IsEmpty()) throw std::invalid_argument {"Empty container provided."};
 
-        DiffSizeT size = std::distance(begin, end);
-        if (size <= 0) throw std::invalid_argument{"Container is empty"};
-
-        if constexpr (std::random_access_iterator<Iterator>)
-            return begin + Index(size);
-
-        std::advance(begin, Index(size));
-        return begin;
+        usize index = Index(itWrap.GetSize());
+        return itWrap[index];
     }
 
-    template <typename ValueContainerIterator, typename WeightContainerIterator>
-    [[nodiscard]] auto& WeightedChoiceIt(
-        ValueContainerIterator valuesBegin, ValueContainerIterator valuesEnd,
-        WeightContainerIterator weightsBegin, WeightContainerIterator weightsEnd
+    template <std::forward_iterator ValuesIteratorT, std::forward_iterator WeightsIteratorT>
+    [[nodiscard]] typename std::iterator_traits<ValuesIteratorT>::reference WeightedChoiceIt(
+        IteratorWrapper<ValuesIteratorT> valuesItWrap,
+        IteratorWrapper<WeightsIteratorT> weightsItWrap
     )
     {
-        using ValueDiffSizeT = typename std::iterator_traits<ValueContainerIterator>::difference_type;
-        ValueDiffSizeT valuesSize = std::distance(valuesBegin, valuesEnd);
+        if (valuesItWrap.GetSize() != weightsItWrap.GetSize() || valuesItWrap.IsEmpty())
+            throw std::invalid_argument{"Invalid container sizes"};
 
-        using WeightDiffSizeT = typename std::iterator_traits<WeightContainerIterator>::difference_type;
-        WeightDiffSizeT weightsSize = std::distance(weightsBegin, weightsEnd);
-
-        if (valuesSize != weightsSize)
-            throw std::invalid_argument{"Values and Weight size mismatch"};
-        if (valuesSize == 0)
-            throw std::invalid_argument{"Container is empty"};
-
-        std::discrete_distribution<usize> distribution {weightsBegin, weightsEnd};
-
-        if constexpr (std::random_access_iterator<ValueContainerIterator>)
-            return valuesBegin + distribution(GetEngine());
-
-        std::advance(valuesBegin, distribution(GetEngine()));
-        return valuesBegin;
+        std::discrete_distribution<usize> distribution {weightsItWrap.GetBegin(), weightsItWrap.GetEnd()};
+        usize index = distribution(GetEngine());
+        return valuesItWrap[index];
     }
 
-    template <typename Container>
-    [[nodiscard]] auto& Choice(Container& values) { return *ChoiceIt(values.begin(), values.end()); }
+    template <typename IteratorT>
+    [[nodiscard]] auto& Choice(IteratorT begin, IteratorT end) { return *ChoiceIt({begin, end}); }
 
-    template <typename Container>
-    [[nodiscard]] const auto& Choice(const Container& values) { return *ChoiceIt(values.cbegin(), values.cend()); }
+    template <typename ContainerT>
+    [[nodiscard]] auto& Choice(ContainerT& values) { return *ChoiceIt({values}); }
 
-    template <typename Iterator>
-    [[nodiscard]] auto& Choice(Iterator begin, Iterator end) { return *ChoiceIt(begin, end); }
+    template <typename ContainerT>
+    [[nodiscard]] const auto& Choice(const ContainerT& values) { return *ChoiceIt({values}); }
 
-    template <typename Container, typename WeightContainer>
-    [[nodiscard]] auto& WeightedChoice(Container& values, const WeightContainer& weights)
+    template <typename ContainerT, typename WeightContainerT>
+    [[nodiscard]] auto& WeightedChoice(ContainerT& values, const WeightContainerT& weights)
     {
         return *WeightedChoiceIt(values.begin(), values.end(), weights.cbegin(), weights.cend());
     }
 
-    template <typename Container, typename WeightContainer>
-    [[nodiscard]] const auto& WeightedChoice(const Container& values, const WeightContainer& weights)
+    template <typename ContainerT, typename WeightContainerT>
+    [[nodiscard]] const auto& WeightedChoice(const ContainerT& values, const WeightContainerT& weights)
     {
         return *WeightedChoiceIt(values.cbegin(), values.cend(), weights.cbegin(), weights.cend());
     }
 
-    template <typename ValueContainerIterator, typename WeightContainerIterator>
+    template <typename ValueContainerIteratorT, typename WeightContainerIteratorT>
     [[nodiscard]] const auto& WeightedChoice(
-        ValueContainerIterator valuesBegin, ValueContainerIterator valuesEnd,
-        WeightContainerIterator weightsBegin, WeightContainerIterator weightsEnd
+        ValueContainerIteratorT valuesBegin, ValueContainerIteratorT valuesEnd,
+        WeightContainerIteratorT weightsBegin, WeightContainerIteratorT weightsEnd
     )
     {
         return *WeightedChoiceIt(valuesBegin, valuesEnd, weightsBegin, weightsEnd);
