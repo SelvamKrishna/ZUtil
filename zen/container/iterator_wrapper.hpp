@@ -3,6 +3,7 @@
 #include "../core/_export.hpp"
 
 #include <stdexcept>
+#include <algorithm>
 #include <iterator>
 
 namespace zen
@@ -25,34 +26,34 @@ namespace zen
         IteratorWrapper(IteratorT itBegin, IteratorT itEnd)
             : _containerBegin {std::move(itBegin)}
             , _containerEnd   {std::move(itEnd)}
-            , _containerSize  {std::distance(_containerBegin, _containerEnd)}
+            , _containerSize  {static_cast<size_t>(std::distance(_containerBegin, _containerEnd))}
         {
             if (_containerSize == 0) throw std::invalid_argument{"Iterator range is empty."};
         }
 
         template <typename ContainerT>
-        explicit IteratorWrapper(ContainerT& container) : IteratorWrapper(container.begin(), container.end()) {}
+        IteratorWrapper(ContainerT& container) : IteratorWrapper {container.begin(), container.end()} {}
 
         template <typename ContainerT>
-        explicit IteratorWrapper(const ContainerT& container) : IteratorWrapper(container.begin(), container.end()) {}
+        IteratorWrapper(const ContainerT& container) : IteratorWrapper {container.begin(), container.end()} {}
 
         [[nodiscard]] constexpr size_t GetSize() const noexcept { return this->_containerSize; }
 
         [[nodiscard]] IteratorT GetBegin() const noexcept { return this->_containerBegin; }
         [[nodiscard]] IteratorT GetEnd()   const noexcept { return this->_containerEnd; }
 
-        [[nodiscard]] IteratorT Advance(size_t steps) const
+        [[nodiscard]] reference operator[](size_t index) const
         {
-            if (steps >= this->GetSize()) throw std::out_of_range{"Advance steps exceed range."};
-
-            if constexpr (std::random_access_iterator<IteratorT>) return this->_containerBegin + steps;
+            if (index >= this->GetSize()) throw std::out_of_range{"Index exceed size of range."};
 
             auto currentIt = this->_containerBegin;
-            std::advance(currentIt, steps);
-            return currentIt;
-        }
 
-        [[nodiscard]] IteratorT operator[](size_t index) const { return this->Advance(index); }
+            if constexpr (std::random_access_iterator<IteratorT>)
+                return *(currentIt + static_cast<typename std::iterator_traits<IteratorT>::difference_type>(index));
+
+            std::advance(currentIt, index);
+            return *currentIt;
+        }
 
         [[nodiscard]] bool operator==(const IteratorWrapper& other) const noexcept
         {
@@ -67,4 +68,13 @@ namespace zen
         [[nodiscard]] IteratorT begin() const noexcept { return this->_containerBegin; }
         [[nodiscard]] IteratorT end()   const noexcept { return this->_containerEnd; }
     };
+
+    template <std::forward_iterator IteratorT>
+    IteratorWrapper(IteratorT, IteratorT) -> IteratorWrapper<IteratorT>;
+
+    template <typename ContainerT>
+    IteratorWrapper(ContainerT&) -> IteratorWrapper<typename ContainerT::iterator>;
+
+    template <typename ContainerT>
+    IteratorWrapper(const ContainerT&) -> IteratorWrapper<typename ContainerT::const_iterator>;
 } // namespace zen

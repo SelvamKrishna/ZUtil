@@ -59,56 +59,83 @@ namespace zen::random
     void Shuffle(IteratorT begin, IteratorT end) { std::shuffle(begin, end, GetEngine()); }
 
     template <std::forward_iterator IteratorT>
-    [[nodiscard]] IteratorT ChoiceIt(IteratorWrapper<IteratorT> itWrap)
+    [[nodiscard]] IteratorWrapper<IteratorT>::reference ChoiceIt(const IteratorWrapper<IteratorT>& wrapper)
     {
-        if (itWrap.IsEmpty()) throw std::invalid_argument {"Empty container provided."};
-
-        usize index = Index(itWrap.GetSize());
-        return itWrap[index];
+        usize index = Index(wrapper.GetSize());
+        return wrapper[index];
     }
 
-    template <std::forward_iterator ValuesIteratorT, std::forward_iterator WeightsIteratorT>
-    [[nodiscard]] typename std::iterator_traits<ValuesIteratorT>::reference WeightedChoiceIt(
-        IteratorWrapper<ValuesIteratorT> valuesItWrap,
-        IteratorWrapper<WeightsIteratorT> weightsItWrap
-    )
+    template <std::forward_iterator IteratorT>
+    [[nodiscard]] auto& Choice(IteratorT begin, IteratorT end)
     {
-        if (valuesItWrap.GetSize() != weightsItWrap.GetSize() || valuesItWrap.IsEmpty())
-            throw std::invalid_argument{"Invalid container sizes"};
-
-        std::discrete_distribution<usize> distribution {weightsItWrap.GetBegin(), weightsItWrap.GetEnd()};
-        usize index = distribution(GetEngine());
-        return valuesItWrap[index];
+        return ChoiceIt(IteratorWrapper<IteratorT>{begin, end});
     }
-
-    template <typename IteratorT>
-    [[nodiscard]] auto& Choice(IteratorT begin, IteratorT end) { return *ChoiceIt({begin, end}); }
 
     template <typename ContainerT>
-    [[nodiscard]] auto& Choice(ContainerT& values) { return *ChoiceIt({values}); }
+    [[nodiscard]] auto& Choice(ContainerT& container)
+    {
+        return ChoiceIt(IteratorWrapper{container});
+    }
 
     template <typename ContainerT>
-    [[nodiscard]] const auto& Choice(const ContainerT& values) { return *ChoiceIt({values}); }
-
-    template <typename ContainerT, typename WeightContainerT>
-    [[nodiscard]] auto& WeightedChoice(ContainerT& values, const WeightContainerT& weights)
+    [[nodiscard]] const auto& Choice(const ContainerT& container)
     {
-        return *WeightedChoiceIt(values.begin(), values.end(), weights.cbegin(), weights.cend());
+        return ChoiceIt(IteratorWrapper{container});
     }
 
-    template <typename ContainerT, typename WeightContainerT>
-    [[nodiscard]] const auto& WeightedChoice(const ContainerT& values, const WeightContainerT& weights)
+    template <typename ValueT>
+    [[nodiscard]] const ValueT& Choice(std::initializer_list<ValueT> initList)
     {
-        return *WeightedChoiceIt(values.cbegin(), values.cend(), weights.cbegin(), weights.cend());
+        return ChoiceIt(IteratorWrapper{initList.begin(), initList.end()});
     }
 
-    template <typename ValueContainerIteratorT, typename WeightContainerIteratorT>
-    [[nodiscard]] const auto& WeightedChoice(
-        ValueContainerIteratorT valuesBegin, ValueContainerIteratorT valuesEnd,
-        WeightContainerIteratorT weightsBegin, WeightContainerIteratorT weightsEnd
+    template <std::forward_iterator ValuesIt, std::forward_iterator WeightsIt>
+    [[nodiscard]] IteratorWrapper<ValuesIt>::reference WeightedChoiceIt(
+        const IteratorWrapper<ValuesIt>& values,
+        const IteratorWrapper<WeightsIt>& weights
     )
     {
-        return *WeightedChoiceIt(valuesBegin, valuesEnd, weightsBegin, weightsEnd);
+        if (values.GetSize() != weights.GetSize())
+            throw std::invalid_argument{"Value and weight containers must have same size"};
+
+        std::discrete_distribution<usize> distribution {weights.GetBegin(), weights.GetEnd()};
+        return values[distribution(GetEngine())];
+    }
+
+    template <std::forward_iterator ValuesIt, std::forward_iterator WeightsIt>
+    [[nodiscard]] auto& WeightedChoice(
+        ValuesIt valuesBegin, ValuesIt valuesEnd,
+        WeightsIt weightsBegin, WeightsIt weightsEnd
+    )
+    {
+        return WeightedChoiceIt(
+            IteratorWrapper{valuesBegin, valuesEnd},
+            IteratorWrapper{weightsBegin, weightsEnd}
+        );
+    }
+
+    template <typename ValueContainerT, typename WeightContainerT>
+    [[nodiscard]] auto& WeightedChoice(ValueContainerT& values, WeightContainerT& weights)
+    {
+        return WeightedChoiceIt(IteratorWrapper{values}, IteratorWrapper{weights});
+    }
+
+    template <typename ValueContainerT, typename WeightContainerT>
+    [[nodiscard]] const auto& WeightedChoice(const ValueContainerT& values, const WeightContainerT& weights)
+    {
+        return WeightedChoiceIt(IteratorWrapper{values}, IteratorWrapper{weights});
+    }
+
+    template <typename ValueT, typename WeightT>
+    [[nodiscard]] const ValueT& WeightedChoice(
+        std::initializer_list<ValueT> valueInitList,
+        std::initializer_list<WeightT> weightInitList
+    )
+    {
+        return WeightedChoiceIt(
+            IteratorWrapper{valueInitList.begin(), valueInitList.end()},
+            IteratorWrapper{weightInitList.begin(), weightInitList.end()}
+        );
     }
 
 } // namespace zen::random

@@ -2,6 +2,7 @@
 #include "../example/logging.hpp" // IWYU pragma: keep
 #include "../example/testing.hpp" // IWYU pragma: keep
 #include "../example/buffer.hpp"  // IWYU pragma: keep
+#include "../example/random.hpp"  // IWYU pragma: keep
 
 #include <iostream>
 
@@ -35,6 +36,10 @@ void RunAllTests(void)
     example::FastAccessBuffer();
     example::SparseSetInsertion();
     example::DoubleBuffer();
+
+    example::RandomChoiceTest();
+    example::RandomRangeTest();
+    example::RandomShuffleTest();
 }
 
 void Playground(void)
