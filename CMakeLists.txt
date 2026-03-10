@@ -19,10 +19,11 @@ option(ZEN_DISABLE_TESTING "Disable internal tests"    OFF)
 # --------------------------------------------------
 
 add_library(zenutil SHARED
-  src/_pro_string.cpp
-  src/z_assert.cpp
-  src/z_logger.cpp
-  src/z_test.cpp
+  include/z_math/z_random.cpp
+  include/_pro_string.cpp
+  include/z_assert.cpp
+  include/z_logger.cpp
+  include/z_test.cpp
 )
 
 add_library(zen::zenutil ALIAS zenutil)

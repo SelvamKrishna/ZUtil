@@ -20,6 +20,7 @@ def run_cmd(cmd: list[str], fail_desc: str = "", fail_fix_steps: list[str] = [])
         print("\n")
         sys.exit(0)
 
+
 def main() -> None:
     run_cmd(
         ["cmake", "--version"], "Cmake not found", [
