@@ -1,8 +1,13 @@
-#include "z_random.hpp"
+#ifndef ZEN_BUILD
+#define ZEN_BUILD
+#endif
+
+#include "random.hpp"
 
 namespace zen
 {
-    std::mt19937 Random::_randomEngine = {};
+
+    inline std::mt19937 Random::_randomEngine = {};
 
     void Random::SetSeed(u32 value) { Random::_randomEngine.seed(value); }
     void Random::SetTimeBasedSeed() { Random::_randomEngine.seed(std::random_device{}()); }

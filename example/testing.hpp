@@ -1,8 +1,8 @@
 #pragma once
 
-#include "z_assert.hpp"
-#include "z_test.hpp"
-#include "z_macros.hpp"
+#include "../zen/core/assert.hpp"
+#include "../zen/core/test.hpp"
+#include "../zen/core/macros.hpp"
 
 namespace example {
 

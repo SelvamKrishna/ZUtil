@@ -5,11 +5,13 @@
 
 namespace zen
 {
+
 #ifdef NDEBUG
     inline constexpr bool BUILD_DEBUG = false;
 #else
     inline constexpr bool BUILD_DEBUG = true;
 #endif
+
 } // namespace zen
 
 // ============================================================

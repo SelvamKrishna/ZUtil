@@ -1,6 +1,6 @@
 #pragma once
 
-#include "z_logger.hpp"
+#include "../zen/core/logger.hpp"
 
 namespace example
 {

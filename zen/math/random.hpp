@@ -1,13 +1,14 @@
 #pragma once
 
-#include "z_types.hpp"
+#include "../core/_export.hpp"
+#include "../core/types.hpp"
 
 #include <random>
 
 namespace zen
 {
 
-    struct Random
+    struct ZEN_API Random
     {
     private:
         static std::mt19937 _randomEngine;

@@ -3,7 +3,7 @@
 #endif
 
 #include "_pro_string.hpp"
-#include "z_logger.hpp"
+#include "logger.hpp"
 
 namespace zen
 {

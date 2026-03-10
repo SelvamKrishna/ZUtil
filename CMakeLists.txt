@@ -19,11 +19,11 @@ option(ZEN_DISABLE_TESTING "Disable internal tests"    OFF)
 # --------------------------------------------------
 
 add_library(zenutil SHARED
-  include/z_math/z_random.cpp
-  include/_pro_string.cpp
-  include/z_assert.cpp
-  include/z_logger.cpp
-  include/z_test.cpp
+  zen/math/random.cpp
+  zen/core/_pro_string.cpp
+  zen/core/assert.cpp
+  zen/core/logger.cpp
+  zen/core/test.cpp
 )
 
 add_library(zen::zenutil ALIAS zenutil)
@@ -34,8 +34,7 @@ add_library(zen::zenutil ALIAS zenutil)
 
 target_include_directories(zenutil
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/zen>
 )
 
 # --------------------------------------------------

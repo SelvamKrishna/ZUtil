@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_export.hpp"
+#include "../core/_export.hpp"
 
 #include <array>
 

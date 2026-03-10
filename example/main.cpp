@@ -1,4 +1,4 @@
-#include "../zen_core.hpp" // IWYU pragma: keep
+#include "../zen_prelude.hpp"      // IWYU pragma: keep
 #include "../example/logging.hpp" // IWYU pragma: keep
 #include "../example/testing.hpp" // IWYU pragma: keep
 #include "../example/buffer.hpp"  // IWYU pragma: keep

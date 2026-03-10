@@ -1,11 +1,11 @@
 #pragma once
 
-#include "z_container/z_fast_access_buffer.hpp"
-#include "z_container/z_spares_set.hpp"
-#include "z_container/z_double_buffer.hpp"
+#include "../zen/container/fast_access_buffer.hpp"
+#include "../zen/container/spares_set.hpp"
+#include "../zen/container/double_buffer.hpp"
 
-#include "z_test.hpp"
-#include "z_macros.hpp"
+#include "../zen/core/test.hpp"
+#include "../zen/core/macros.hpp"
 
 #include <cassert>
 
