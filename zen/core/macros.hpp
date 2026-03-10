@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cstdio>  // IWYU pragma: keep
 #include <cstdlib> // IWYU pragma: keep
 #include <cstddef> // IWYU pragma: keep
+#include <cassert> // IWYU pragma: keep
 
 namespace zen
 {
@@ -114,3 +116,26 @@ namespace zen
 /// @brief Creates a bit mask at the given position.
 #define Z_BIT(bitPos) \
     (1u << (bitPos))
+
+// ============================================================
+// Assertion
+// ============================================================
+
+#if defined (NDEBUG)
+
+#define Z_ASSERT(expression, description) \
+    ((void)0)
+
+#else
+
+#define Z_ASSERT(expression) do {                                       \
+    if ((expression)) break;                                            \
+    std::fprintf(                                                       \
+        stderr,                                                         \
+        "ZEN_ASSERT FAILED\n  Condition: %s\n  File: %s\n  Line: %d\n", \
+        #expression, __FILE__, __LINE__                                 \
+    );                                                                  \
+    std::abort();                                                       \
+} while (0)
+
+#endif

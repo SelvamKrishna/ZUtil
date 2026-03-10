@@ -2,37 +2,66 @@
 
 #include "../core/_export.hpp"
 #include "../core/types.hpp"
+#include "constants.hpp"
 
+#include <algorithm>
 #include <random>
+#include <type_traits>
 
-namespace zen
+namespace zen::random
 {
+    [[nodiscard]] ZEN_API std::mt19937& GetEngine() noexcept;
 
-    struct ZEN_API Random
+    ZEN_API void SetSeed(u32 value);
+    ZEN_API void SetTimeBasedSeed();
+
+    template <typename NumericT>
+        requires std::is_integral_v<NumericT> || std::is_floating_point_v<NumericT>
+    [[nodiscard]] NumericT Range(NumericT min, NumericT max)
     {
-    private:
-        static std::mt19937 _randomEngine;
+        if (min > max) std::swap(min, max);
 
-    public:
-        static void SetSeed(u32 value);
-        static void SetTimeBasedSeed();
+        auto& engine = GetEngine();
 
-        static i16 RangeI16(i16 min, i16 max);
-        static i32 RangeI32(i32 min, i32 max);
-        static i64 RangeI64(i64 min, i64 max);
+        if constexpr (std::is_integral_v<NumericT>)
+            return std::uniform_int_distribution<NumericT>{min, max}(engine);
 
-        static u16 RangeU16(u16 min, u16 max);
-        static u32 RangeU32(u32 min, u32 max);
-        static u64 RangeU64(u64 min, u64 max);
+        else
+            return std::uniform_real_distribution<NumericT>{min, max}(engine);
+    }
 
-        static f32 RangeF32(f32 min, f32 max);
-        static f64 RangeF64(f64 min, f64 max);
+    [[nodiscard]] ZEN_API i16 RangeI16(i16 min = I16_MIN, i16 max = I16_MAX);
+    [[nodiscard]] ZEN_API i32 RangeI32(i32 min = I32_MIN, i32 max = I32_MAX);
+    [[nodiscard]] ZEN_API i64 RangeI64(i64 min = I64_MIN, i64 max = I64_MAX);
 
-        static bool Boolean();
-        static bool Chance(f32 probability);
+    [[nodiscard]] ZEN_API u16 RangeU16(u16 min = 0, u16 max = U16_MAX);
+    [[nodiscard]] ZEN_API u32 RangeU32(u32 min = 0, u32 max = U32_MAX);
+    [[nodiscard]] ZEN_API u64 RangeU64(u64 min = 0, u64 max = U64_MAX);
 
-        static i32 Sign();
+    [[nodiscard]] ZEN_API usize Index(usize size);
 
-    };
+    [[nodiscard]] ZEN_API f32 RangeF32(f32 min = F32_MIN, f32 max = F32_MAX);
+    [[nodiscard]] ZEN_API f64 RangeF64(f64 min = F64_MIN, f64 max = F64_MAX);
 
-} // namespace zen
+    [[nodiscard]] ZEN_API f32 UnitF32();
+    [[nodiscard]] ZEN_API f64 UnitF64();
+
+    [[nodiscard]] ZEN_API f32 NormalF32(f32 mean, f32 standardDeviation);
+    [[nodiscard]] ZEN_API f64 NormalF64(f64 mean, f64 standardDeviation);
+
+    [[nodiscard]] ZEN_API bool Boolean();
+    [[nodiscard]] ZEN_API bool Chance(f32 probability);
+
+    [[nodiscard]] ZEN_API i32 SignI32();
+    [[nodiscard]] ZEN_API f32 SignF32();
+
+    template <typename Container>
+    [[nodiscard]] auto& Choice(Container& container) { return container[Index(container.size())]; }
+
+    template <typename Container>
+    [[nodiscard]] const auto& Choice(const Container& container) { return container[Index(container.size())]; }
+
+    template <typename Iterator>
+    void Shuffle(Iterator begin, Iterator end) { std::shuffle(begin, end, GetEngine()); }
+
+} // namespace zen::random
