@@ -11,11 +11,6 @@
 
 namespace zen::random {
 
-    /// @brief Concept constraint for numeric types.
-    /// Accepts both integral and floating-point types.
-    template <typename NumericT>
-    concept Numeric = std::is_integral_v<NumericT> || std::is_floating_point_v<NumericT>;
-
     /// @brief Returns the global random engine used by the library.
     /// @return Reference to the internal std::mt19937 engine.
     [[nodiscard]] ZEN_API std::mt19937& GetEngine() noexcept;
@@ -33,7 +28,8 @@ namespace zen::random {
     /// @param min Minimum value.
     /// @param max Maximum value.
     /// @return Random value within the specified range.
-    template <Numeric NumericT>
+    template <typename NumericT>
+        requires std::is_arithmetic_v<NumericT>
     [[nodiscard]] NumericT UniformDistribution(NumericT min, NumericT max)
     {
         if (min > max) std::swap(min, max);
@@ -49,7 +45,8 @@ namespace zen::random {
     /// @param mean Mean value of the distribution.
     /// @param standardDeviation Standard deviation.
     /// @return Random value following a normal distribution.
-    template <Numeric NumericT>
+    template <typename NumericT>
+        requires std::is_arithmetic_v<NumericT>
     [[nodiscard]] NumericT NormalDistribution(NumericT mean, NumericT standardDeviation)
     {
         return std::normal_distribution<NumericT>{mean, standardDeviation}(GetEngine());
