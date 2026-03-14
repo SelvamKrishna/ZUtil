@@ -7,11 +7,11 @@
 namespace zen::random
 {
 
-    inline std::mt19937 _randomEngine = {};
+    inline std::mt19937 _randomEngine { GenerateSeed() };
 
     [[nodiscard]] std::mt19937& GetEngine() noexcept { return _randomEngine; }
 
-    [[nodiscard]] u64 GenerateSeed() { return std::random_device{}(); }
+    [[nodiscard]] u32 GenerateSeed() { return std::random_device{}(); }
     void SetSeed(u32 value) { _randomEngine.seed(value); }
 
     [[nodiscard]] i32 RangeI32(i32 min, i32 max) { return UniformDistribution<i32>(min, max); }

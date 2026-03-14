@@ -24,7 +24,7 @@ namespace zen::random
 
     /// @brief Generates a random seed using system entropy.
     /// @return 64-bit seed value.
-    [[nodiscard]] ZEN_API u64 GenerateSeed();
+    [[nodiscard]] ZEN_API u32 GenerateSeed();
 
     /// @brief Sets the seed for the global random engine.
     /// @param value Seed value.
@@ -36,7 +36,15 @@ namespace zen::random
     /// @param max Maximum value.
     /// @return Random value within the specified range.
     template <Numeric NumericT>
-    [[nodiscard]] NumericT UniformDistribution(NumericT min, NumericT max);
+    [[nodiscard]] NumericT UniformDistribution(NumericT min, NumericT max)
+    {
+        if (min > max) std::swap(min, max);
+
+        if constexpr (std::is_integral_v<NumericT>)
+            return std::uniform_int_distribution<NumericT>{min, max}(GetEngine());
+        else
+            return std::uniform_real_distribution<NumericT>{min, max}(GetEngine());
+    }
 
     /// @brief Generates a normally distributed random value.
     /// @tparam NumericT Numeric type.
@@ -44,14 +52,20 @@ namespace zen::random
     /// @param standardDeviation Standard deviation.
     /// @return Random value following a normal distribution.
     template <Numeric NumericT>
-    [[nodiscard]] NumericT NormalDistribution(NumericT mean, NumericT standardDeviation);
+    [[nodiscard]] NumericT NormalDistribution(NumericT mean, NumericT standardDeviation)
+    {
+        return std::normal_distribution<NumericT>{mean, standardDeviation}(GetEngine());
+    }
 
     /// @brief Generates an index using a discrete weighted distribution.
     /// @tparam WeightsIt Iterator type for weight values.
     /// @param weights Iterator wrapper containing weight values.
     /// @return Selected index based on weight distribution.
     template <typename WeightsIt>
-    [[nodiscard]] size_t DiscreteDistribution(const IteratorWrapper<WeightsIt>& weights);
+    [[nodiscard]] size_t DiscreteDistribution(const IteratorWrapper<WeightsIt>& weights)
+    {
+        return std::discrete_distribution<size_t>{weights.GetBegin(), weights.GetEnd()}(GetEngine());
+    }
 
     /// @brief Generates a random 32-bit signed integer.
     /// @param min Minimum value.
@@ -112,30 +126,46 @@ namespace zen::random
     /// @param begin Start of range.
     /// @param end End of range.
     template <typename IteratorT>
-    void Shuffle(IteratorT begin, IteratorT end);
+    void Shuffle(IteratorT begin, IteratorT end) { std::shuffle(begin, end, GetEngine()); }
 
     /// @brief Selects a random element from an iterator range.
     /// @tparam IteratorT Iterator type.
     /// @param wrapper Iterator wrapper containing the range.
     /// @return Reference to the selected element.
     template <std::forward_iterator IteratorT>
-    [[nodiscard]] IteratorWrapper<IteratorT>::reference ChoiceIt(const IteratorWrapper<IteratorT>& wrapper);
+    [[nodiscard]] IteratorWrapper<IteratorT>::reference ChoiceIt(const IteratorWrapper<IteratorT>& wrapper)
+    {
+        usize index = Index(wrapper.GetSize());
+        return wrapper[index];
+    }
 
     /// @brief Selects a random element from an iterator pair.
     template <std::forward_iterator IteratorT>
-    [[nodiscard]] auto& Choice(IteratorT begin, IteratorT end);
+    [[nodiscard]] auto& Choice(IteratorT begin, IteratorT end)
+    {
+        return ChoiceIt(IteratorWrapper<IteratorT>{begin, end});
+    }
 
     /// @brief Selects a random element from a container.
     template <typename ContainerT>
-    [[nodiscard]] auto& Choice(ContainerT& container);
+    [[nodiscard]] auto& Choice(ContainerT& container)
+    {
+        return ChoiceIt(IteratorWrapper{container});
+    }
 
     /// @brief Selects a random element from a const container.
     template <typename ContainerT>
-    [[nodiscard]] const auto& Choice(const ContainerT& container);
+    [[nodiscard]] const auto& Choice(const ContainerT& container)
+    {
+        return ChoiceIt(IteratorWrapper{container});
+    }
 
     /// @brief Selects a random element from an initializer list.
     template <typename ValueT>
-    [[nodiscard]] const ValueT& Choice(std::initializer_list<ValueT> initList);
+    [[nodiscard]] const ValueT& Choice(std::initializer_list<ValueT> initList)
+    {
+        return ChoiceIt(IteratorWrapper{initList.begin(), initList.end()});
+    }
 
     /// @brief Selects a random element using weighted probabilities.
     /// @tparam ValuesIt Iterator type for values.
@@ -145,6 +175,62 @@ namespace zen::random
     [[nodiscard]] IteratorWrapper<ValuesIt>::reference WeightedChoiceIt(
         const IteratorWrapper<ValuesIt>& values,
         const IteratorWrapper<WeightsIt>& weights
-    );
+    ) {
+        if (values.GetSize() == weights.GetSize()) return values[DiscreteDistribution(weights)];
+        throw std::invalid_argument{"Value and weight containers must have same size"};
+    }
+
+    /// @brief Selects a random element using weighted probabilities.
+    /// @tparam ValuesIt Iterator type for values.
+    /// @tparam WeightsIt Iterator type for weights.
+    /// @return Reference to the selected value.
+    template <std::forward_iterator ValuesIt, std::forward_iterator WeightsIt>
+    [[nodiscard]] auto& WeightedChoice(
+        ValuesIt valuesBegin, ValuesIt valuesEnd,
+        WeightsIt weightsBegin, WeightsIt weightsEnd
+    ) {
+        return WeightedChoiceIt(
+            IteratorWrapper{valuesBegin, valuesEnd},
+            IteratorWrapper{weightsBegin, weightsEnd}
+        );
+    }
+
+    /// @brief Selects a random element using weighted probabilities.
+    /// @tparam ValueContainerT container type of values.
+    /// @tparam WeightContainerT container type of weights.
+    /// @return Reference to the selected value.
+    template <typename ValueContainerT, typename WeightContainerT>
+    [[nodiscard]] auto& WeightedChoice(ValueContainerT& values, WeightContainerT& weights)
+    {
+        return WeightedChoiceIt(IteratorWrapper{values}, IteratorWrapper{weights});
+    }
+
+    /// @brief Selects a random element using weighted probabilities.
+    /// @tparam ValueContainerT container type of values.
+    /// @tparam WeightContainerT container type of weights.
+    /// @return Reference to the selected value.
+    template <typename ValueContainerT, typename WeightContainerT>
+    [[nodiscard]] const auto& WeightedChoice(const ValueContainerT& values, const WeightContainerT& weights)
+    {
+        return WeightedChoiceIt(IteratorWrapper{values}, IteratorWrapper{weights});
+    }
+
+    /// @brief Selects a random element using weighted probabilities.
+    /// @tparam ValueT type of values.
+    /// @tparam WeightT type of weights.
+    /// @param valueInitList Initializer list of values.
+    /// @param weightInitList Initializer list of weights.
+    /// @return Reference to the selected value.
+    template <typename ValueT, typename WeightT>
+    [[nodiscard]] const ValueT& WeightedChoice(
+        std::initializer_list<ValueT> valueInitList,
+        std::initializer_list<WeightT> weightInitList
+    )
+    {
+        return WeightedChoiceIt(
+            IteratorWrapper{valueInitList.begin(), valueInitList.end()},
+            IteratorWrapper{weightInitList.begin(), weightInitList.end()}
+        );
+    }
 
 } // namespace zen::random
