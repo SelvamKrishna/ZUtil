@@ -7,8 +7,7 @@
 
 #include <iostream>
 
-namespace zen
-{
+namespace zen::core {
 
     void _Test(bool condition, const ProString& description, const ProString& contextTag) noexcept
     {
@@ -56,7 +55,7 @@ namespace zen
     {
         this->_passedCases += (testResult == true );
         this->_failedCases += (testResult == false);
-        ::zen::Test(testResult, testDescription, {"\n\t"});
+        ::zen::core::Test(testResult, testDescription, {"\n\t"});
     }
 
-}; // namespace zen
+}; // namespace zen::core

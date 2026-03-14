@@ -6,8 +6,7 @@
 #include <format>
 #include <stdexcept>
 
-namespace zen
-{
+namespace zen::container {
 
     /// ---
     /// @brief ID-based storage container with binary-search lookup.
@@ -113,4 +112,4 @@ namespace zen
         CDataRef operator [] (size_t dataID) const { return this->_GetDataIter(dataID)->data; }
     };
 
-} // namespace zen
+} // namespace zen::container

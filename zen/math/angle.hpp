@@ -3,33 +3,32 @@
 #include "../core/_export.hpp"
 #include "../core/types.hpp"
 
-namespace zen
-{
+namespace zen::math {
 
     struct ZEN_API Angle
     {
     private:
-        f32 _angleValue = 0.0f; // stored in radians
+        core::f32 _angleValue = 0.0f; // stored in radians
 
-        constexpr Angle(f32 radians) : _angleValue {radians} {}
+        constexpr Angle(core::f32 radians) : _angleValue {radians} {}
 
     public:
-        [[nodiscard]] static constexpr Angle FromRadians(f32 radians);
-        [[nodiscard]] static constexpr Angle FromDegrees(f32 degrees);
+        [[nodiscard]] static constexpr Angle FromRadians(core::f32 radians);
+        [[nodiscard]] static constexpr Angle FromDegrees(core::f32 degrees);
 
-        [[nodiscard]] constexpr f32 AsRadians() const;
-        [[nodiscard]] constexpr f32 AsDegrees() const;
+        [[nodiscard]] constexpr core::f32 AsRadians() const;
+        [[nodiscard]] constexpr core::f32 AsDegrees() const;
 
         [[nodiscard]] Angle Normalized() const;
 
-        [[nodiscard]] f32 Sin() noexcept;
-        [[nodiscard]] f32 Cos() noexcept;
-        [[nodiscard]] f32 Tan() noexcept;
+        [[nodiscard]] core::f32 Sin() noexcept;
+        [[nodiscard]] core::f32 Cos() noexcept;
+        [[nodiscard]] core::f32 Tan() noexcept;
 
         Angle operator + (Angle other) const;
         Angle operator - (Angle other) const;
-        Angle operator * (f32 scalar) const;
-        Angle operator / (f32 scalar) const;
+        Angle operator * (core::f32 scalar) const;
+        Angle operator / (core::f32 scalar) const;
 
         Angle& operator += (Angle other);
         Angle& operator -= (Angle other);
@@ -38,4 +37,4 @@ namespace zen
         bool operator != (Angle other) const;
     };
 
-} // namespace zen
+} // namespace zen::math

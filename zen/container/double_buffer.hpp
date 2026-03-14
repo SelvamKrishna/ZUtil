@@ -4,8 +4,7 @@
 
 #include <array>
 
-namespace zen
-{
+namespace zen::container {
 
     /// ---
     /// @brief Double-buffered storage container.
@@ -55,4 +54,4 @@ namespace zen
         }
     };
 
-} // namespace zen
+} // namespace zen::container

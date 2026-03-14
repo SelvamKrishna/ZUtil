@@ -6,8 +6,7 @@
 #include <format>
 #include <stdexcept>
 
-namespace zen
-{
+namespace zen::container {
 
     /// ---
     /// @brief Sparse set container providing O(1) insertion, removal, and lookup by ID.
@@ -103,4 +102,4 @@ namespace zen
         CDataRef operator [] (size_t dataID) const { return this->_denseData[this->_sparseIDs[dataID]]; }
     };
 
-} // namespace zen
+} // namespace zen::container

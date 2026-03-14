@@ -8,8 +8,7 @@
 #include <string>
 #include <source_location>
 
-namespace zen
-{
+namespace zen::core {
 
     /// ---
     /// @brief String wrapper with ANSI color support.
@@ -94,16 +93,16 @@ namespace zen
         friend std::ostream& operator<<(std::ostream& outStream, const ProString& proString) noexcept;
     };
 
-} // namespace zen
+} // namespace zen::core
 
-/// @brief Formatter specialization for `zen::ProString` to support `std::format`.
+/// @brief Formatter specialization for `zen::core::ProString` to support `std::format`.
 /// Allows `ProString` instances to be used in `std::format` or `std::format_to`.
 template <>
-struct std::formatter<zen::ProString>
+struct std::formatter<zen::core::ProString>
 {
     constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
-    auto format(const zen::ProString &proString, std::format_context &ctx) const
+    auto format(const zen::core::ProString &proString, std::format_context &ctx) const
     {
         return std::format_to(ctx.out(), "{}", proString.GetParsedString());
     }

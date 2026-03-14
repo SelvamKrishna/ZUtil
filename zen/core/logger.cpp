@@ -5,8 +5,7 @@
 #include "_pro_string.hpp"
 #include "logger.hpp"
 
-namespace zen
-{
+namespace zen::core {
 
     std::ostream& operator<<(std::ostream& outStream, const LogLevel& logLevel) noexcept
     {
@@ -27,11 +26,11 @@ namespace zen
 
     Logger::Logger(const ProString& logContext) : _logContext(logContext.GetParsedString()) {}
 
-    Logger::Logger(const std::vector<zen::ProString>& logContextCollection)
+    Logger::Logger(const std::vector<ProString>& logContextCollection)
     {
         std::string combinedContext;
 
-        for (const zen::ProString& CONTEXT_PORTION : logContextCollection)
+        for (const ProString& CONTEXT_PORTION : logContextCollection)
             combinedContext += CONTEXT_PORTION.GetParsedString();
 
         this->_logContext = combinedContext;
@@ -39,7 +38,7 @@ namespace zen
 
     void Logger::Log(LogLevel logLevel, const ProString& message) const noexcept
     {
-        ::zen::Log(logLevel, message, {this->GetContext()});
+        ::zen::core::Log(logLevel, message, {this->GetContext()});
     }
 
     void Logger::AddContext(const ProString& context) noexcept { this->_logContext += context.GetParsedString(); }
@@ -65,7 +64,7 @@ namespace zen
     void ScopeDiagnostic::_LogDescription(std::string_view prefix) const noexcept
     {
         (this->_LOGGER_PTR == nullptr)
-            ?             ::zen::Log(LogLevel::DBG, {"{} {}", prefix, this->_DESCRIPTION})
+            ?       ::zen::core::Log(LogLevel::DBG, {"{} {}", prefix, this->_DESCRIPTION})
             : this->_LOGGER_PTR->Log(LogLevel::DBG, {"{} {}", prefix, this->_DESCRIPTION})
         ;
     }
@@ -75,7 +74,7 @@ namespace zen
         static const std::string SOURCE_LOCATION_STRING = ProString{this->_SOURCE_LOCATION}.GetParsedString();
 
         (this->_LOGGER_PTR == nullptr)
-            ?             ::zen::Log(logLevel, {"{} {} : {}", SOURCE_LOCATION_STRING, this->_DESCRIPTION, message})
+            ?       ::zen::core::Log(logLevel, {"{} {} : {}", SOURCE_LOCATION_STRING, this->_DESCRIPTION, message})
             : this->_LOGGER_PTR->Log(logLevel, {"{} {} : {}", SOURCE_LOCATION_STRING, this->_DESCRIPTION, message})
         ;
     }
@@ -90,4 +89,4 @@ namespace zen
 
     void ScopeDiagnostic::Success(const ProString& message) const noexcept { this->_LogMessage(LogLevel::INFO, message); }
 
-} // namespace zen
+} // namespace zen::core

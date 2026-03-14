@@ -6,8 +6,7 @@
 #include <iostream>
 #include <vector>
 
-namespace zen
-{
+namespace zen::core {
 
 #ifdef Z_DISABLE_LOGGING
     inline constexpr bool DISABLE_LOGGING {true};
@@ -37,7 +36,7 @@ namespace zen
     /// @param logLevel Severity level of the message.
     /// @param message Message to log.
     /// @param context Optional contextual information.
-    /// @note Intended to be called through zen::Log().
+    /// @note Intended to be called through zen::core::Log().
     ZEN_API void _Log(LogLevel logLevel, const ProString& message, const ProString& context) noexcept;
 
     /// @brief Logs a message with a specified severity level.
@@ -48,7 +47,7 @@ namespace zen
     /// @param context Optional contextual information.
     inline void Log(LogLevel level, const ProString& message, const ProString& context = {""}) noexcept
     {
-        if constexpr (!DISABLE_LOGGING) ::zen::_Log(level, message, context);
+        if constexpr (!DISABLE_LOGGING) ::zen::core::_Log(level, message, context);
     }
 
     /// @brief Base class that provides contextual logging.
@@ -73,7 +72,7 @@ namespace zen
         /// @brief Constructs a logger with multiple context tags.
         /// Each element is appended to the context prefix.
         /// @param logContextCollection Collection of context labels.
-        explicit Logger(const std::vector<zen::ProString>& logContextCollection);
+        explicit Logger(const std::vector<ProString>& logContextCollection);
 
         /// @brief Returns the stored logging context.
         /// @return Context string.
@@ -148,4 +147,4 @@ namespace zen
         void Success(const ProString& message) const noexcept;
     };
 
-} // namespace zen
+} // namespace zen::core

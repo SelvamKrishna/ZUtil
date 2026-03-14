@@ -4,8 +4,7 @@
 
 #include <vector>
 
-namespace zen
-{
+namespace zen::container {
 
     /// ---
     /// @brief Fixed-size object pool.
@@ -73,4 +72,4 @@ namespace zen
         [[nodiscard]] constexpr bool IsFull() const noexcept { return this->_currentlyActive == this->_objectBuffer.size(); }
     };
 
-} // namespace zen
+} // namespace zen::container

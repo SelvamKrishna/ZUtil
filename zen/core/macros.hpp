@@ -5,8 +5,7 @@
 #include <cstddef> // IWYU pragma: keep
 #include <cassert> // IWYU pragma: keep
 
-namespace zen
-{
+namespace zen::core {
 
 #ifdef NDEBUG
     inline constexpr bool BUILD_DEBUG = false;
@@ -14,7 +13,7 @@ namespace zen
     inline constexpr bool BUILD_DEBUG = true;
 #endif
 
-} // namespace zen
+} // namespace zen::core
 
 // ============================================================
 // Logging / Debug Helpers
@@ -22,7 +21,7 @@ namespace zen
 
 /// @brief Expands a variable to `"name = (value)"`.
 #define Z_VAR_SPLAT(variable) \
-    {"{} = ({})", ::zen::ProString{::zen::ANSI::Magenta, #variable}, (variable)}
+    {"{} = ({})", ::zen::core::ProString{::zen::core::ANSI::Magenta, #variable}, (variable)}
 
 /// @brief Expands a condition and its textual representation.
 #define Z_CND_SPLAT(condition) \
@@ -34,11 +33,11 @@ namespace zen
 
 /// @brief Execute code only in debug builds.
 #define Z_ON_DBG \
-    if constexpr (::zen::BUILD_DEBUG)
+    if constexpr (::zen::core::BUILD_DEBUG)
 
 /// @brief Execute code only in release builds.
 #define Z_ON_RLS \
-    if constexpr (!::zen::BUILD_DEBUG)
+    if constexpr (!::zen::core::BUILD_DEBUG)
 
 // ============================================================
 // Compiler Hints

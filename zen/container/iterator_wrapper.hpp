@@ -6,8 +6,7 @@
 #include <algorithm>
 #include <iterator>
 
-namespace zen
-{
+namespace zen::container {
 
     /// ---
     /// @brief Lightweight wrapper around an iterator range.
@@ -125,4 +124,4 @@ namespace zen
     template <typename ContainerT>
     IteratorWrapper(const ContainerT&) -> IteratorWrapper<typename ContainerT::const_iterator>;
 
-} // namespace zen
+} // namespace zen::container
