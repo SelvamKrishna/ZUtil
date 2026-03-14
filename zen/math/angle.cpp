@@ -9,30 +9,40 @@
 
 namespace zen::math {
 
-    [[nodiscard]] constexpr Angle Angle::FromRadians(float radians) { return Angle {radians}; }
-    [[nodiscard]] constexpr Angle Angle::FromDegrees(float degrees) { return Angle {degrees * (F32_PI / 180.0f)}; }
+    [[nodiscard]] constexpr core::f32 DegreesToRadians(core::f32 degrees) noexcept
+    {
+        return degrees * constants::F32_PI / 180.0F;
+    }
 
-    [[nodiscard]] constexpr core::f32 Angle::AsRadians() const { return this->_angleValue; }
-    [[nodiscard]] constexpr core::f32 Angle::AsDegrees() const { return this->_angleValue * (180.0f / F32_PI); }
+    [[nodiscard]] constexpr core::f32 RadiansToDegrees(core::f32 radians) noexcept
+    {
+        return radians * 180.0F / constants::F32_PI;
+    }
+
+    [[nodiscard]] constexpr Angle Angle::FromRadians(core::f32 radians) { return Angle {radians}; }
+    [[nodiscard]] constexpr Angle Angle::FromDegrees(core::f32 degrees) { return Angle {DegreesToRadians(degrees)}; }
+
+    [[nodiscard]] constexpr core::f32 Angle::AsRadians() const { return this->_radians; }
+    [[nodiscard]] constexpr core::f32 Angle::AsDegrees() const { return RadiansToDegrees(this->_radians); }
 
     [[nodiscard]] Angle Angle::Normalized() const
     {
-        core::f32 normalRadian = std::fmod(this->AsRadians(), F32_TWO_PI);
-        if (normalRadian < 0.0f) normalRadian += F32_TWO_PI;
+        core::f32 normalRadian = std::fmod(this->AsRadians(), constants::F32_TWO_PI);
+        if (normalRadian < 0.0f) normalRadian += constants::F32_TWO_PI;
         return Angle {normalRadian};
     }
 
-    [[nodiscard]] core::f32 Angle::Sin() noexcept { return std::sin(this->_angleValue); }
-    [[nodiscard]] core::f32 Angle::Cos() noexcept { return std::cos(this->_angleValue); }
-    [[nodiscard]] core::f32 Angle::Tan() noexcept { return std::tan(this->_angleValue); }
+    [[nodiscard]] core::f32 Angle::Sin() noexcept { return std::sin(this->AsRadians()); }
+    [[nodiscard]] core::f32 Angle::Cos() noexcept { return std::cos(this->AsRadians()); }
+    [[nodiscard]] core::f32 Angle::Tan() noexcept { return std::tan(this->AsRadians()); }
 
     Angle Angle::operator + (Angle other) const { return Angle {this->AsRadians() + other.AsRadians()}; }
     Angle Angle::operator - (Angle other) const { return Angle {this->AsRadians() - other.AsRadians()}; }
     Angle Angle::operator * (core::f32 scalar) const { return Angle {this->AsRadians() * scalar}; }
     Angle Angle::operator / (core::f32 scalar) const { return Angle {this->AsRadians() / scalar}; }
 
-    Angle& Angle::operator += (Angle other) { this->_angleValue += other.AsRadians(); return *this; }
-    Angle& Angle::operator -= (Angle other) { this->_angleValue -= other.AsRadians(); return *this; }
+    Angle& Angle::operator += (Angle other) { this->_radians += other.AsRadians(); return *this; }
+    Angle& Angle::operator -= (Angle other) { this->_radians -= other.AsRadians(); return *this; }
 
     bool Angle::operator == (Angle other) const { return this->AsRadians() == other.AsRadians(); }
     bool Angle::operator != (Angle other) const { return this->AsRadians() != other.AsRadians(); }

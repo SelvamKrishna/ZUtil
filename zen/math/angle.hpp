@@ -5,12 +5,15 @@
 
 namespace zen::math {
 
+    [[nodiscard]] constexpr core::f32 DegreesToRadians(core::f32 degrees) noexcept;
+    [[nodiscard]] constexpr core::f32 RadiansToDegrees(core::f32 radians) noexcept;
+
     struct ZEN_API Angle
     {
     private:
-        core::f32 _angleValue = 0.0f; // stored in radians
+        core::f32 _radians = 0.0f;
 
-        constexpr Angle(core::f32 radians) : _angleValue {radians} {}
+        constexpr Angle(core::f32 radians) : _radians {radians} {}
 
     public:
         [[nodiscard]] static constexpr Angle FromRadians(core::f32 radians);
