@@ -1,9 +1,9 @@
 #pragma once
 
+#include "constants.hpp"
 #include "../core/_export.hpp"
 #include "../core/types.hpp"
 #include "../container/iterator_wrapper.hpp"
-#include "constants.hpp"
 
 #include <iterator>
 #include <random>

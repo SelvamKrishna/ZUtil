@@ -23,15 +23,19 @@ namespace zen
         return Angle {normalRadian};
     }
 
-    Angle Angle::operator + (Angle other)  const { return Angle {this->_angleValue + other._angleValue}; }
-    Angle Angle::operator - (Angle other)  const { return Angle {this->_angleValue - other._angleValue}; }
-    Angle Angle::operator * (float scalar) const { return Angle {this->_angleValue * scalar}; }
-    Angle Angle::operator / (float scalar) const { return Angle {this->_angleValue / scalar}; }
+    [[nodiscard]] f32 Angle::Sin() noexcept { return std::sin(this->_angleValue); }
+    [[nodiscard]] f32 Angle::Cos() noexcept { return std::cos(this->_angleValue); }
+    [[nodiscard]] f32 Angle::Tan() noexcept { return std::tan(this->_angleValue); }
 
-    Angle& Angle::operator += (Angle other) { this->_angleValue += other._angleValue; return *this; }
-    Angle& Angle::operator -= (Angle other) { this->_angleValue -= other._angleValue; return *this; }
+    Angle Angle::operator + (Angle other)  const { return Angle {this->AsRadians() + other.AsRadians()}; }
+    Angle Angle::operator - (Angle other)  const { return Angle {this->AsRadians() - other.AsRadians()}; }
+    Angle Angle::operator * (f32 scalar) const { return Angle {this->AsRadians() * scalar}; }
+    Angle Angle::operator / (f32 scalar) const { return Angle {this->AsRadians() / scalar}; }
 
-    bool Angle::operator == (Angle other) const { return this->_angleValue == other._angleValue; }
-    bool Angle::operator != (Angle other) const { return this->_angleValue != other._angleValue; }
+    Angle& Angle::operator += (Angle other) { this->_angleValue += other.AsRadians(); return *this; }
+    Angle& Angle::operator -= (Angle other) { this->_angleValue -= other.AsRadians(); return *this; }
+
+    bool Angle::operator == (Angle other) const { return this->AsRadians() == other.AsRadians(); }
+    bool Angle::operator != (Angle other) const { return this->AsRadians() != other.AsRadians(); }
 
 } // namespace zen

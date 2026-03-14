@@ -22,6 +22,10 @@ namespace zen
 
         [[nodiscard]] Angle Normalized() const;
 
+        [[nodiscard]] f32 Sin() noexcept;
+        [[nodiscard]] f32 Cos() noexcept;
+        [[nodiscard]] f32 Tan() noexcept;
+
         Angle operator + (Angle other) const;
         Angle operator - (Angle other) const;
         Angle operator * (f32 scalar) const;
