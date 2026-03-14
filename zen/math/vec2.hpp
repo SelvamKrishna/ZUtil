@@ -72,6 +72,15 @@ namespace zen::math {
             return {value, value};
         }
 
+        /// @brief Creates a unit vector from an angle.
+        [[nodiscard]] static Vec2 FromAngle(const Angle& angle) noexcept
+        {
+            return {
+                static_cast<ValueT>(angle.Cos()),
+                static_cast<ValueT>(angle.Sin())
+            };
+        }
+
         /// @brief Returns a vector rotated 90 degrees counter-clockwise.
         [[nodiscard]] constexpr Vec2 Rotated90() const noexcept { return {-this->y, this->x}; }
 
@@ -88,6 +97,34 @@ namespace zen::math {
             return {
                 static_cast<ValueT>(x * COS_VAL - y * SIN_VAL),
                 static_cast<ValueT>(x * SIN_VAL + y * COS_VAL)
+            };
+        }
+
+        /// @brief Returns the component-wise minimum between two vectors.
+        /// @param other Other vector.
+        [[nodiscard]] Vec2 Min(const Vec2& other) const noexcept
+        {
+            return {std::min(this->x, other.x), std::min(this->y, other.y)};
+        }
+
+        /// @brief Returns the component-wise maximum between two vectors.
+        /// @param other Other vector.
+        [[nodiscard]] Vec2 Max(const Vec2& other) const noexcept
+        {
+            return {std::max(this->x, other.x), std::max(this->y, other.y)};
+        }
+
+        /// @brief Returns a vector with absolute component values.
+        [[nodiscard]] Vec2 Abs() const noexcept { return {std::abs(this->x), std::abs(this->y)}; }
+
+        /// @brief Clamps the vector between a minimum and maximum vector component-wise.
+        /// @param minVec Minimum values.
+        /// @param maxVec Maximum values.
+        [[nodiscard]] Vec2 Clamp(const Vec2& minVec, const Vec2& maxVec) const noexcept
+        {
+            return {
+                std::clamp(this->x, minVec.x, maxVec.x),
+                std::clamp(this->y, minVec.y, maxVec.y)
             };
         }
 
@@ -186,6 +223,10 @@ namespace zen::math {
             return *this - normal * (static_cast<ValueT>(2) * this->Dot(normal));
         }
 
+        /// @brief Computes the reflection of a vector against a surface normal.
+        /// @note Identical to Reflect, included for physics clarity.
+        [[nodiscard]] Vec2 Bounce(const Vec2& normal) const noexcept { return this->Reflect(normal); }
+
         /// @brief Projects the vector onto another vector.
         [[nodiscard]] Vec2 Project(const Vec2& other) const noexcept
         {
@@ -208,13 +249,49 @@ namespace zen::math {
             return start + (end - start) * travel;
         }
 
-        /// @brief Creates a unit vector from an angle.
-        [[nodiscard]] static Vec2 FromAngle(const Angle& angle) noexcept
+        /// @brief Smoothly interpolates the vector towards a target over time.
+        /// @param target Target vector.
+        /// @param smoothing Smoothing factor [0,1], higher means faster convergence.
+        /// @return Smoothed vector.
+        [[nodiscard]] Vec2 SmoothDamp(const Vec2& target, ValueT smoothing) const noexcept
         {
-            return {
-                static_cast<ValueT>(angle.Cos()),
-                static_cast<ValueT>(angle.Sin())
-            };
+            return this->Lerp(*this, target, smoothing);
+        }
+
+        /// @brief Moves the vector towards a target by a maximum delta.
+        /// @param target Target vector.
+        /// @param maxDistanceDelta Maximum distance to move.
+        /// @return New vector moved towards target.
+        [[nodiscard]] Vec2 MoveTowards(const Vec2& target, ValueT maxDistanceDelta) const noexcept
+        {
+            Vec2 delta = target - *this;
+            ValueT sqDist = delta.LengthSquared();
+
+            if (sqDist == 0 || sqDist <= maxDistanceDelta * maxDistanceDelta) return target;
+            return *this + delta.Normalized() * maxDistanceDelta;
+        }
+
+        /// @brief Slides the vector along a surface defined by a normal.
+        /// @param normal Surface normal (should be normalized).
+        /// @return Vector projected along the surface plane.
+        [[nodiscard]] Vec2 Slide(const Vec2& normal) const noexcept
+        {
+            return *this - normal * this->Dot(normal);
+        }
+
+        /// @brief Refracts the vector through a surface with a given normal and refraction ratio.
+        /// @param normal Surface normal (should be normalized).
+        /// @param eta Refraction ratio (from n1/n2).
+        /// @return Refracted vector.
+        [[nodiscard]] Vec2 Refract(const Vec2& normal, ValueT eta) const noexcept
+        {
+            ValueT cosI = -this->Dot(normal);
+            ValueT sinT2 = eta * eta * (static_cast<ValueT>(1) - cosI * cosI);
+
+            return (sinT2 > static_cast<ValueT>(1))
+                ? Vec2::Zero()
+                : *this * eta + normal * (eta * cosI - std::sqrt(static_cast<ValueT>(1) - sinT2))
+            ;
         }
 
         [[nodiscard]] constexpr Vec2 operator - () const noexcept { return {-this->x, -this->y}; }
