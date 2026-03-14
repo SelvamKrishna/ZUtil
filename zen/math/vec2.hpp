@@ -91,8 +91,8 @@ namespace zen::math {
         /// @param rotationAngle Angle of rotation.
         [[nodiscard]] Vec2 Rotated(Angle rotationAngle) const noexcept
         {
-            const core::f32 SIN_VAL = rotationAngle.Sin();
-            const core::f32 COS_VAL = rotationAngle.Cos();
+            const f32 SIN_VAL = rotationAngle.Sin();
+            const f32 COS_VAL = rotationAngle.Cos();
 
             return {
                 static_cast<ValueT>(x * COS_VAL - y * SIN_VAL),
@@ -150,15 +150,15 @@ namespace zen::math {
         }
 
         /// @brief Computes the magnitude of the vector.
-        [[nodiscard]] core::f32 Length() const noexcept
+        [[nodiscard]] f32 Length() const noexcept
         {
-            return std::hypot(static_cast<core::f32>(this->x), static_cast<core::f32>(this->y));
+            return std::hypot(static_cast<f32>(this->x), static_cast<f32>(this->y));
         }
 
         /// @brief Returns the reciprocal of the vector length.
-        [[nodiscard]] core::f32 LengthInverse() const noexcept
+        [[nodiscard]] f32 LengthInverse() const noexcept
         {
-            core::f32 lengthSquared = static_cast<core::f32>(this->LengthSquared());
+            f32 lengthSquared = static_cast<f32>(this->LengthSquared());
             if (lengthSquared == 0) return 0.0f;
             return 1.0f / std::sqrt(lengthSquared);
         }
@@ -172,7 +172,7 @@ namespace zen::math {
         }
 
         /// @brief Computes the distance between two vectors.
-        [[nodiscard]] core::f32 Distance(const Vec2& other) const noexcept
+        [[nodiscard]] f32 Distance(const Vec2& other) const noexcept
         {
             return (*this - other).Length();
         }
@@ -180,7 +180,7 @@ namespace zen::math {
         /// @brief Returns a normalized version of the vector.
         [[nodiscard]] Vec2 Normalized() const noexcept
         {
-            const core::f32 MAGNITUDE = this->Length();
+            const f32 MAGNITUDE = this->Length();
             if (MAGNITUDE == 0) return Vec2::Zero();
             return *this / static_cast<ValueT>(MAGNITUDE);
         }
@@ -191,10 +191,10 @@ namespace zen::math {
         /// @brief Computes the angle between two vectors.
         [[nodiscard]] Angle AngleBetween(const Vec2& other) const noexcept
         {
-            const core::f32 COMBINED_MAGNITUDE = this->Length() * other.Length();
+            const f32 COMBINED_MAGNITUDE = this->Length() * other.Length();
             if (COMBINED_MAGNITUDE == 0) return Angle::FromRadians(0);
 
-            const core::f32 COS_VAL = static_cast<core::f32>(this->Dot(other)) / COMBINED_MAGNITUDE;
+            const f32 COS_VAL = static_cast<f32>(this->Dot(other)) / COMBINED_MAGNITUDE;
             return Angle::FromRadians(std::acos(std::clamp(COS_VAL, -1.0f, 1.0f)));
         }
 
@@ -203,8 +203,8 @@ namespace zen::math {
         {
             return Angle::FromRadians(
                 std::atan2(
-                    static_cast<core::f32>(this->Cross(other)),
-                    static_cast<core::f32>(this->Dot(other))
+                    static_cast<f32>(this->Cross(other)),
+                    static_cast<f32>(this->Dot(other))
                 )
             );
         }
@@ -213,7 +213,7 @@ namespace zen::math {
         [[nodiscard]] Angle GetAngle() const noexcept
         {
             return Angle::FromRadians(
-                std::atan2(static_cast<core::f32>(this->y), static_cast<core::f32>(this->x))
+                std::atan2(static_cast<f32>(this->y), static_cast<f32>(this->x))
             );
         }
 
@@ -329,9 +329,9 @@ namespace zen::math {
     constexpr Vec2<ValueT> operator*(ValueT scalar, const Vec2<ValueT>& vector) noexcept { return vector * scalar; }
 
     /// @brief 2D vector with float components.
-    using vec2f = Vec2<core::f32>;
+    using Vec2f = Vec2<f32>;
 
     /// @brief 2D vector with integer components.
-    using vec2i = Vec2<core::i32>;
+    using Vec2i = Vec2<i32>;
 
 } // namespace zen::math

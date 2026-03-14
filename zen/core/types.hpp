@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 
-namespace zen::core {
+namespace zen {
 
     using i8  = std::int8_t;
     using i16 = std::int16_t;
@@ -36,4 +36,4 @@ namespace zen::core {
     using char32 = char32_t;
     using wchar  = wchar_t;
 
-} // namespace zen::core
+} // namespace zen

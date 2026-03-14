@@ -17,11 +17,11 @@ namespace zen::random {
 
     /// @brief Generates a random seed using system entropy.
     /// @return 64-bit seed value.
-    [[nodiscard]] ZEN_API core::u32 GenerateSeed();
+    [[nodiscard]] ZEN_API u32 GenerateSeed();
 
     /// @brief Sets the seed for the global random engine.
     /// @param value Seed value.
-    ZEN_API void SetSeed(core::u32 value);
+    ZEN_API void SetSeed(u32 value);
 
     /// @brief Generates a uniformly distributed random value.
     /// @tparam NumericT Numeric type (integral or floating point).
@@ -66,54 +66,54 @@ namespace zen::random {
     /// @param min Minimum value.
     /// @param max Maximum value.
     /// @return Random i32 within the specified range.
-    [[nodiscard]] ZEN_API core::i32 RangeI32(
-        core::i32 min = constants::I32_MIN, core::i32 max = constants::I32_MAX
+    [[nodiscard]] ZEN_API i32 RangeI32(
+        i32 min = constants::I32_MIN, i32 max = constants::I32_MAX
     );
 
     /// @brief Generates a random 64-bit signed integer.
-    [[nodiscard]] ZEN_API core::i64 RangeI64(
-        core::i64 min = constants::I64_MIN, core::i64 max = constants::I64_MAX
+    [[nodiscard]] ZEN_API i64 RangeI64(
+        i64 min = constants::I64_MIN, i64 max = constants::I64_MAX
     );
 
     /// @brief Generates a random 32-bit unsigned integer.
-    [[nodiscard]] ZEN_API core::u32 RangeU32(core::u32 min = 0, core::u32 max = constants::U32_MAX);
+    [[nodiscard]] ZEN_API u32 RangeU32(u32 min = 0, u32 max = constants::U32_MAX);
 
     /// @brief Generates a random 64-bit unsigned integer.
-    [[nodiscard]] ZEN_API core::u64 RangeU64(core::u64 min = 0, core::u64 max = constants::U64_MAX);
+    [[nodiscard]] ZEN_API u64 RangeU64(u64 min = 0, u64 max = constants::U64_MAX);
 
     /// @brief Generates a random 32-bit floating-point value.
-    [[nodiscard]] ZEN_API core::f32 RangeF32(
-        core::f32 min = constants::F32_MIN, core::f32 max = constants::F32_MAX
+    [[nodiscard]] ZEN_API f32 RangeF32(
+        f32 min = constants::F32_MIN, f32 max = constants::F32_MAX
     );
 
     /// @brief Generates a random 64-bit floating-point value.
-    [[nodiscard]] ZEN_API core::f64 RangeF64(
-        core::f64 min = constants::F64_MIN, core::f64 max = constants::F64_MAX
+    [[nodiscard]] ZEN_API f64 RangeF64(
+        f64 min = constants::F64_MIN, f64 max = constants::F64_MAX
     );
 
     /// @brief Generates a floating-point value in the range [0,1].
-    [[nodiscard]] ZEN_API core::f32 UnitF32();
+    [[nodiscard]] ZEN_API f32 UnitF32();
 
     /// @brief Generates a floating-point value in the range [0,1].
-    [[nodiscard]] ZEN_API core::f64 UnitF64();
+    [[nodiscard]] ZEN_API f64 UnitF64();
 
     /// @brief Generates a normally distributed 32-bit floating-point value.
-    [[nodiscard]] ZEN_API core::f32 NormalF32(core::f32 mean, core::f32 standardDeviation);
+    [[nodiscard]] ZEN_API f32 NormalF32(f32 mean, f32 standardDeviation);
 
     /// @brief Generates a normally distributed 64-bit floating-point value.
-    [[nodiscard]] ZEN_API core::f64 NormalF64(core::f64 mean, core::f64 standardDeviation);
+    [[nodiscard]] ZEN_API f64 NormalF64(f64 mean, f64 standardDeviation);
 
     /// @brief Generates either -1 or +1.
     /// @return Random sign value.
-    [[nodiscard]] ZEN_API core::i32 SignI32();
+    [[nodiscard]] ZEN_API i32 SignI32();
 
     /// @brief Generates either -1.0f or +1.0f.
-    [[nodiscard]] ZEN_API core::f32 SignF32();
+    [[nodiscard]] ZEN_API f32 SignF32();
 
     /// @brief Generates a random index for a container of given size.
     /// @param size Container size.
     /// @return Random index in range [0, size).
-    [[nodiscard]] ZEN_API core::usize Index(core::usize size);
+    [[nodiscard]] ZEN_API usize Index(usize size);
 
     /// @brief Generates a random boolean value.
     /// @return true or false with equal probability.
@@ -122,7 +122,7 @@ namespace zen::random {
     /// @brief Returns true based on a probability threshold.
     /// @param probability Value in range [0,1].
     /// @return true with the given probability.
-    [[nodiscard]] ZEN_API bool Chance(core::f32 probability);
+    [[nodiscard]] ZEN_API bool Chance(f32 probability);
 
     /// @brief Randomly shuffles a range of elements.
     /// @tparam IteratorT Iterator type.
@@ -139,7 +139,7 @@ namespace zen::random {
     [[nodiscard]] container::IteratorWrapper<IteratorT>::reference ChoiceIt(
         const container::IteratorWrapper<IteratorT>& wrapper
     ) {
-        core::usize index = Index(wrapper.GetSize());
+        usize index = Index(wrapper.GetSize());
         return wrapper[index];
     }
 
