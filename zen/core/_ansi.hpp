@@ -17,8 +17,7 @@ namespace zen::core {
     /// Provides foreground, background, extended colors, and text style flags.
     /// Can be used with both `std::ostream` and `std::format`.
     /// ---
-    enum class ANSI : uint8_t
-    {
+    enum struct ANSI : uint8_t {
         Reset          = 0,   ///< Reset all styles
         Bold           = 1,   ///< Bold text
         Dim            = 2,   ///< Dim text
@@ -81,8 +80,7 @@ namespace zen::core {
 
 /// @brief Formatter specialization for `::zen::core::ANSI` to support `std::format`.
 template <>
-struct std::formatter<::zen::core::ANSI>
-{
+struct std::formatter<::zen::core::ANSI> {
     constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
     auto format(const ::zen::core::ANSI &ansiCode, std::format_context &ctx) const

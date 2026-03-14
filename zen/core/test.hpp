@@ -40,8 +40,7 @@ namespace zen::core {
     /// passed and failed. When the suite goes out of scope, a summary
     /// of the results is automatically logged.
     /// ---
-    struct ZEN_API TestSuite final
-    {
+    struct ZEN_API TestSuite final {
     private:
         std::string _description;     ///< Description of the test suite
         uint32_t    _passedCases = 0; ///< Number of passed test cases

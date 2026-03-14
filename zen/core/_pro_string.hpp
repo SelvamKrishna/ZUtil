@@ -14,15 +14,12 @@ namespace zen::core {
     /// @brief String wrapper with ANSI color support.
     /// `ProString` encapsulates a `std::string` with an associated ANSI color code.
     /// ---
-    struct ZEN_API ProString
-    {
+    struct ZEN_API ProString {
     private:
         ANSI _ansiCode { ANSI::Reset }; ///< ANSI code for the string
         std::string _string;                   ///< Stored string data
 
     public:
-    // --- Constructos ---
-
         /// @brief Constructs a `ProString` from a `std::string_view`.
         /// @param string String content
         /// @param ansiCode Optional ANSI color (default: Reset)
@@ -60,8 +57,6 @@ namespace zen::core {
         /// @param isVerbose Optional flag for verbose formatting (default: false)
         ProString(const std::source_location& sourceLocation, bool isVerbose = false) noexcept;
 
-    // --- Utilities ---
-
         /// @brief Returns the ANSI color of the string.
         /// @return ANSI code
         [[nodiscard]] ANSI GetColor() const noexcept;
@@ -98,8 +93,7 @@ namespace zen::core {
 /// @brief Formatter specialization for `zen::core::ProString` to support `std::format`.
 /// Allows `ProString` instances to be used in `std::format` or `std::format_to`.
 template <>
-struct std::formatter<zen::core::ProString>
-{
+struct std::formatter<zen::core::ProString> {
     constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
     auto format(const zen::core::ProString &proString, std::format_context &ctx) const

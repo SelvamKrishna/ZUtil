@@ -15,8 +15,7 @@ namespace zen::container {
     /// @tparam IteratorT Iterator type satisfying std::forward_iterator.
     /// ---
     template <std::forward_iterator IteratorT>
-    struct ZEN_API IteratorWrapper
-    {
+    struct ZEN_API IteratorWrapper {
     private:
         IteratorT _containerBegin; ///< Beginning iterator of the wrapped range.
         IteratorT _containerEnd;   ///< End iterator of the wrapped range.

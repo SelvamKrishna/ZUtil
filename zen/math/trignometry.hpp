@@ -4,8 +4,7 @@
 
 #include <cmath>
 
-namespace zen::math
-{
+namespace zen::math {
 
     [[nodiscard]] inline core::f32 Sin(Angle angle) noexcept { return angle.Sin(); }
     [[nodiscard]] inline core::f32 Cos(Angle angle) noexcept { return angle.Cos(); }

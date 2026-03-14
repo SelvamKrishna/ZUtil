@@ -14,8 +14,7 @@ namespace zen::container {
     /// @tparam DataT Type of data stored in the buffers.
     /// ---
     template<typename DataT>
-    struct ZEN_API DoubleBuffer
-    {
+    struct ZEN_API DoubleBuffer {
     private:
         std::array<DataT, 2> _buffers; ///< Internal storage for the two buffers
 

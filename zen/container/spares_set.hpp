@@ -16,8 +16,7 @@ namespace zen::container {
     /// @tparam DataT Type of data stored in the sparse set.
     /// ---
     template<typename DataT>
-    struct ZEN_API SparseSet
-    {
+    struct ZEN_API SparseSet {
     private:
         std::vector<size_t> _sparseIDs; ///< Maps external IDs → dense indices
         std::vector<size_t> _denseIDs;  ///< Maps dense indices → external IDs

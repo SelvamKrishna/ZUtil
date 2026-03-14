@@ -6,8 +6,8 @@
 
 #include <source_location>
 
-namespace zen::core
-{
+namespace zen::core {
+
     /// @brief Internal assert logic implementation
     /// Evaluates a condition and abort's program on failure.
     /// @param condition Result of the assert condition.
@@ -27,8 +27,7 @@ namespace zen::core
         bool condition,
         ProString description,
         const std::source_location& sourceLocation = std::source_location::current()
-    )
-    {
+    ) {
         if constexpr (Always || BUILD_DEBUG) ::zen::core::_Assert(condition, description, sourceLocation);
     }
 

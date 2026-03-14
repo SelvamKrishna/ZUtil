@@ -15,12 +15,10 @@ namespace zen::container {
     /// @tparam DataT Type of data stored in the buffer.
     /// ---
     template <typename DataT>
-    struct ZEN_API FastAccessBuffer
-    {
+    struct ZEN_API FastAccessBuffer {
     private:
         /// @brief Internal structure binding an ID to stored data.
-        struct _IdentifiedData
-        {
+        struct _IdentifiedData {
             size_t id;   ///< Unique identifier
             DataT data;  ///< Stored value
         };

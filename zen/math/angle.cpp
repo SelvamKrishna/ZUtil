@@ -36,15 +36,21 @@ namespace zen::math {
     [[nodiscard]] core::f32 Angle::Cos() noexcept { return std::cos(this->AsRadians()); }
     [[nodiscard]] core::f32 Angle::Tan() noexcept { return std::tan(this->AsRadians()); }
 
-    Angle Angle::operator + (Angle other) const { return Angle {this->AsRadians() + other.AsRadians()}; }
-    Angle Angle::operator - (Angle other) const { return Angle {this->AsRadians() - other.AsRadians()}; }
-    Angle Angle::operator * (core::f32 scalar) const { return Angle {this->AsRadians() * scalar}; }
-    Angle Angle::operator / (core::f32 scalar) const { return Angle {this->AsRadians() / scalar}; }
+    [[nodiscard]] Angle Angle::operator + (Angle other) const { return Angle {this->AsRadians() + other.AsRadians()}; }
+    [[nodiscard]] Angle Angle::operator - (Angle other) const { return Angle {this->AsRadians() - other.AsRadians()}; }
+    [[nodiscard]] Angle Angle::operator * (core::f32 scalar) const { return Angle {this->AsRadians() * scalar}; }
+    [[nodiscard]] Angle Angle::operator / (core::f32 scalar) const { return Angle {this->AsRadians() / scalar}; }
 
     Angle& Angle::operator += (Angle other) { this->_radians += other.AsRadians(); return *this; }
     Angle& Angle::operator -= (Angle other) { this->_radians -= other.AsRadians(); return *this; }
 
-    bool Angle::operator == (Angle other) const { return this->AsRadians() == other.AsRadians(); }
-    bool Angle::operator != (Angle other) const { return this->AsRadians() != other.AsRadians(); }
+    [[nodiscard]] bool Angle::operator == (Angle other) const { return  CompareF32Eq(this->AsRadians(), other.AsRadians()); }
+    [[nodiscard]] bool Angle::operator != (Angle other) const { return !CompareF32Eq(this->AsRadians(), other.AsRadians()); }
+
+    [[nodiscard]] bool Angle::operator < (Angle other) const { return this->Normalized().AsRadians() < other.Normalized().AsRadians(); }
+    [[nodiscard]] bool Angle::operator > (Angle other) const { return this->Normalized().AsRadians() > other.Normalized().AsRadians(); }
+
+    [[nodiscard]] bool Angle::operator <= (Angle other) const { return this->Normalized().AsRadians() <= other.Normalized().AsRadians(); }
+    [[nodiscard]] bool Angle::operator >= (Angle other) const { return this->Normalized().AsRadians() >= other.Normalized().AsRadians(); }
 
 } // namespace zen::math

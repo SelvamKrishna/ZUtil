@@ -12,8 +12,7 @@ namespace zen::container {
     /// @tparam DataT Type stored in the pool.
     /// ---
     template<typename DataT>
-    struct ZEN_API ObjectPool
-    {
+    struct ZEN_API ObjectPool {
     private:
         std::vector<DataT> _objectBuffer; ///< Densely packed buffer of data
         std::vector<bool>  _objectActive; ///< Active flags of all data by index

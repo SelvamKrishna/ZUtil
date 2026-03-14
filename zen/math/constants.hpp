@@ -4,6 +4,7 @@
 
 #include <limits>
 #include <numbers>
+#include <cmath>
 
 namespace zen::constants {
 
@@ -57,3 +58,17 @@ namespace zen::constants {
     inline constexpr core::f64 F64_GOLDEN_RATIO = 1.61803398875;
 
 } // namespace zen::constants
+
+namespace zen::math {
+
+    [[nodiscard]] inline bool CompareF32Eq(core::f32 lhs, core::f32 rhs, core::f32 epsilon = constants::F32_EPSILON) noexcept
+    {
+        return std::abs(rhs - lhs) < epsilon;
+    }
+
+    [[nodiscard]] inline bool CompareF64Eq(core::f64 lhs, core::f64 rhs, core::f64 epsilon = constants::F64_EPSILON) noexcept
+    {
+        return std::abs(rhs - lhs) < epsilon;
+    }
+
+} // namespace zen::math

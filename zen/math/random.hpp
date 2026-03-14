@@ -14,8 +14,7 @@ namespace zen::random {
     /// @brief Concept constraint for numeric types.
     /// Accepts both integral and floating-point types.
     template <typename NumericT>
-    concept Numeric =
-        std::is_integral_v<NumericT> || std::is_floating_point_v<NumericT>;
+    concept Numeric = std::is_integral_v<NumericT> || std::is_floating_point_v<NumericT>;
 
     /// @brief Returns the global random engine used by the library.
     /// @return Reference to the internal std::mt19937 engine.

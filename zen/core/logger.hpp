@@ -16,8 +16,7 @@ namespace zen::core {
 
     /// @brief Logging severity levels.
     /// Used to categorize log messages according to their importance.
-    enum LogLevel : uint8_t
-    {
+    enum LogLevel : uint8_t {
         DBG  = 0, ///< Debug information
         INFO = 1, ///< Informational message
         WARN = 2, ///< Warning condition
@@ -54,11 +53,10 @@ namespace zen::core {
     /// `Logger` allows derived classes or systems to attach a persistent
     /// context prefix to all log messages. This is useful for identifying
     /// the source of logs such as subsystems, managers, or objects.
-    struct ZEN_API Logger
-    {
+    struct ZEN_API Logger {
+    private:
         friend struct ScopeDiagnostic;
 
-    private:
         std::string _logContext; ///< Context prefix applied to log messages
 
     protected:
@@ -95,8 +93,7 @@ namespace zen::core {
     /// @note The class can optionally attach to a `Logger` instance to
     /// inherit its logging context.
     /// ---
-    struct ZEN_API ScopeDiagnostic
-    {
+    struct ZEN_API ScopeDiagnostic {
     private:
         std::string          _DESCRIPTION;          ///< Description of the operation
         std::source_location _SOURCE_LOCATION;      ///< Source location of invocation
