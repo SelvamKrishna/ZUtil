@@ -1,8 +1,9 @@
 #pragma once
 
-#include "constants.hpp"
+#include "angle.hpp"
 #include "../core/types.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <type_traits>
 
@@ -26,165 +27,229 @@ namespace zen::math {
         /// @brief Constructs a vector with specified components.
         /// @param x X component.
         /// @param y Y component.
-        constexpr Vec2(ValueT x, ValueT y) noexcept : x {x}, y {y} {}
+        constexpr Vec2(ValueT x, ValueT y) noexcept : x{x}, y{y} {}
 
         /// @brief Returns a zero vector.
-        [[nodiscard]] static constexpr Vec2 Zero() noexcept { return {0, 0}; }
+        [[nodiscard]] static constexpr Vec2 Zero() noexcept
+        {
+            return {static_cast<ValueT>(0), static_cast<ValueT>(0)};
+        }
 
         /// @brief Returns a vector with all components equal to 1.
-        [[nodiscard]] static constexpr Vec2 One() noexcept { return {1, 1}; }
+        [[nodiscard]] static constexpr Vec2 One() noexcept
+        {
+            return {static_cast<ValueT>(1), static_cast<ValueT>(1)};
+        }
 
         /// @brief Returns the unit vector pointing upward.
-        [[nodiscard]] static constexpr Vec2 Up() noexcept { return {0, 1}; }
+        [[nodiscard]] static constexpr Vec2 Up() noexcept
+        {
+            return {static_cast<ValueT>(0), static_cast<ValueT>(1)};
+        }
 
         /// @brief Returns the unit vector pointing downward.
-        [[nodiscard]] static constexpr Vec2 Down() noexcept { return {0, -1}; }
+        [[nodiscard]] static constexpr Vec2 Down() noexcept
+        {
+            return {static_cast<ValueT>(0), static_cast<ValueT>(-1)};
+        }
 
         /// @brief Returns the unit vector pointing left.
-        [[nodiscard]] static constexpr Vec2 Left() noexcept { return {-1, 0}; }
+        [[nodiscard]] static constexpr Vec2 Left() noexcept
+        {
+            return {static_cast<ValueT>(-1), static_cast<ValueT>(0)};
+        }
 
         /// @brief Returns the unit vector pointing right.
-        [[nodiscard]] static constexpr Vec2 Right() noexcept { return {1, 0}; }
+        [[nodiscard]] static constexpr Vec2 Right() noexcept
+        {
+            return {static_cast<ValueT>(1), static_cast<ValueT>(0)};
+        }
 
         /// @brief Returns a vector where both components equal the specified value.
-        /// @param val Value for both components.
-        [[nodiscard]] static constexpr Vec2 Unit(ValueT val = 1) noexcept { return {val, val}; }
+        /// @param value Value for both components.
+        [[nodiscard]] static constexpr Vec2 Unit(ValueT value = static_cast<ValueT>(1)) noexcept
+        {
+            return {value, value};
+        }
+
+        /// @brief Returns a vector rotated 90 degrees counter-clockwise.
+        [[nodiscard]] constexpr Vec2 Rotated90() const noexcept { return {-this->y, this->x}; }
+
+        /// @brief Returns a vector rotated 270 degrees counter-clockwise.
+        [[nodiscard]] constexpr Vec2 Rotated270() const noexcept { return {this->y, -this->x}; }
+
+        /// @brief Rotates the vector by the specified angle.
+        /// @param rotationAngle Angle of rotation.
+        [[nodiscard]] Vec2 Rotated(Angle rotationAngle) const noexcept
+        {
+            const core::f32 SIN_VAL = rotationAngle.Sin();
+            const core::f32 COS_VAL = rotationAngle.Cos();
+
+            return {
+                static_cast<ValueT>(x * COS_VAL - y * SIN_VAL),
+                static_cast<ValueT>(x * SIN_VAL + y * COS_VAL)
+            };
+        }
 
         /// @brief Computes the dot product between two vectors.
-        /// @param other Other vector.
-        /// @return Scalar dot product.
         [[nodiscard]] constexpr ValueT Dot(const Vec2& other) const noexcept
         {
             return this->x * other.x + this->y * other.y;
         }
 
         /// @brief Computes the 2D cross product (scalar).
-        /// @param other Other vector.
-        /// @return Scalar cross product.
         [[nodiscard]] constexpr ValueT Cross(const Vec2& other) const noexcept
         {
             return this->x * other.y - this->y * other.x;
         }
 
         /// @brief Returns a perpendicular vector.
-        /// Rotates the vector 90 degrees counter-clockwise.
-        /// @return Perpendicular vector.
         [[nodiscard]] constexpr Vec2 Perpendicular() const noexcept { return {-this->y, this->x}; }
 
-        /// @brief Computes the length (magnitude) of the vector.
-        /// @return Vector length.
-        [[nodiscard]] ValueT Length() const noexcept { return std::hypot(this->x, this->y); }
+        /// @brief Computes the squared magnitude of the vector.
+        [[nodiscard]] constexpr ValueT LengthSquared() const noexcept
+        {
+            return this->x * this->x + this->y * this->y;
+        }
+
+        /// @brief Computes the magnitude of the vector.
+        [[nodiscard]] core::f32 Length() const noexcept
+        {
+            return std::hypot(static_cast<core::f32>(this->x), static_cast<core::f32>(this->y));
+        }
+
+        /// @brief Returns the reciprocal of the vector length.
+        [[nodiscard]] core::f32 LengthInverse() const noexcept
+        {
+            core::f32 lengthSquared = static_cast<core::f32>(this->LengthSquared());
+            if (lengthSquared == 0) return 0.0f;
+            return 1.0f / std::sqrt(lengthSquared);
+        }
+
+        /// @brief Computes the squared distance between two vectors.
+        [[nodiscard]] ValueT DistanceSquared(const Vec2& other) const noexcept
+        {
+            ValueT dx = this->x - other.x;
+            ValueT dy = this->y - other.y;
+            return dx * dx + dy * dy;
+        }
 
         /// @brief Computes the distance between two vectors.
-        /// @param other Other vector.
-        /// @return Distance between vectors.
-        [[nodiscard]] ValueT Distance(const Vec2& other) const noexcept { return (*this - other).Length(); }
+        [[nodiscard]] core::f32 Distance(const Vec2& other) const noexcept
+        {
+            return (*this - other).Length();
+        }
 
         /// @brief Returns a normalized version of the vector.
-        /// If the vector length is zero, a zero vector is returned.
-        /// @return Unit-length vector.
         [[nodiscard]] Vec2 Normalized() const noexcept
         {
-            const ValueT CURRENT_LENGTH = this->Length();
-            return CURRENT_LENGTH ? (*this / CURRENT_LENGTH) : Vec2::Zero();
+            const core::f32 MAGNITUDE = this->Length();
+            if (MAGNITUDE == 0) return Vec2::Zero();
+            return *this / static_cast<ValueT>(MAGNITUDE);
         }
 
         /// @brief Normalizes the vector in-place.
         void Normalize() noexcept { *this = this->Normalized(); }
 
-        /// @brief Checks if two vectors are approximately equal.
-        ///
-        /// For floating point types an epsilon comparison is used.
-        ///
-        /// @param other Other vector.
-        /// @param epsilon Allowed error tolerance.
-        /// @return True if vectors are nearly equal.
-        [[nodiscard]] bool NearlyEquals(
-            const Vec2& other,
-            core::f32 epsilon = constants::F32_EPSILON
-        ) const noexcept
+        /// @brief Computes the angle between two vectors.
+        [[nodiscard]] Angle AngleBetween(const Vec2& other) const noexcept
         {
-            if constexpr (!std::is_floating_point_v<ValueT>)
-                return this->x == other.x && this->y == other.y;
-            else
-                return CompareF32Eq(this->x, other.x, epsilon) && CompareF32Eq(this->y, other.y, epsilon);
+            const core::f32 COMBINED_MAGNITUDE = this->Length() * other.Length();
+            if (COMBINED_MAGNITUDE == 0) return Angle::FromRadians(0);
+
+            const core::f32 COS_VAL = static_cast<core::f32>(this->Dot(other)) / COMBINED_MAGNITUDE;
+            return Angle::FromRadians(std::acos(std::clamp(COS_VAL, -1.0f, 1.0f)));
         }
 
-        /// @brief Unary negation operator.
-        [[nodiscard]] constexpr Vec2 operator - () const noexcept { return {-x, -y}; }
-
-        /// @brief Vector addition.
-        [[nodiscard]] constexpr Vec2 operator + (const Vec2& other) const noexcept
+        /// @brief Computes the signed angle between two vectors.
+        [[nodiscard]] Angle SignedAngle(const Vec2& other) const noexcept
         {
-            return {this->x + other.x, this->y + other.y};
+            return Angle::FromRadians(
+                std::atan2(
+                    static_cast<core::f32>(this->Cross(other)),
+                    static_cast<core::f32>(this->Dot(other))
+                )
+            );
         }
 
-        /// @brief Vector subtraction.
-        [[nodiscard]] constexpr Vec2 operator - (const Vec2& other) const noexcept
+        /// @brief Returns the polar angle of the vector.
+        [[nodiscard]] Angle GetAngle() const noexcept
         {
-            return {this->x - other.x, this->y - other.y};
+            return Angle::FromRadians(
+                std::atan2(static_cast<core::f32>(this->y), static_cast<core::f32>(this->x))
+            );
         }
 
-        /// @brief Component-wise multiplication.
-        [[nodiscard]] constexpr Vec2 operator * (const Vec2& other) const noexcept
+        /// @brief Reflects the vector across a normal.
+        [[nodiscard]] Vec2 Reflect(const Vec2& normal) const noexcept
         {
-            return {this->x * other.x, this->y * other.y};
+            return *this - normal * (static_cast<ValueT>(2) * this->Dot(normal));
         }
 
-        /// @brief Component-wise division.
-        [[nodiscard]] constexpr Vec2 operator / (const Vec2& other) const noexcept
+        /// @brief Projects the vector onto another vector.
+        [[nodiscard]] Vec2 Project(const Vec2& other) const noexcept
         {
-            return {this->x / other.x, this->y / other.y};
+            ValueT denom = other.LengthSquared();
+            if (denom == 0) return Vec2::Zero();
+            return other * (this->Dot(other) / denom);
         }
 
-        constexpr Vec2& operator += (const Vec2& other) noexcept { return *this = *this + other; }
-        constexpr Vec2& operator -= (const Vec2& other) noexcept { return *this = *this - other; }
-        constexpr Vec2& operator *= (const Vec2& other) noexcept { return *this = *this * other; }
-        constexpr Vec2& operator /= (const Vec2& other) noexcept { return *this = *this / other; }
-
-        /// @brief Adds a scalar to both components.
-        [[nodiscard]] constexpr Vec2 operator + (ValueT scalar) const noexcept
+        /// @brief Clamps the vector magnitude to a maximum length.
+        [[nodiscard]] Vec2 ClampLength(ValueT maxLength) const noexcept
         {
-            return {this->x + scalar, this->y + scalar};
+            ValueT lengthSquared = this->LengthSquared();
+            ValueT maxLengthSquared = maxLength * maxLength;
+            return (lengthSquared > maxLengthSquared) ? this->Normalized() * maxLength : *this;
         }
 
-        /// @brief Subtracts a scalar from both components.
-        [[nodiscard]] constexpr Vec2 operator - (ValueT scalar) const noexcept
+        /// @brief Linearly interpolates between two vectors.
+        [[nodiscard]] static constexpr Vec2 Lerp(const Vec2& start, const Vec2& end, ValueT travel) noexcept
         {
-            return {this->x - scalar, this->y - scalar};
+            return start + (end - start) * travel;
         }
 
-        /// @brief Multiplies both components by a scalar.
-        [[nodiscard]] constexpr Vec2 operator * (ValueT scalar) const noexcept
+        /// @brief Creates a unit vector from an angle.
+        [[nodiscard]] static Vec2 FromAngle(const Angle& angle) noexcept
         {
-            return {this->x * scalar, this->y * scalar};
+            return {
+                static_cast<ValueT>(angle.Cos()),
+                static_cast<ValueT>(angle.Sin())
+            };
         }
 
-        /// @brief Divides both components by a scalar.
-        [[nodiscard]] constexpr Vec2 operator / (ValueT scalar) const noexcept
-        {
-            return {this->x / scalar, this->y / scalar};
-        }
+        [[nodiscard]] constexpr Vec2 operator - () const noexcept { return {-this->x, -this->y}; }
 
-        constexpr Vec2& operator += (ValueT scalar) noexcept { x += scalar; y += scalar; return *this; }
-        constexpr Vec2& operator -= (ValueT scalar) noexcept { x -= scalar; y -= scalar; return *this; }
-        constexpr Vec2& operator *= (ValueT scalar) noexcept { x *= scalar; y *= scalar; return *this; }
-        constexpr Vec2& operator /= (ValueT scalar) noexcept { x /= scalar; y /= scalar; return *this; }
+        [[nodiscard]] constexpr Vec2 operator + (const Vec2& other) const noexcept { return {this->x + other.x, this->y + other.y}; }
+        [[nodiscard]] constexpr Vec2 operator - (const Vec2& other) const noexcept { return {this->x - other.x, this->y - other.y}; }
+        [[nodiscard]] constexpr Vec2 operator * (const Vec2& other) const noexcept { return {this->x * other.x, this->y * other.y}; }
+        [[nodiscard]] constexpr Vec2 operator / (const Vec2& other) const noexcept { return {this->x / other.x, this->y / other.y}; }
 
-        /// @brief Equality comparison.
+        [[nodiscard]] constexpr Vec2 operator + (ValueT scalar) const noexcept { return {this->x + scalar, this->y + scalar}; }
+        [[nodiscard]] constexpr Vec2 operator - (ValueT scalar) const noexcept { return {this->x - scalar, this->y - scalar}; }
+        [[nodiscard]] constexpr Vec2 operator * (ValueT scalar) const noexcept { return {this->x * scalar, this->y * scalar}; }
+        [[nodiscard]] constexpr Vec2 operator / (ValueT scalar) const noexcept { return {this->x / scalar, this->y / scalar}; }
+
+        constexpr Vec2& operator += (const Vec2& other) noexcept { this->x += other.x; this->y += other.y; return *this; }
+        constexpr Vec2& operator -= (const Vec2& other) noexcept { this->x -= other.x; this->y -= other.y; return *this; }
+        constexpr Vec2& operator *= (const Vec2& other) noexcept { this->x *= other.x; this->y *= other.y; return *this; }
+        constexpr Vec2& operator /= (const Vec2& other) noexcept { this->x /= other.x; this->y /= other.y; return *this; }
+
+        constexpr Vec2& operator += (ValueT scalar) noexcept { this->x += scalar; this->y += scalar; return *this; }
+        constexpr Vec2& operator -= (ValueT scalar) noexcept { this->x -= scalar; this->y -= scalar; return *this; }
+        constexpr Vec2& operator *= (ValueT scalar) noexcept { this->x *= scalar; this->y *= scalar; return *this; }
+        constexpr Vec2& operator /= (ValueT scalar) noexcept { this->x /= scalar; this->y /= scalar; return *this; }
+
         constexpr bool operator == (const Vec2& other) const noexcept = default;
-
-        /// @brief Inequality comparison.
         constexpr bool operator != (const Vec2& other) const noexcept = default;
     };
 
-    /// @brief Adds a scalar to a vector.
-    template <typename T>
-    constexpr Vec2<T> operator + (T scalar, const Vec2<T>& vector) noexcept { return vector + scalar; }
+    /// @brief Scalar-vector addition.
+    template <typename ValueT>
+    constexpr Vec2<ValueT> operator+(ValueT scalar, const Vec2<ValueT>& vector) noexcept { return vector + scalar; }
 
-    /// @brief Multiplies a vector by a scalar.
-    template <typename T>
-    constexpr Vec2<T> operator * (T scalar, const Vec2<T>& vector) noexcept { return vector * scalar; }
+    /// @brief Scalar-vector multiplication.
+    template <typename ValueT>
+    constexpr Vec2<ValueT> operator*(ValueT scalar, const Vec2<ValueT>& vector) noexcept { return vector * scalar; }
 
     /// @brief 2D vector with float components.
     using vec2f = Vec2<core::f32>;

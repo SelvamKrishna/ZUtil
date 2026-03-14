@@ -57,51 +57,30 @@ namespace zen::math {
 
         /// @brief Computes the sine of the angle.
         /// @return Sine of the angle.
-        [[nodiscard]] core::f32 Sin() noexcept;
+        [[nodiscard]] core::f32 Sin() const noexcept;
 
         /// @brief Computes the cosine of the angle.
         /// @return Cosine of the angle.
-        [[nodiscard]] core::f32 Cos() noexcept;
+        [[nodiscard]] core::f32 Cos() const noexcept;
 
         /// @brief Computes the tangent of the angle.
         /// @return Tangent of the angle.
-        [[nodiscard]] core::f32 Tan() noexcept;
+        [[nodiscard]] core::f32 Tan() const noexcept;
 
-        /// @brief operation overload: Addition
         [[nodiscard]] Angle operator + (Angle other) const;
-
-        /// @brief operation overload: Subtraction
         [[nodiscard]] Angle operator - (Angle other) const;
-
-        /// @brief operation overload: Multiplication
         [[nodiscard]] Angle operator * (core::f32 scalar) const;
-
-        /// @brief operation overload: Divison
         [[nodiscard]] Angle operator / (core::f32 scalar) const;
 
-        /// @brief Performs addition operation and assign's result to self
         Angle& operator += (Angle other);
-
-        /// @brief Performs subtraction operation and assign's result to self
         Angle& operator -= (Angle other);
 
-        /// @brief Equality comparison within two angles
-        [[nodiscard]] bool operator == (Angle other) const;
-
-        /// @brief Inequality comparison within two angles
-        [[nodiscard]] bool operator != (Angle other) const;
-
-        /// @brief Lesser than comparison within 2 angles
-        [[nodiscard]] bool operator < (Angle other) const;
-
-        /// @brief Greater than comparison within 2 angles
-        [[nodiscard]] bool operator > (Angle other) const;
-
-        /// @brief Greater than or Equal comparison within 2 angles
-        [[nodiscard]] bool operator <= (Angle other) const;
-
-        /// @brief Lesser than or Equal comparison within 2 angles
-        [[nodiscard]] bool operator >= (Angle other) const;
+        bool operator == (Angle other) const;
+        bool operator != (Angle other) const;
+        bool operator < (Angle other) const;
+        bool operator > (Angle other) const;
+        bool operator <= (Angle other) const;
+        bool operator >= (Angle other) const;
     };
 
 } // namespace zen::math

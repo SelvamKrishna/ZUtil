@@ -1,6 +1,7 @@
 #pragma once
 
 #include "angle.hpp"
+#include "vec2.hpp"
 
 #include <cmath>
 
@@ -23,5 +24,8 @@ namespace zen::math {
 
     /// @brief Computes the angle using the tangent value.
     [[nodiscard]] inline Angle ArcTan(core::f32 tanValue) noexcept { return Angle::FromRadians(std::atan(tanValue)); }
+
+    /// @brief Computes the angle using the point coordinates.
+    [[nodiscard]] inline Angle ArcTan(vec2f coordinate) noexcept { return coordinate.GetAngle(); }
 
 } // namespace zen::math

@@ -32,9 +32,9 @@ namespace zen::math {
         return Angle {normalRadian};
     }
 
-    [[nodiscard]] core::f32 Angle::Sin() noexcept { return std::sin(this->AsRadians()); }
-    [[nodiscard]] core::f32 Angle::Cos() noexcept { return std::cos(this->AsRadians()); }
-    [[nodiscard]] core::f32 Angle::Tan() noexcept { return std::tan(this->AsRadians()); }
+    [[nodiscard]] core::f32 Angle::Sin() const noexcept { return std::sin(this->AsRadians()); }
+    [[nodiscard]] core::f32 Angle::Cos() const noexcept { return std::cos(this->AsRadians()); }
+    [[nodiscard]] core::f32 Angle::Tan() const noexcept { return std::tan(this->AsRadians()); }
 
     [[nodiscard]] Angle Angle::operator + (Angle other) const { return Angle {this->AsRadians() + other.AsRadians()}; }
     [[nodiscard]] Angle Angle::operator - (Angle other) const { return Angle {this->AsRadians() - other.AsRadians()}; }
