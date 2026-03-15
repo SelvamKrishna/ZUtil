@@ -4,17 +4,15 @@
 
 ### Overview
 
-The `zen::container` module provides a collection of specialized data structures
-optimized for different use cases in systems programming, game development, and
-high-performance applications. Each container is designed with specific
-performance characteristics and memory access patterns in mind.
+The `zen::container` module provides a collection of specialized data structures optimized for different use cases in systems programming, game development, and high-performance applications. Each container is designed with specific performance characteristics and memory access patterns in mind.
 
 ### Table of Contents
-  * 1. DoubleBuffer
-  * 2. FastAccessBuffer
-  * 3. IteratorWrapper
-  * 4. ObjectPool
-  * 5. SparseSet
+
+  1. [DoubleBuffer](#doublebuffer)
+  2. [FastAccessBuffer](#fastaccessbuffer)
+  3. [IteratorWrapper](#iteratorwrapper)
+  4. [ObjectPool](#objectpool)
+  5. [SparseSet](#sparseset)
 
 ## DoubleBuffer
 
@@ -24,31 +22,28 @@ performance characteristics and memory access patterns in mind.
 
 ### `template<typename DataT> struct DoubleBuffer`
 
-Double-buffered storage container that maintains two instances of a data object:
-a read buffer and a write buffer. This pattern is particularly useful for
-thread-safe data sharing where one thread writes data while another reads it, or
-for implementing double-buffered rendering techniques.
+Double-buffered storage container that maintains two instances of a data object: a read buffer and a write buffer. This pattern is particularly useful for thread-safe data sharing where one thread writes data while another reads it, or for implementing double-buffered rendering techniques.
 
-#### Template Parameters
+### Template Parameters
 
 Parameter | Description
 ---|---
 `DataT` |  Type of data stored in the buffers. Can be any copyable/movable type.
 
-#### Public Types
+### Public Types
 
 Type Alias | Description
 ---|---
 `WBufferRef` | Mutable reference to write buffer (`DataT&`)
 `RBufferRef` | Const reference to read buffer (`const DataT&`)
 
-#### Constructors
+### Constructors
 
 Constructor | Description
 ---|---
 `DoubleBuffer(DataT readValue = {}, DataT writeValue = {})` |  Constructs the double buffer with initial values for both buffers.
 
-#### Member Functions
+### Member Functions
 
 Function | Description | Complexity
 ---|---|---
@@ -56,7 +51,7 @@ Function | Description | Complexity
 `WBufferRef Write() noexcept` | Returns the current write buffer (mutable access) | O(1)
 `void Swap() noexcept` | Exchanges read and write buffers and clears the new write buffer | O(1)
 
-#### Example Usage
+### Example Usage
 
 ```cpp
     // Create a double buffer for a game object
@@ -76,7 +71,7 @@ Function | Description | Complexity
     renderObject(readTransform);
 ```
 
-#### Implementation Details
+### Implementation Details
 
 ```cpp
     private:
@@ -95,32 +90,32 @@ Function | Description | Complexity
 
 ID-based storage container. Elements are stored sorted by ID to allow binary search lookup. while maintaining cache-friendly memory layout.
 
-#### Template Parameters
+### Template Parameters
 
 Parameter | Description
 ---|---
 `DataT` | Type of data stored in the buffer.
 
-#### Private Types
+### Private Types
 
 Type | Description
 ---|---
 `_IdentifiedData` | Internal structure pairing an ID with stored data
 
-#### Public Types
+### Public Types
 
 Type | Description
 ---|---
 `DataRef` | Mutable reference to stored data (`DataT&`)
 `CDataRef` | Const reference to stored data (`const DataT&`)
 
-#### Constructors
+### Constructors
 
 Constructor | Description
 ---|---
 `explicit FastAccessBuffer(size_t reserveBuffer = 32)` | Constructs the buffer with reserved capacity.
 
-#### Member Functions
+### Member Functions
 
 Function | Description | Complexity
 ---|---|---
@@ -131,13 +126,13 @@ Function | Description | Complexity
 `DataRef operator[](size_t dataID)` | Access data by ID (mutable) | O(log N)
 `CDataRef operator[](size_t dataID) const` | Access data by ID (const) | O(log N)
 
-#### ID Management
+### ID Management
 
   * IDs are either generated sequentially or recycled from removed elements
   * Free IDs are stored in `_freeIDs` vector for reuse
   * Maintains ascending ID order automatically
 
-#### Example Usage
+### Example Usage
 
 ```cpp
     zen::container::FastAccessBuffer<Player> playerBuffer;
@@ -156,7 +151,7 @@ Function | Description | Complexity
     playerBuffer.Remove(player2ID);
 ```
 
-#### Implementation Details
+### Implementation Details
 
 ```cpp
     private:
@@ -178,17 +173,15 @@ Function | Description | Complexity
 
 ### `template<std::forward_iterator IteratorT> struct IteratorWrapper`
 
-Lightweight utility class that wraps an iterator range, providing a unified
-interface for working with iterator pairs. Particularly useful for algorithm
-implementations and range-based operations.
+Lightweight utility class that wraps an iterator range, providing a unified interface for working with iterator pairs. Particularly useful for algorithm implementations and range-based operations.
 
-#### Template Parameters
+### Template Parameters
 
 Parameter | Description
 ---|---
 `IteratorT` |  Iterator type that satisfies `std::forward_iterator` concept.
 
-#### Type Aliases
+### Type Aliases
 
 Alias | Description
 ---|---
@@ -198,7 +191,7 @@ Alias | Description
 `pointer` | Pointer to element type
 `reference` | Reference to element type
 
-#### Constructors
+### Constructors
 
 Constructor | Description
 ---|---
@@ -206,7 +199,7 @@ Constructor | Description
 `template<typename ContainerT> IteratorWrapper(ContainerT& container)` | Constructs from mutable container
 `template<typename ContainerT> IteratorWrapper(const ContainerT& container)` | Constructs from const container
 
-#### Member Functions
+### Member Functions
 
 Function | Description | Complexity
 ---|---|---
@@ -219,7 +212,7 @@ Function | Description | Complexity
 `IteratorT begin() const noexcept` | Range-based for support | O(1)
 `IteratorT end() const noexcept` | Range-based for support | O(1)
 
-#### Deduction Guides
+### Deduction Guides
 
 Guide | Purpose
 ---|---
@@ -227,7 +220,7 @@ Guide | Purpose
 `IteratorWrapper(ContainerT&) -> IteratorWrapper<typename ContainerT::iterator>` | For mutable containers
 `IteratorWrapper(const ContainerT&) -> IteratorWrapper<typename ContainerT::const_iterator>` | For const containers
 
-#### Example Usage
+### Example Usage
 
 ```cpp
     std::vector<int> numbers = {1, 2, 3, 4, 5};
@@ -250,7 +243,7 @@ Guide | Purpose
     );
 ```
 
-#### Implementation Details
+### Implementation Details
 
 ```cpp
     private:
@@ -267,23 +260,21 @@ Guide | Purpose
 
 ### `template<typename DataT> struct ObjectPool`
 
-Fixed-size object pool that preallocates memory and provides O(N)
-acquisition/release of objects. Uses a bitmap to track active slots, ideal for
-managing reusable objects in performance-critical code.
+Fixed-size object pool that preallocates memory and provides O(N) acquisition/release of objects. Uses a bitmap to track active slots, ideal for managing reusable objects in performance-critical code.
 
-#### Template Parameters
+### Template Parameters
 
 Parameter | Description
 ---|---
 `DataT` | Type stored in the pool.
 
-#### Constructors
+### Constructors
 
 Constructor | Description
 ---|---
 `explicit ObjectPool(size_t poolReserve = 64)` | Creates pool with fixed capacity.
 
-#### Member Functions
+### Member Functions
 
 Function | Description | Complexity
 ---|---|---
@@ -292,13 +283,13 @@ Function | Description | Complexity
 `template<typename Fn> void ForEachActive(Fn fn)` | Iterates over all active objects | O(N)
 `bool IsFull() const noexcept` | Checks if pool has reached capacity | O(1)
 
-#### Memory Layout
+### Memory Layout
 
   * **`_objectBuffer`** : Contiguous storage for all objects (active and inactive)
   * **`_objectActive`** : Boolean bitmap tracking which slots are in use
   * **`_currentlyActive`** : Counter of currently active objects
 
-#### Example Usage
+### Example Usage
 
 ```cpp
     struct Particle {
@@ -328,7 +319,7 @@ Function | Description | Complexity
     });
 ```
 
-#### Implementation Details
+### Implementation Details
 
 ```cpp
     private:
@@ -345,31 +336,28 @@ Function | Description | Complexity
 
 ### `template<typename DataT> struct SparseSet`
 
-Sparse set container providing O(1) insertion, removal, and lookup by ID. Stores
-elements in a dense array while maintaining a sparse lookup table that maps
-external IDs to dense indices. Commonly used in Entity Component Systems (ECS)
-where entities are sparse but components must be iterated efficiently.
+Sparse set container providing O(1) insertion, removal, and lookup by ID. Stores elements in a dense array while maintaining a sparse lookup table that maps external IDs to dense indices. Commonly used in Entity Component Systems (ECS) where entities are sparse but components must be iterated efficiently.
 
-#### Template Parameters
+### Template Parameters
 
 Parameter | Description
 ---|---
 `DataT` | Type of data stored in the sparse set.
 
-#### Private Types
+### Private Types
 
 Type | Description
 ---|---
 `DataRef` | Mutable reference to data (`DataT&`)
 `CDataRef` | Const reference to data (`const DataT&`)
 
-#### Constructors
+### Constructors
 
 Constructor | Description
 ---|---
 `explicit SparseSet(size_t sparseReserve = 64, size_t denseReserve = 64)` |  Constructs a sparse set with reserved capacity for both sparse and dense arrays.
 
-#### Member Functions
+### Member Functions
 
 Function | Description | Complexity
 ---|---|---
@@ -381,23 +369,22 @@ Function | Description | Complexity
 `DataRef operator[](size_t dataID)` | Access data by ID (mutable) | O(1)
 `CDataRef operator[](size_t dataID) const` | Access data by ID (const) | O(1)
 
-#### Memory Layout
+### Memory Layout
 
   * **`_sparseIDs`** : Maps external IDs → dense indices
   * **`_denseIDs`** : Maps dense indices → external IDs
   * **`_denseData`** : Contiguous storage of data values
 
-#### How It Works
+### How It Works
 
 The sparse set maintains two parallel arrays:
 
   1. **Sparse array** : Indexed by external ID, stores position in dense array
   2. **Dense array** : Stores elements contiguously for fast iteration
 
-When an element is removed, the last element in the dense array is moved into
-its place, and the sparse mapping is updated accordingly.
+When an element is removed, the last element in the dense array is moved into its place, and the sparse mapping is updated accordingly.
 
-#### Example Usage
+### Example Usage
 
 ```cpp
     // Component type for ECS
@@ -433,7 +420,7 @@ its place, and the sparse mapping is updated accordingly.
     std::cout << "Active transforms: " << transforms.Size() << "\n";  // Output: 2
 ```
 
-#### Implementation Details
+### Implementation Details
 
 ```cpp
     private:
@@ -442,7 +429,7 @@ its place, and the sparse mapping is updated accordingly.
         std::vector<DataT>  _denseData; ///< Contiguous storage of data
 ```
 
-#### Performance Characteristics
+### Performance Characteristics
 
 Operation | Complexity | Notes
 ---|---|---
