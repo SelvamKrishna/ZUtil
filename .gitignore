@@ -16,3 +16,7 @@
 *.suo
 *.ncb
 *.VC.db
+
+# Doc
+docs/*.py
+docs/*.html
