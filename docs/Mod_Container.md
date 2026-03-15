@@ -198,11 +198,11 @@ Lightweight utility class that wraps an iterator range, providing a unified inte
 
 ### Constructors
 
-| Constructor                                           | Description                            |
-| ----------------------------------------------------- | -------------------------------------- |
-| `IteratorWrapper(IteratorT itBegin, IteratorT itEnd)` | Constructs from explicit iterator pair |
-| `IteratorWrapper(ContainerT& container)`              | Constructs from mutable container      |
-| `IteratorWrapper<>(const ContainerT& container)`      | Constructs from const container        |
+| Constructor                                                | Description                            |
+| ---------------------------------------------------------- | -------------------------------------- |
+| `IteratorWrapper(IteratorT itBegin, IteratorT itEnd)`      | Constructs from explicit iterator pair |
+| `IteratorWrapper<ContainerT>(ContainerT& container)`       | Constructs from mutable container      |
+| `IteratorWrapper<ContainerT>(const ContainerT& container)` | Constructs from const container        |
 
 ### Member Functions
 
