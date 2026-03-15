@@ -1,23 +1,23 @@
 #pragma once
 
-#include "z_container/z_fast_access_buffer.hpp"
-#include "z_container/z_spares_set.hpp"
-#include "z_container/z_double_buffer.hpp"
+#include "../zen/container/fast_access_buffer.hpp"
+#include "../zen/container/spares_set.hpp"
+#include "../zen/container/double_buffer.hpp"
 
-#include "z_test.hpp"
-#include "z_macros.hpp"
+#include "../zen/core/test.hpp"
+#include "../zen/core/macros.hpp"
 
 #include <cassert>
 
-namespace example
-{
+namespace example {
+
     struct TestData { float fVal; int iVal; };
 
     inline void FastAccessBuffer() noexcept
     {
-        zen::TestSuite test {__PRETTY_FUNCTION__};
+        zen::core::TestSuite test {__PRETTY_FUNCTION__};
 
-        zen::FastAccessBuffer<TestData> testBuffer {8};
+        zen::container::FastAccessBuffer<TestData> testBuffer {8};
         size_t dataID1 = testBuffer.Insert(TestData{1.0, 1});
         size_t dataID2 = testBuffer.Insert(TestData{2.0, 2});
 
@@ -33,9 +33,9 @@ namespace example
 
     inline void SparseSetInsertion() noexcept
     {
-        zen::TestSuite test {__PRETTY_FUNCTION__};
+        zen::core::TestSuite test {__PRETTY_FUNCTION__};
 
-        zen::SparseSet<TestData> testBuffer {8, 8};
+        zen::container::SparseSet<TestData> testBuffer {8, 8};
         testBuffer.Insert(1, TestData{1.0, 1});
         testBuffer.Insert(2, TestData{2.0, 2});
 
@@ -52,11 +52,8 @@ namespace example
         testBuffer.Remove(1);
         testBuffer.Remove(2);
 
-        try {
-            testBuffer.Remove(3);
-        } catch (std::invalid_argument& err) {
-            test.AddCase(true, err.what());
-        }
+        try   { testBuffer.Remove(3); }
+        catch (std::invalid_argument& err) { test.AddCase(true, err.what()); }
 
         test.AddCase(Z_CND_SPLAT(!testBuffer.Contains(1)));
         test.AddCase(Z_CND_SPLAT(!testBuffer.Contains(2)));
@@ -65,8 +62,8 @@ namespace example
 
     inline void DoubleBuffer() noexcept
     {
-        zen::TestSuite test {__PRETTY_FUNCTION__};
-        zen::DoubleBuffer<TestData> testBuffer;
+        zen::core::TestSuite test {__PRETTY_FUNCTION__};
+        zen::container::DoubleBuffer<TestData> testBuffer;
 
         test.AddCase(Z_CND_SPLAT(testBuffer.Read().fVal == 0.0));
         test.AddCase(Z_CND_SPLAT(testBuffer.Read().iVal == 0));

@@ -1,4 +1,4 @@
--Iinclude
+-I.
 -std=c++23
 -g
 -O0

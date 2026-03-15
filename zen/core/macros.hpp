@@ -1,16 +1,19 @@
 #pragma once
 
+#include <cstdio>  // IWYU pragma: keep
 #include <cstdlib> // IWYU pragma: keep
 #include <cstddef> // IWYU pragma: keep
+#include <cassert> // IWYU pragma: keep
 
-namespace zen
-{
+namespace zen::core {
+
 #ifdef NDEBUG
     inline constexpr bool BUILD_DEBUG = false;
 #else
     inline constexpr bool BUILD_DEBUG = true;
 #endif
-} // namespace zen
+
+} // namespace zen::core
 
 // ============================================================
 // Logging / Debug Helpers
@@ -18,7 +21,7 @@ namespace zen
 
 /// @brief Expands a variable to `"name = (value)"`.
 #define Z_VAR_SPLAT(variable) \
-    {"{} = ({})", ::zen::ProString{::zen::ANSI::Magenta, #variable}, (variable)}
+    {"{} = ({})", ::zen::core::ProString{::zen::core::ANSI::Magenta, #variable}, (variable)}
 
 /// @brief Expands a condition and its textual representation.
 #define Z_CND_SPLAT(condition) \
@@ -30,11 +33,11 @@ namespace zen
 
 /// @brief Execute code only in debug builds.
 #define Z_ON_DBG \
-    if constexpr (::zen::BUILD_DEBUG)
+    if constexpr (::zen::core::BUILD_DEBUG)
 
 /// @brief Execute code only in release builds.
 #define Z_ON_RLS \
-    if constexpr (!::zen::BUILD_DEBUG)
+    if constexpr (!::zen::core::BUILD_DEBUG)
 
 // ============================================================
 // Compiler Hints
@@ -112,3 +115,26 @@ namespace zen
 /// @brief Creates a bit mask at the given position.
 #define Z_BIT(bitPos) \
     (1u << (bitPos))
+
+// ============================================================
+// Assertion
+// ============================================================
+
+#if defined (NDEBUG)
+
+#define Z_ASSERT(expression, description) \
+    ((void)0)
+
+#else
+
+#define Z_ASSERT(expression) do {                                       \
+    if ((expression)) break;                                            \
+    std::fprintf(                                                       \
+        stderr,                                                         \
+        "ZEN_ASSERT FAILED\n  Condition: %s\n  File: %s\n  Line: %d\n", \
+        #expression, __FILE__, __LINE__                                 \
+    );                                                                  \
+    std::abort();                                                       \
+} while (0)
+
+#endif

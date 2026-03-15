@@ -1,8 +1,8 @@
 #pragma once
 
-#include "z_assert.hpp"
-#include "z_test.hpp"
-#include "z_macros.hpp"
+#include "../zen/core/assert.hpp"
+#include "../zen/core/test.hpp"
+#include "../zen/core/macros.hpp"
 
 namespace example {
 
@@ -10,20 +10,20 @@ namespace example {
     {
         int errCode = 0;
 
-        zen::Assert(errCode == 0, "Message MUST NOT be displayed");
-        zen::Assert(Z_CND_SPLAT(errCode != 0));
-        zen::Assert<1>(false, "Displayed in both Debug and Release builds");
+        zen::core::Assert(errCode == 0, "Message MUST NOT be displayed");
+        zen::core::Assert(Z_CND_SPLAT(errCode != 0));
+        zen::core::Assert<1>(false, "Displayed in both Debug and Release builds");
     }
 
     inline void UnitTesting()
     {
-        zen::Test(true, "This test MUST PASS");
-        zen::Test(false, "This test MUST FAIL");
+        zen::core::Test(true, "This test MUST PASS");
+        zen::core::Test(false, "This test MUST FAIL");
 
         int value = 42;
 
-        zen::Test(value == 42, {"Value is correct: {}", value});
-        zen::Test(Z_CND_SPLAT(value > 100));
+        zen::core::Test(value == 42, {"Value is correct: {}", value});
+        zen::core::Test(Z_CND_SPLAT(value > 100));
     }
 
     struct TestStruct
@@ -44,7 +44,7 @@ namespace example {
 
     inline void SuiteTesting()
     {
-        zen::TestSuite suite("Example Test Suite");
+        zen::core::TestSuite suite("Example Test Suite");
 
         TestStruct objA {10, 3.14};
         TestStruct objB {10, 3.14};

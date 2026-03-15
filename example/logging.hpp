@@ -1,71 +1,58 @@
 #pragma once
 
-#include "z_logger.hpp"
+#include "../zen/core/logger.hpp"
 
-namespace example
-{
+namespace example {
 
     inline void BasicLogging() noexcept
     {
-        zen::Log(zen::DBG, "Debug messages");
-        zen::Log(zen::INFO, "Information messages");
-        zen::Log(zen::WARN, "Warning messages");
+        zen::core::Log(zen::core::DBG, "Debug messages");
+        zen::core::Log(zen::core::INFO, "Information messages");
+        zen::core::Log(zen::core::WARN, "Warning messages");
 
         int errCode = 404;
 
         if (errCode > 0)
-            zen::Log(zen::ERR, {"Error messages: ERR_CODE = {}", errCode});
+            zen::core::Log(zen::core::ERR, {"Error messages: ERR_CODE = {}", errCode});
     }
 
-    class App : public zen::Logger
-    {
+    class App : public zen::core::Logger {
     private:
         bool _isRunning = false;
 
     public:
-        App() : zen::Logger({
-            zen::ProString {zen::ANSI::Magenta, "[SYS]"},
-            zen::ProString {zen::ANSI::Magenta, "[APP]"},
+        App() : zen::core::Logger ({
+            zen::core::ProString {zen::core::ANSI::Magenta, "[SYS]"},
+            zen::core::ProString {zen::core::ANSI::Magenta, "[APP]"},
         })
         {
-            this->Log(zen::INFO, "Initialized");
+            this->Log(zen::core::INFO, "Initialized");
         }
 
         void Run()
         {
             if (this->_isRunning)
-                return this->Log(zen::WARN, "Run function called multiple times.");
+                return this->Log(zen::core::WARN, "Run function called multiple times.");
 
             this->_isRunning = true;
-            this->Log(zen::INFO, "Running");
+            this->Log(zen::core::INFO, "Running");
         }
 
         void Operate(int errCode)
         {
-            zen::ScopeDiagnostic op {"", this};
-
-            if (errCode > 0)
-                op.FailWarn({"Failed with error code: {}", errCode});
-
-            if (errCode == -1)
-                op.FailAbort("Failed with critical error");
+            zen::core::ScopeDiagnostic op {"", this};
+            if (errCode > 0) op.FailWarn({"Failed with error code: {}", errCode});
+            if (errCode == -1) op.FailAbort("Failed with critical error");
         }
 
         void VerboseOperate(int errCode)
         {
-            zen::ScopeDiagnostic op {"Verbose Operation", this, true};
-
-            if (errCode > 0)
-                op.FailWarn({"Failed with error code: {}", errCode});
-
-            if (errCode == -1)
-                op.FailAbort("Failed with critical error");
+            zen::core::ScopeDiagnostic op {"Verbose Operation", this, true};
+            if (errCode > 0) op.FailWarn({"Failed with error code: {}", errCode});
+            if (errCode == -1) op.FailAbort("Failed with critical error");
         }
 
-        ~App()
-        {
-            this->Log(zen::INFO, "Destroyed");
-        }
+        ~App() { this->Log(zen::core::INFO, "Destroyed"); }
     };
 
     inline void LoggerClass()

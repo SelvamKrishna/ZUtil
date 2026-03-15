@@ -1,42 +1,51 @@
-#include "../zen_core.hpp" // IWYU pragma: keep
-#include "../example/logging.hpp" // IWYU pragma: keep
-#include "../example/testing.hpp" // IWYU pragma: keep
 #include "../example/buffer.hpp"  // IWYU pragma: keep
+#include "../example/logging.hpp" // IWYU pragma: keep
+#include "../example/math.hpp"    // IWYU pragma: keep
+#include "../example/random.hpp"  // IWYU pragma: keep
+#include "../example/testing.hpp" // IWYU pragma: keep
 
 #include <iostream>
 
-void Playground();
-void RunAllTests();
+#define _Z_SHOWCASE_LOGGING (0)
+#define _Z_SHOWCASE_TESTING (0)
+#define _Z_TEST_BUFFER      (0)
+#define _Z_TEST_RANDOM      (1)
+#define _Z_TEST_MATH        (1)
 
 int main(void)
 {
     Z_ON_DBG std::cout << "\n---Test Start---\n";
 
-#if 1
-    RunAllTests();
-#else
-    Playground();
-#endif
-
-    Z_ON_DBG std::cout << "\n---Test End---\n";
-    return 0;
-}
-
-void RunAllTests(void)
-{
+#if _Z_SHOWCASE_LOGGING
     example::BasicLogging();
     example::LoggerClass();
     example::ScopeDiagnosticOverview();
-
+#endif
+#if _Z_SHOWCASE_TESTING
     // example::BasicAssertion(); // Uncomment to test assertion failure
     example::UnitTesting();
     example::SuiteTesting();
-
-    example::FastAccessBuffer();
-    example::SparseSetInsertion();
+#endif
+#if _Z_TEST_BUFFER
     example::DoubleBuffer();
-}
+    example::FastAccessBuffer();
+    Z_TODO("Test: IteratorWrapper");
+    Z_TODO("Test: ObjectPolol");
+    example::SparseSetInsertion();
+#endif
+#if _Z_TEST_RANDOM
+    example::RandomUniformTest();
+    example::RandomShuffleTest();
+    example::RandomNormalTest();
+    example::RandomDiscreteTest();
+#endif
+#if _Z_TEST_MATH
+    example::AngleBasic();
+    example::AngleArithmetic();
+    example::Vec2Basic();
+    example::Vec2Arithmetic();
+    example::Vec2Advanced();
+#endif
 
-void Playground(void)
-{
+    Z_ON_DBG std::cout << "\n---Test End---\n";
 }

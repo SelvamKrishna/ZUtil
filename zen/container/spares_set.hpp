@@ -1,13 +1,12 @@
 #pragma once
 
-#include "_export.hpp"
+#include "../core/_export.hpp"
 
 #include <vector>
 #include <format>
 #include <stdexcept>
 
-namespace zen
-{
+namespace zen::container {
 
     /// ---
     /// @brief Sparse set container providing O(1) insertion, removal, and lookup by ID.
@@ -17,8 +16,7 @@ namespace zen
     /// @tparam DataT Type of data stored in the sparse set.
     /// ---
     template<typename DataT>
-    struct ZEN_API SparseSet
-    {
+    struct ZEN_API SparseSet {
     private:
         std::vector<size_t> _sparseIDs; ///< Maps external IDs → dense indices
         std::vector<size_t> _denseIDs;  ///< Maps dense indices → external IDs
@@ -103,4 +101,4 @@ namespace zen
         CDataRef operator [] (size_t dataID) const { return this->_denseData[this->_sparseIDs[dataID]]; }
     };
 
-} // namespace zen
+} // namespace zen::container

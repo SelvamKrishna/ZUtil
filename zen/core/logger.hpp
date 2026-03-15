@@ -6,8 +6,7 @@
 #include <iostream>
 #include <vector>
 
-namespace zen
-{
+namespace zen::core {
 
 #ifdef Z_DISABLE_LOGGING
     inline constexpr bool DISABLE_LOGGING {true};
@@ -17,8 +16,7 @@ namespace zen
 
     /// @brief Logging severity levels.
     /// Used to categorize log messages according to their importance.
-    enum LogLevel : uint8_t
-    {
+    enum LogLevel : uint8_t {
         DBG  = 0, ///< Debug information
         INFO = 1, ///< Informational message
         WARN = 2, ///< Warning condition
@@ -37,7 +35,7 @@ namespace zen
     /// @param logLevel Severity level of the message.
     /// @param message Message to log.
     /// @param context Optional contextual information.
-    /// @note Intended to be called through zen::Log().
+    /// @note Intended to be called through zen::core::Log().
     ZEN_API void _Log(LogLevel logLevel, const ProString& message, const ProString& context) noexcept;
 
     /// @brief Logs a message with a specified severity level.
@@ -48,18 +46,17 @@ namespace zen
     /// @param context Optional contextual information.
     inline void Log(LogLevel level, const ProString& message, const ProString& context = {""}) noexcept
     {
-        if constexpr (!DISABLE_LOGGING) ::zen::_Log(level, message, context);
+        if constexpr (!DISABLE_LOGGING) ::zen::core::_Log(level, message, context);
     }
 
     /// @brief Base class that provides contextual logging.
     /// `Logger` allows derived classes or systems to attach a persistent
     /// context prefix to all log messages. This is useful for identifying
     /// the source of logs such as subsystems, managers, or objects.
-    struct ZEN_API Logger
-    {
+    struct ZEN_API Logger {
+    private:
         friend struct ScopeDiagnostic;
 
-    private:
         std::string _logContext; ///< Context prefix applied to log messages
 
     protected:
@@ -73,7 +70,7 @@ namespace zen
         /// @brief Constructs a logger with multiple context tags.
         /// Each element is appended to the context prefix.
         /// @param logContextCollection Collection of context labels.
-        explicit Logger(const std::vector<zen::ProString>& logContextCollection);
+        explicit Logger(const std::vector<ProString>& logContextCollection);
 
         /// @brief Returns the stored logging context.
         /// @return Context string.
@@ -96,8 +93,7 @@ namespace zen
     /// @note The class can optionally attach to a `Logger` instance to
     /// inherit its logging context.
     /// ---
-    struct ZEN_API ScopeDiagnostic
-    {
+    struct ZEN_API ScopeDiagnostic {
     private:
         std::string          _DESCRIPTION;          ///< Description of the operation
         std::source_location _SOURCE_LOCATION;      ///< Source location of invocation
@@ -148,4 +144,4 @@ namespace zen
         void Success(const ProString& message) const noexcept;
     };
 
-} // namespace zen
+} // namespace zen::core

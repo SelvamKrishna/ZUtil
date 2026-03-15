@@ -2,12 +2,11 @@
 #define ZEN_BUILD
 #endif
 
-#include "z_assert.hpp"
+#include "assert.hpp"
 
 #include <iostream>
 
-namespace zen
-{
+namespace zen::core {
 
     void _Assert(bool condition, ProString description, const std::source_location& sourceLocation)
     {
@@ -26,4 +25,4 @@ namespace zen
         std::abort();
     }
 
-} // namespace zen
+} // namespace zen::core

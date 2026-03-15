@@ -4,8 +4,7 @@
 #include <format>
 #include <ostream>
 
-namespace zen
-{
+namespace zen::core {
 
 #ifdef Z_DISABLE_ANSI
     inline constexpr bool DISABLE_ANSI {true};
@@ -18,8 +17,7 @@ namespace zen
     /// Provides foreground, background, extended colors, and text style flags.
     /// Can be used with both `std::ostream` and `std::format`.
     /// ---
-    enum class ANSI : uint8_t
-    {
+    enum struct ANSI : uint8_t {
         Reset          = 0,   ///< Reset all styles
         Bold           = 1,   ///< Bold text
         Dim            = 2,   ///< Dim text
@@ -73,22 +71,21 @@ namespace zen
     /// @param outStream Output stream.
     /// @param ansiCode ANSI code to insert.
     /// @return Reference to the output stream.
-    inline std::ostream& operator<<(std::ostream& outStream, const ::zen::ANSI& ansiCode) noexcept
+    inline std::ostream& operator<<(std::ostream& outStream, const ANSI& ansiCode) noexcept
     {
         return (DISABLE_ANSI) ? outStream : outStream << "\033[" << static_cast<int>(ansiCode) << "m";
     }
 
-} // namespace zen
+} // namespace zen::core
 
-/// @brief Formatter specialization for `::zen::ANSI` to support `std::format`.
+/// @brief Formatter specialization for `::zen::core::ANSI` to support `std::format`.
 template <>
-struct std::formatter<::zen::ANSI>
-{
+struct std::formatter<::zen::core::ANSI> {
     constexpr auto parse(std::format_parse_context &ctx) -> std::format_parse_context::const_iterator { return ctx.begin(); }
 
-    auto format(const ::zen::ANSI &ansiCode, std::format_context &ctx) const
+    auto format(const ::zen::core::ANSI &ansiCode, std::format_context &ctx) const
     {
-        return (::zen::DISABLE_ANSI)
+        return (::zen::core::DISABLE_ANSI)
             ? std::format_to(ctx.out(), "")
             : std::format_to(ctx.out(), "\033[{}m", static_cast<int>(ansiCode));
     }

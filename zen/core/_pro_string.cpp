@@ -4,8 +4,7 @@
 
 #include "_pro_string.hpp"
 
-namespace zen
-{
+namespace zen::core {
 
     ProString::ProString(std::string_view string, ANSI ansiCode) noexcept
         : _ansiCode { ansiCode }
@@ -55,4 +54,4 @@ namespace zen
         return outStream << proString.GetColor() << proString.GetString() << ANSI::Reset;
     }
 
-} // namespace zen
+} // namespace zen::core

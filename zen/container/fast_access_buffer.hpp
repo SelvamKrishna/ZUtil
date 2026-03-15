@@ -1,13 +1,12 @@
 #pragma once
 
-#include "_export.hpp"
+#include "../core/_export.hpp"
 
 #include <vector>
 #include <format>
 #include <stdexcept>
 
-namespace zen
-{
+namespace zen::container {
 
     /// ---
     /// @brief ID-based storage container with binary-search lookup.
@@ -16,12 +15,10 @@ namespace zen
     /// @tparam DataT Type of data stored in the buffer.
     /// ---
     template <typename DataT>
-    struct ZEN_API FastAccessBuffer
-    {
+    struct ZEN_API FastAccessBuffer {
     private:
         /// @brief Internal structure binding an ID to stored data.
-        struct _IdentifiedData
-        {
+        struct _IdentifiedData {
             size_t id;   ///< Unique identifier
             DataT data;  ///< Stored value
         };
@@ -113,4 +110,4 @@ namespace zen
         CDataRef operator [] (size_t dataID) const { return this->_GetDataIter(dataID)->data; }
     };
 
-} // namespace zen
+} // namespace zen::container

@@ -3,8 +3,7 @@
 #include "_export.hpp"
 #include "_pro_string.hpp"
 
-namespace zen
-{
+namespace zen::core {
 
 #ifdef Z_DISABLE_TESTING
     inline constexpr bool DISABLE_TESTING {true};
@@ -14,7 +13,7 @@ namespace zen
 
     /// @brief Internal testing implementation.
     /// Evaluates a condition and logs the result with a description and context tag.
-    /// This function is intended to be called through zen::Test().
+    /// This function is intended to be called through zen::core::Test().
     /// @param condition Result of the test condition.
     /// @param description Description of the test.
     /// @param contextTag Optional context tag used for grouping or labeling tests.
@@ -32,7 +31,7 @@ namespace zen
     ) noexcept
     {
         if constexpr (DISABLE_TESTING) return;
-        ::zen::_Test(condition, description, contextTag);
+        ::zen::core::_Test(condition, description, contextTag);
     }
 
     /// ---
@@ -41,8 +40,7 @@ namespace zen
     /// passed and failed. When the suite goes out of scope, a summary
     /// of the results is automatically logged.
     /// ---
-    struct ZEN_API TestSuite final
-    {
+    struct ZEN_API TestSuite final {
     private:
         std::string _description;     ///< Description of the test suite
         uint32_t    _passedCases = 0; ///< Number of passed test cases
@@ -86,4 +84,4 @@ namespace zen
         void AddCase(bool testResult, const ProString& testDescription) noexcept;
     };
 
-} // namespace zen
+} // namespace zen::core

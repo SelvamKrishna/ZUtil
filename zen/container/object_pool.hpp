@@ -1,11 +1,10 @@
 #pragma once
 
-#include "_export.hpp"
+#include "../core/_export.hpp"
 
 #include <vector>
 
-namespace zen
-{
+namespace zen::container {
 
     /// ---
     /// @brief Fixed-size object pool.
@@ -13,8 +12,7 @@ namespace zen
     /// @tparam DataT Type stored in the pool.
     /// ---
     template<typename DataT>
-    struct ZEN_API ObjectPool
-    {
+    struct ZEN_API ObjectPool {
     private:
         std::vector<DataT> _objectBuffer; ///< Densely packed buffer of data
         std::vector<bool>  _objectActive; ///< Active flags of all data by index
@@ -73,4 +71,4 @@ namespace zen
         [[nodiscard]] constexpr bool IsFull() const noexcept { return this->_currentlyActive == this->_objectBuffer.size(); }
     };
 
-} // namespace zen
+} // namespace zen::container
