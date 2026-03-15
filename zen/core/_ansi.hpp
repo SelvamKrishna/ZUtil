@@ -13,6 +13,7 @@ namespace zen::core {
 #endif
 
     /// ---
+    /// @enum ANSI
     /// @brief ANSI escape codes for terminal text formatting.
     /// Provides foreground, background, extended colors, and text style flags.
     /// Can be used with both `std::ostream` and `std::format`.
