@@ -1,9 +1,9 @@
 #pragma once
 
 #include "angle.hpp"
+#include "utils.hpp"
 #include "../core/types.hpp"
 
-#include <algorithm>
 #include <cmath>
 #include <type_traits>
 
@@ -75,10 +75,7 @@ namespace zen::math {
         /// @brief Creates a unit vector from an angle.
         [[nodiscard]] static Vec2 FromAngle(const Angle& angle) noexcept
         {
-            return {
-                static_cast<ValueT>(angle.Cos()),
-                static_cast<ValueT>(angle.Sin())
-            };
+            return {static_cast<ValueT>(angle.Cos()), static_cast<ValueT>(angle.Sin())};
         }
 
         /// @brief Returns a vector rotated 90 degrees counter-clockwise.
@@ -87,48 +84,66 @@ namespace zen::math {
         /// @brief Returns a vector rotated 270 degrees counter-clockwise.
         [[nodiscard]] constexpr Vec2 Rotated270() const noexcept { return {this->y, -this->x}; }
 
-        /// @brief Rotates the vector by the specified angle.
-        /// @param rotationAngle Angle of rotation.
-        [[nodiscard]] Vec2 Rotated(Angle rotationAngle) const noexcept
+        /// @brief Rotates the vector by a given angle.
+        [[nodiscard]] Vec2 Rotated(const Angle& rotationAngle) const noexcept
         {
-            const f32 SIN_VAL = rotationAngle.Sin();
             const f32 COS_VAL = rotationAngle.Cos();
+            const f32 SIN_VAL = rotationAngle.Sin();
 
             return {
-                static_cast<ValueT>(x * COS_VAL - y * SIN_VAL),
-                static_cast<ValueT>(x * SIN_VAL + y * COS_VAL)
+                static_cast<ValueT>(this->x * COS_VAL - this->y * SIN_VAL),
+                static_cast<ValueT>(this->x * SIN_VAL + this->y * COS_VAL)
             };
         }
 
-        /// @brief Returns the component-wise minimum between two vectors.
-        /// @param other Other vector.
+        /// @brief Component-wise minimum with another vector.
         [[nodiscard]] Vec2 Min(const Vec2& other) const noexcept
         {
-            return {std::min(this->x, other.x), std::min(this->y, other.y)};
+            return {Min(this->x, other.x), Min(this->y, other.y)};
         }
 
-        /// @brief Returns the component-wise maximum between two vectors.
-        /// @param other Other vector.
+        /// @brief Component-wise maximum with another vector.
         [[nodiscard]] Vec2 Max(const Vec2& other) const noexcept
         {
-            return {std::max(this->x, other.x), std::max(this->y, other.y)};
+            return {Max(this->x, other.x), Max(this->y, other.y)};
         }
 
-        /// @brief Returns a vector with absolute component values.
+        /// @brief Returns absolute component values.
         [[nodiscard]] Vec2 Abs() const noexcept { return {std::abs(this->x), std::abs(this->y)}; }
 
-        /// @brief Clamps the vector between a minimum and maximum vector component-wise.
-        /// @param minVec Minimum values.
-        /// @param maxVec Maximum values.
+        /// @brief Component-wise clamp between minVec and maxVec.
         [[nodiscard]] Vec2 Clamp(const Vec2& minVec, const Vec2& maxVec) const noexcept
         {
+            return {Clamp(this->x, minVec.x, maxVec.x), Clamp(this->y, minVec.y, maxVec.y)};
+        }
+
+        /// @brief Component-wise remap from one range to another.
+        [[nodiscard]] Vec2 Remap(
+            const Vec2& inMin,
+            const Vec2& inMax,
+            const Vec2& outMin,
+            const Vec2& outMax
+        ) const noexcept
+        {
             return {
-                std::clamp(this->x, minVec.x, maxVec.x),
-                std::clamp(this->y, minVec.y, maxVec.y)
+                Remap(this->x, inMin.x, inMax.x, outMin.x, outMax.x),
+                Remap(this->y, inMin.y, inMax.y, outMin.y, outMax.y)
             };
         }
 
-        /// @brief Computes the dot product between two vectors.
+        /// @brief Component-wise wrap between minVec and maxVec.
+        [[nodiscard]] Vec2 Wrap(const Vec2& minVec, const Vec2& maxVec) const noexcept
+        {
+            return {Wrap(this->x, minVec.x, maxVec.x), Wrap(this->y, minVec.y, maxVec.y)};
+        }
+
+        /// @brief Component-wise smooth step interpolation between two vectors.
+        [[nodiscard]] Vec2 SmoothStep(const Vec2& edge0, const Vec2& edge1) const noexcept
+        {
+            return {SmoothStep(edge0.x, edge1.x, this->x), SmoothStep(edge0.y, edge1.y, this->y)};
+        }
+
+        /// @brief Computes the dot product.
         [[nodiscard]] constexpr ValueT Dot(const Vec2& other) const noexcept
         {
             return this->x * other.x + this->y * other.y;
@@ -143,27 +158,26 @@ namespace zen::math {
         /// @brief Returns a perpendicular vector.
         [[nodiscard]] constexpr Vec2 Perpendicular() const noexcept { return {-this->y, this->x}; }
 
-        /// @brief Computes the squared magnitude of the vector.
+        /// @brief Squared magnitude of the vector.
         [[nodiscard]] constexpr ValueT LengthSquared() const noexcept
         {
             return this->x * this->x + this->y * this->y;
         }
 
-        /// @brief Computes the magnitude of the vector.
+        /// @brief Magnitude of the vector.
         [[nodiscard]] f32 Length() const noexcept
         {
             return std::hypot(static_cast<f32>(this->x), static_cast<f32>(this->y));
         }
 
-        /// @brief Returns the reciprocal of the vector length.
+        /// @brief Reciprocal of the vector length.
         [[nodiscard]] f32 LengthInverse() const noexcept
         {
-            f32 lengthSquared = static_cast<f32>(this->LengthSquared());
-            if (lengthSquared == 0) return 0.0f;
-            return 1.0f / std::sqrt(lengthSquared);
+            const f32 LENGTH_SQUARED = static_cast<f32>(this->LengthSquared());
+            return (LENGTH_SQUARED == 0) ? 0.0f : 1.0f / std::sqrt(LENGTH_SQUARED);
         }
 
-        /// @brief Computes the squared distance between two vectors.
+        /// @brief Distance squared to another vector.
         [[nodiscard]] ValueT DistanceSquared(const Vec2& other) const noexcept
         {
             ValueT dx = this->x - other.x;
@@ -171,126 +185,101 @@ namespace zen::math {
             return dx * dx + dy * dy;
         }
 
-        /// @brief Computes the distance between two vectors.
-        [[nodiscard]] f32 Distance(const Vec2& other) const noexcept
-        {
-            return (*this - other).Length();
-        }
+        /// @brief Distance to another vector.
+        [[nodiscard]] f32 Distance(const Vec2& other) const noexcept { return (*this - other).Length(); }
 
-        /// @brief Returns a normalized version of the vector.
+        /// @brief Returns a normalized vector (zero if magnitude is near zero).
         [[nodiscard]] Vec2 Normalized() const noexcept
         {
             const f32 MAGNITUDE = this->Length();
-            if (MAGNITUDE == 0) return Vec2::Zero();
-            return *this / static_cast<ValueT>(MAGNITUDE);
+
+            return (MAGNITUDE < constants::F32_NORMAL_EPSILON)
+                ? Vec2::Zero()
+                : *this / static_cast<ValueT>(MAGNITUDE)
+            ;
         }
 
-        /// @brief Normalizes the vector in-place.
-        void Normalize() noexcept { *this = this->Normalized(); }
-
-        /// @brief Computes the angle between two vectors.
+        /// @brief Computes angle between this and another vector.
         [[nodiscard]] Angle AngleBetween(const Vec2& other) const noexcept
         {
-            const f32 COMBINED_MAGNITUDE = this->Length() * other.Length();
-            if (COMBINED_MAGNITUDE == 0) return Angle::FromRadians(0);
+            const f32 DENOM = this->Length() * other.Length();
+            if (DENOM == 0) return Angle::FromRadians(0);
 
-            const f32 COS_VAL = static_cast<f32>(this->Dot(other)) / COMBINED_MAGNITUDE;
-            return Angle::FromRadians(std::acos(std::clamp(COS_VAL, -1.0f, 1.0f)));
+            const f32 COS_VAL = static_cast<f32>(this->Dot(other)) / DENOM;
+            return Angle::FromRadians(std::acos(Clamp(COS_VAL, -1.0f, 1.0f)));
         }
 
-        /// @brief Computes the signed angle between two vectors.
+        /// @brief Computes signed angle between vectors.
         [[nodiscard]] Angle SignedAngle(const Vec2& other) const noexcept
         {
-            return Angle::FromRadians(
-                std::atan2(
-                    static_cast<f32>(this->Cross(other)),
-                    static_cast<f32>(this->Dot(other))
-                )
-            );
+            return Angle::FromRadians(std::atan2(this->Cross(other), this->Dot(other)));
         }
 
-        /// @brief Returns the polar angle of the vector.
+        /// @brief Polar angle of the vector.
         [[nodiscard]] Angle GetAngle() const noexcept
         {
-            return Angle::FromRadians(
-                std::atan2(static_cast<f32>(this->y), static_cast<f32>(this->x))
-            );
+            return Angle::FromRadians(std::atan2(this->y, this->x));
         }
 
-        /// @brief Reflects the vector across a normal.
+        /// @brief Reflect vector over a normal.
         [[nodiscard]] Vec2 Reflect(const Vec2& normal) const noexcept
         {
             return *this - normal * (static_cast<ValueT>(2) * this->Dot(normal));
         }
 
-        /// @brief Computes the reflection of a vector against a surface normal.
-        /// @note Identical to Reflect, included for physics clarity.
-        [[nodiscard]] Vec2 Bounce(const Vec2& normal) const noexcept { return this->Reflect(normal); }
-
-        /// @brief Projects the vector onto another vector.
+        /// @brief Projects vector onto another vector.
         [[nodiscard]] Vec2 Project(const Vec2& other) const noexcept
         {
-            ValueT denom = other.LengthSquared();
-            if (denom == 0) return Vec2::Zero();
-            return other * (this->Dot(other) / denom);
+            const ValueT DENOM = other.LengthSquared();
+            return (DENOM == 0) ? Vec2::Zero() : other * (this->Dot(other) / DENOM);
         }
 
-        /// @brief Clamps the vector magnitude to a maximum length.
+        /// @brief Clamps vector length to a maximum.
         [[nodiscard]] Vec2 ClampLength(ValueT maxLength) const noexcept
         {
-            ValueT lengthSquared = this->LengthSquared();
-            ValueT maxLengthSquared = maxLength * maxLength;
-            return (lengthSquared > maxLengthSquared) ? this->Normalized() * maxLength : *this;
+            const ValueT LEN_SQUARED = this->LengthSquared();
+            return (LEN_SQUARED > maxLength * maxLength) ? this->Normalized() * maxLength : *this;
         }
 
-        /// @brief Linearly interpolates between two vectors.
+        /// @brief Linear interpolation between two vectors.
         [[nodiscard]] static constexpr Vec2 Lerp(const Vec2& start, const Vec2& end, ValueT travel) noexcept
         {
-            return start + (end - start) * travel;
+            return {Lerp(start.x, end.x, travel), Lerp(start.y, end.y, travel)};
         }
 
-        /// @brief Smoothly interpolates the vector towards a target over time.
-        /// @param target Target vector.
-        /// @param smoothing Smoothing factor [0,1], higher means faster convergence.
-        /// @return Smoothed vector.
+        /// @brief Smoothly moves vector towards a target.
         [[nodiscard]] Vec2 SmoothDamp(const Vec2& target, ValueT smoothing) const noexcept
         {
-            return this->Lerp(*this, target, smoothing);
+            return Lerp(*this, target, smoothing);
         }
 
-        /// @brief Moves the vector towards a target by a maximum delta.
-        /// @param target Target vector.
-        /// @param maxDistanceDelta Maximum distance to move.
-        /// @return New vector moved towards target.
-        [[nodiscard]] Vec2 MoveTowards(const Vec2& target, ValueT maxDistanceDelta) const noexcept
+        /// @brief Moves vector towards target by a maximum delta.
+        [[nodiscard]] Vec2 MoveTowards(const Vec2& target, ValueT maxDelta) const noexcept
         {
-            Vec2 delta = target - *this;
-            ValueT sqDist = delta.LengthSquared();
+            const Vec2 DELTA = target - *this;
+            const ValueT DELTA_MAGNITUDE_SQUARED = DELTA.LengthSquared();
 
-            if (sqDist == 0 || sqDist <= maxDistanceDelta * maxDistanceDelta) return target;
-            return *this + delta.Normalized() * maxDistanceDelta;
+            return (DELTA_MAGNITUDE_SQUARED == 0 || DELTA_MAGNITUDE_SQUARED <= maxDelta * maxDelta)
+                ? target
+                : *this + DELTA.Normalized() * maxDelta
+            ;
         }
 
-        /// @brief Slides the vector along a surface defined by a normal.
-        /// @param normal Surface normal (should be normalized).
-        /// @return Vector projected along the surface plane.
+        /// @brief Slides vector along a surface normal.
         [[nodiscard]] Vec2 Slide(const Vec2& normal) const noexcept
         {
             return *this - normal * this->Dot(normal);
         }
 
-        /// @brief Refracts the vector through a surface with a given normal and refraction ratio.
-        /// @param normal Surface normal (should be normalized).
-        /// @param eta Refraction ratio (from n1/n2).
-        /// @return Refracted vector.
+        /// @brief Refracts vector with a given normal and ratio.
         [[nodiscard]] Vec2 Refract(const Vec2& normal, ValueT eta) const noexcept
         {
-            ValueT cosI = -this->Dot(normal);
-            ValueT sinT2 = eta * eta * (static_cast<ValueT>(1) - cosI * cosI);
+            const ValueT COS_I  = -this->Dot(normal);
+            const ValueT SIN_T2 = eta * eta * (1 - COS_I * COS_I);
 
-            return (sinT2 > static_cast<ValueT>(1))
+            return (SIN_T2 > 1)
                 ? Vec2::Zero()
-                : *this * eta + normal * (eta * cosI - std::sqrt(static_cast<ValueT>(1) - sinT2))
+                : *this * eta + normal * (eta * COS_I - std::sqrt(1 - SIN_T2))
             ;
         }
 
@@ -320,11 +309,9 @@ namespace zen::math {
         constexpr bool operator != (const Vec2& other) const noexcept = default;
     };
 
-    /// @brief Scalar-vector addition.
     template <typename ValueT>
     constexpr Vec2<ValueT> operator+(ValueT scalar, const Vec2<ValueT>& vector) noexcept { return vector + scalar; }
 
-    /// @brief Scalar-vector multiplication.
     template <typename ValueT>
     constexpr Vec2<ValueT> operator*(ValueT scalar, const Vec2<ValueT>& vector) noexcept { return vector * scalar; }
 
@@ -333,5 +320,34 @@ namespace zen::math {
 
     /// @brief 2D vector with integer components.
     using Vec2i = Vec2<i32>;
+
+    /// @brief Computes the dot product of two vectors.
+    /// @note (AxBx + AyBy)
+    template <typename ValueT>
+    [[nodiscard]] constexpr ValueT DotProduct(const Vec2<ValueT>& lhs, const Vec2<ValueT>& rhs) noexcept
+    {
+        return lhs.x * rhs.x + lhs.y * rhs.y;
+    }
+
+    /// @brief Computes the cross product of two vectors.
+    /// @note (AxBy - AyBx)
+    template <typename ValueT>
+    [[nodiscard]] constexpr ValueT CrossProduct(const Vec2<ValueT>& lhs, const Vec2<ValueT>& rhs) noexcept
+    {
+        return lhs.x * rhs.y - lhs.y * rhs.x;
+    }
+
+    /// @brief Returns true if two vectors are approximately equal.
+    /// @note Used for vectors with floating point components.
+    template <typename ValueT>
+    [[nodiscard]] inline bool NearlyEqual(
+        const Vec2<ValueT>& lhs,
+        const Vec2<ValueT>& rhs,
+        f32 epsilon = constants::F32_COMPARE_EPSILON
+    ) noexcept
+    {
+        if constexpr (std::is_integral_v<ValueT>) return lhs.x == rhs.x && lhs.y == rhs.y;
+        return NearlyEqual(lhs.x, rhs.x, epsilon) && NearlyEqual(lhs.y, rhs.y, epsilon);
+    }
 
 } // namespace zen::math

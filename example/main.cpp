@@ -1,18 +1,21 @@
-#include "../zen_prelude.hpp"      // IWYU pragma: keep
-#include "../example/logging.hpp" // IWYU pragma: keep
-#include "../example/testing.hpp" // IWYU pragma: keep
 #include "../example/buffer.hpp"  // IWYU pragma: keep
+#include "../example/logging.hpp" // IWYU pragma: keep
+#include "../example/math.hpp"    // IWYU pragma: keep
 #include "../example/random.hpp"  // IWYU pragma: keep
+#include "../example/testing.hpp" // IWYU pragma: keep
 
 #include <iostream>
 
-#define _Z_SHOWCASE_LOGGING 0
-#define _Z_SHOWCASE_TESTING 0
-#define _Z_TEST_BUFFER  0
-#define _Z_TEST_RANDOM  1
+#define _Z_SHOWCASE_LOGGING (0)
+#define _Z_SHOWCASE_TESTING (0)
+#define _Z_TEST_BUFFER      (0)
+#define _Z_TEST_RANDOM      (1)
+#define _Z_TEST_MATH        (1)
 
-void TestExamples(void)
+int main(void)
 {
+    Z_ON_DBG std::cout << "\n---Test Start---\n";
+
 #if _Z_SHOWCASE_LOGGING
     example::BasicLogging();
     example::LoggerClass();
@@ -31,23 +34,18 @@ void TestExamples(void)
     example::SparseSetInsertion();
 #endif
 #if _Z_TEST_RANDOM
-    example::RandomChoiceTest();
-    example::RandomRangeTest();
+    example::RandomUniformTest();
     example::RandomShuffleTest();
+    example::RandomNormalTest();
+    example::RandomDiscreteTest();
 #endif
-}
-
-void Playground(void)
-{
-}
-
-int main(void)
-{
-    Z_ON_DBG std::cout << "\n---Test Start---\n";
-#if 1
-    TestExamples();
-#else
-    Playground();
+#if _Z_TEST_MATH
+    example::AngleBasic();
+    example::AngleArithmetic();
+    example::Vec2Basic();
+    example::Vec2Arithmetic();
+    example::Vec2Advanced();
 #endif
+
     Z_ON_DBG std::cout << "\n---Test End---\n";
 }

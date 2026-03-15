@@ -4,7 +4,6 @@
 
 #include <limits>
 #include <numbers>
-#include <cmath>
 
 namespace zen::constants {
 
@@ -34,8 +33,13 @@ namespace zen::constants {
     inline constexpr f64 F64_LOWEST  = std::numeric_limits<f64>::lowest();
     inline constexpr f32 F32_MAX     = std::numeric_limits<f32>::max();
     inline constexpr f64 F64_MAX     = std::numeric_limits<f64>::max();
+
     inline constexpr f32 F32_EPSILON = std::numeric_limits<f32>::epsilon();
     inline constexpr f64 F64_EPSILON = std::numeric_limits<f64>::epsilon();
+    inline constexpr f32 F32_COMPARE_EPSILON = 1e-4f;
+    inline constexpr f64 F64_COMPARE_EPSILON = 1e-4f;
+    inline constexpr f32 F32_NORMAL_EPSILON  = 1e-8f;
+    inline constexpr f64 F64_NORMAL_EPSILON  = 1e-8f;
 
     inline constexpr f32 F32_INFINITY     = std::numeric_limits<f32>::infinity();
     inline constexpr f64 F64_INFINITY     = std::numeric_limits<f64>::infinity();
@@ -49,6 +53,8 @@ namespace zen::constants {
     inline constexpr f64 F64_PI       = static_cast<f64>(std::numbers::pi);
     inline constexpr f32 F32_TWO_PI   = static_cast<f32>(2 * std::numbers::pi);
     inline constexpr f64 F64_TWO_PI   = static_cast<f64>(2 * std::numbers::pi);
+    inline constexpr f32 F32_TAU      = F32_TWO_PI;
+    inline constexpr f64 F64_TAU      = F64_TWO_PI;
     inline constexpr f32 F32_HALF_PI  = static_cast<f32>(std::numbers::pi / 2);
     inline constexpr f64 F64_HALF_PI  = static_cast<f64>(std::numbers::pi / 2);
     inline constexpr f32 F32_INV_PI   = static_cast<f32>(1.0 / std::numbers::pi);
@@ -58,17 +64,3 @@ namespace zen::constants {
     inline constexpr f64 F64_GOLDEN_RATIO = 1.61803398875;
 
 } // namespace zen::constants
-
-namespace zen::math {
-
-    [[nodiscard]] inline bool CompareF32Eq(f32 lhs, f32 rhs, f32 epsilon = constants::F32_EPSILON) noexcept
-    {
-        return std::abs(rhs - lhs) < epsilon;
-    }
-
-    [[nodiscard]] inline bool CompareF64Eq(f64 lhs, f64 rhs, f64 epsilon = constants::F64_EPSILON) noexcept
-    {
-        return std::abs(rhs - lhs) < epsilon;
-    }
-
-} // namespace zen::math

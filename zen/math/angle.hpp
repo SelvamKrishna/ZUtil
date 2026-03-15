@@ -1,5 +1,6 @@
 #pragma once
 
+#include "constants.hpp"
 #include "../core/_export.hpp"
 #include "../core/types.hpp"
 
@@ -8,12 +9,18 @@ namespace zen::math {
     /// @brief Converts an angle in degrees to radians.
     /// @param degrees Angle in degrees.
     /// @return Angle in radians.
-    [[nodiscard]] constexpr f32 DegreesToRadians(f32 degrees) noexcept;
+    [[nodiscard]] inline constexpr f32 DegreesToRadians(f32 degrees) noexcept
+    {
+        return degrees * constants::F32_PI / 180.0F;
+    }
 
     /// @brief Converts an angle in radians to degrees.
     /// @param radians Angle in radians.
     /// @return Angle in degrees.
-    [[nodiscard]] constexpr f32 RadiansToDegrees(f32 radians) noexcept;
+    [[nodiscard]] inline constexpr f32 RadiansToDegrees(f32 radians) noexcept
+    {
+        return radians * 180.0F / constants::F32_PI;
+    }
 
     /// ---
     /// @brief Represents an angle stored internally in radians.
@@ -34,20 +41,20 @@ namespace zen::math {
         /// @brief Creates an angle from a radian value.
         /// @param radians Angle in radians.
         /// @return Angle instance representing the provided value.
-        [[nodiscard]] static constexpr Angle FromRadians(f32 radians);
+        [[nodiscard]] static constexpr Angle FromRadians(f32 radians) { return {radians}; }
 
         /// @brief Creates an angle from a degree value.
         /// @param radians Angle in degrees.
         /// @return Angle instance representing the provided value.
-        [[nodiscard]] static constexpr Angle FromDegrees(f32 degrees);
+        [[nodiscard]] static constexpr Angle FromDegrees(f32 degrees) { return {DegreesToRadians(degrees)}; }
 
         /// @brief Returns the angle value in radians.
         /// @return Angle in radians.
-        [[nodiscard]] constexpr f32 AsRadians() const;
+        [[nodiscard]] constexpr f32 AsRadians() const { return this->_radians; }
 
         /// @brief Returns the angle value in degrees.
         /// @return Angle in degrees.
-        [[nodiscard]] constexpr f32 AsDegrees() const;
+        [[nodiscard]] constexpr f32 AsDegrees() const { return RadiansToDegrees(this->_radians); }
 
         /// @brief Returns a normalized angle.
         /// Normalization ensures the angle lies within a standard range
